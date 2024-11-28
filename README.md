@@ -15,5 +15,8 @@ npm install
 
 - After setting up, the development server can be started:
 ```
+cd frontend-app/voterra
+```
+```
 npm run dev
 ```
