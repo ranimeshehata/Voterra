@@ -27,11 +27,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response,
+                                    jakarta.servlet.FilterChain filterChain) throws ServletException, IOException {
         // Check if the request is for /signup or /login
         String requestUri = request.getRequestURI();
         System.out.println(requestUri);
-        if ("/users/signup".equals(requestUri) || "/users/login".equals(requestUri) || "/signupWithGoogle".equals(requestUri) || "/signupWithFacebook".equals(requestUri)) {
+        if ("/users/signup".equals(requestUri) || "/users/login".equals(requestUri) || "/users/signupWithGoogle".equals(requestUri)
+                || "/users/signupWithFacebook".equals(requestUri)) {
             // If the request is for /signup or /login, skip the filter and continue the chain
             filterChain.doFilter(request, response);
             return;

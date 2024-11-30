@@ -32,10 +32,21 @@ public class UserService {
       public User signupWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
+            //login with token
             System.out.println("User already exists");
             return existingUser;
         }
         System.out.println("User does not exist");
         return userRepository.save(user);
+    }
+
+    public User loginWithGoogleOrFacebook(String email) {
+        User existingUser = userRepository.findByEmail(email);
+        if (existingUser == null) {
+            throw new RuntimeException("User does not exist");
+        }
+        System.out.println("logged in successfully");
+        return existingUser;
+
     }
 }
