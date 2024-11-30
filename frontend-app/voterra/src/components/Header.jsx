@@ -2,7 +2,7 @@ import Logo from '../assets/Logo.svg';
 import { useNavigate } from 'react-router-dom';
 
 
-function LoginLogo() {
+function Header() {
 
     const navigate = useNavigate();
 
@@ -27,4 +27,4 @@ function LoginLogo() {
     );
 }
 
-export default LoginLogo;
+export default Header;
