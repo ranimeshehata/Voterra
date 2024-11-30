@@ -1,5 +1,4 @@
 package com.voterra.services;
-
 import com.voterra.entities.User;
 import com.voterra.repos.UserRepository;
 import com.voterra.tokenization.JwtUtils;
@@ -27,6 +26,16 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+  
+      public User signupWithGoogleOrFacebook(User user) {
+        User existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser != null) {
+            System.out.println("User already exists");
+            return existingUser;
+        }
+        System.out.println("User does not exist");
         return userRepository.save(user);
     }
 }

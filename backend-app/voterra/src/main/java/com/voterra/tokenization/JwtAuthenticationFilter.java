@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Check if the request is for /signup or /login
         String requestUri = request.getRequestURI();
         System.out.println(requestUri);
-        if ("/users/signup".equals(requestUri) || "/users/login".equals(requestUri)) {
+        if ("/users/signup".equals(requestUri) || "/users/login".equals(requestUri) || "/signupWithGoogle".equals(requestUri) || "/signupWithFacebook".equals(requestUri)) {
             // If the request is for /signup or /login, skip the filter and continue the chain
             filterChain.doFilter(request, response);
             return;
