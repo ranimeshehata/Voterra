@@ -1,9 +1,12 @@
 package com.voterra.entities;
-import javax.xml.crypto.Data;
-import java.util.Date;
+import org.springframework.data.annotation.Id;
+
+
 import java.util.List;
 
 public class FeedFactory {
+
+    @Id
     private String postID;
     private String userID;
     private String postContent;
@@ -53,5 +56,27 @@ public class FeedFactory {
         return polls;
     }
 
+    public void setPostID(String postID) {
+        this.postID = postID;
+    }
 
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
+    public void setPostContent(String postContent) {
+        this.postContent = postContent;
+    }
+
+    public void setCategory(FeedFactory.category category) {
+        this.category = category;
+    }
+
+    public void setPrivacy(FeedFactory.privacy privacy) {
+        this.privacy = privacy;
+    }
+
+    public void setPolls(List<Poll> polls) {
+        this.polls = polls;
+    }
 }

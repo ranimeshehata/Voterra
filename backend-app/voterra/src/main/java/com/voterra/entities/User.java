@@ -1,9 +1,15 @@
 package com.voterra.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.List;
 
+
+@Document(collection = "users")
 public class User {
+    @Id
     private String id;
     private String username;
     private String email;
@@ -80,5 +86,49 @@ public class User {
 
     public List<String> getSavedPosts() {
         return savedPosts;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setUserType(User.userType userType) {
+        this.userType = userType;
+    }
+
+    public void setGender(User.gender gender) {
+        this.gender = gender;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
+    }
+
+    public void setSavedPosts(List<String> savedPosts) {
+        this.savedPosts = savedPosts;
     }
 }

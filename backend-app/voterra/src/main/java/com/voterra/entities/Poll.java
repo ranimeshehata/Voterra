@@ -16,4 +16,12 @@ public class Poll {
     public List<String> getVoters() {
         return voters;
     }
+
+    public void setPollContent(String pollContent) {
+        this.pollContent = pollContent;
+    }
+
+    public void setVoters(List<String> voters) {
+        this.voters = voters;
+    }
 }

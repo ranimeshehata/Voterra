@@ -1,8 +1,12 @@
 package com.voterra.entities;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.List;
 
+
+@Document(collection = "posts")
 public class Post extends FeedFactory{
     private Date publishedDate;
 
@@ -14,6 +18,10 @@ public class Post extends FeedFactory{
 
     public Date getPublishedDate() {
         return publishedDate;
+    }
+
+    public void setPublishedDate(Date publishedDate) {
+        this.publishedDate = publishedDate;
     }
 
 }
