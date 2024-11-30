@@ -92,7 +92,7 @@ body {
   display: flex;
   justify-content: center;
   width: 500px;
-  height: 521px;
+  height: 620px;
   top: 149px;
   left: 892px;
   gap: 37px;
@@ -219,4 +219,24 @@ body {
 .facebook-btn:hover{
   background-color: #B90000;
   color: white;
+}
+
+.error-section p{
+  font-size: 20px;
+}
+
+.error-section h1{
+  font-size:var(--error-section-size) ;
+  font-weight: var(--error-section-weight);
+}
+
+.errorMsg{
+  font-weight: 400;
+  line-height: 22.4px;
+  text-align: left;
+  color: rgba(144, 11, 9, 1);
+}
+
+.errorBorder {
+  border: 0.109375vh solid red;
 }
