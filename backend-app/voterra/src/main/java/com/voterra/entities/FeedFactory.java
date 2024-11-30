@@ -9,7 +9,6 @@ public class FeedFactory {
     private String postContent;
     private category category;
     private privacy privacy;
-    private Date publishDate;
     private List<Poll> polls;
 
     public enum category {
@@ -21,13 +20,12 @@ public class FeedFactory {
     }
 
     public FeedFactory(String postID, String userID, String postContent, category category, privacy privacy,
-                       Date publishDate, List<Poll> polls) {
+                       List<Poll> polls) {
         this.postID = postID;
         this.userID = userID;
         this.postContent = postContent;
         this.category = category;
         this.privacy = privacy;
-        this.publishDate = publishDate;
         this.polls = polls;
     }
 
@@ -49,10 +47,6 @@ public class FeedFactory {
 
     public FeedFactory.privacy getPrivacy() {
         return privacy;
-    }
-
-    public Date getPublishDate() {
-        return publishDate;
     }
 
     public List<Poll> getPolls() {
