@@ -38,4 +38,19 @@ public class UserService {
         System.out.println("User does not exist");
         return userRepository.save(user);
     }
+
+    public Object[] login(String email, String password) {
+        User user = userRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("User not found with account: " + email));
+
+        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+        return new Object[] {user, jwtUtils.generateToken(email)};
+    }
+
+    public void signOut() {
+        SecurityContextHolder.clearContext();
+    }
+
 }
