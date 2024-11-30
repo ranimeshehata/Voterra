@@ -20,7 +20,8 @@ public class FeedFactory {
         PUBLIC, PRIVATE
     }
 
-    public FeedFactory(String postID, String userID, String postContent, category category, privacy privacy, Date publishDate, List<Poll> polls) {
+    public FeedFactory(String postID, String userID, String postContent, category category, privacy privacy,
+                       Date publishDate, List<Poll> polls) {
         this.postID = postID;
         this.userID = userID;
         this.postContent = postContent;

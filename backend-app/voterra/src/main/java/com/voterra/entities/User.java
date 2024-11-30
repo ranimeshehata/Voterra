@@ -24,7 +24,8 @@ public class User {
         MALE, FEMALE
     }
 
-    public User(String id, String username, String email, String password, String firstName, String lastName, Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender) {
+    public User(String id, String username, String email, String password, String firstName, String lastName,
+                Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender) {
         this.id = id;
         this.username = username;
         this.email = email;
