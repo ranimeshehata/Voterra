@@ -10,10 +10,9 @@ import java.util.List;
 @Document(collection = "users")
 public class User {
     @Id
-    private String id;
-    private String username;
     private String email;
     private String password;
+    private String username;
     private String firstName;
     private String lastName;
     private userType userType;
@@ -30,9 +29,8 @@ public class User {
         MALE, FEMALE
     }
 
-    public User(String id, String username, String email, String password, String firstName, String lastName,
+    public User(String email, String password, String username, String firstName, String lastName,
                 Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender) {
-        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -45,9 +43,6 @@ public class User {
         this.gender = gender;
     }
 
-    public String getId() {
-        return id;
-    }
 
     public String getUsername() {
         return username;
@@ -86,10 +81,6 @@ public class User {
 
     public List<String> getSavedPosts() {
         return savedPosts;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public void setUsername(String username) {

@@ -1,14 +1,11 @@
 package com.voterra.entities;
-import org.springframework.data.annotation.Id;
 
 
 import java.util.List;
 
 public class FeedFactory {
 
-    @Id
-    private String postID;
-    private String userID;
+    private String userEmail;
     private String postContent;
     private category category;
     private privacy privacy;
@@ -22,22 +19,17 @@ public class FeedFactory {
         PUBLIC, PRIVATE
     }
 
-    public FeedFactory(String postID, String userID, String postContent, category category, privacy privacy,
+    public FeedFactory(String userEmail, String postContent, category category, privacy privacy,
                        List<Poll> polls) {
-        this.postID = postID;
-        this.userID = userID;
+        this.userEmail = userEmail;
         this.postContent = postContent;
         this.category = category;
         this.privacy = privacy;
         this.polls = polls;
     }
 
-    public String getPostID() {
-        return postID;
-    }
-
-    public String getUserID() {
-        return userID;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public String getPostContent() {
@@ -56,12 +48,8 @@ public class FeedFactory {
         return polls;
     }
 
-    public void setPostID(String postID) {
-        this.postID = postID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public void setPostContent(String postContent) {
