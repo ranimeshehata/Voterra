@@ -1,13 +1,18 @@
 package com.voterra.entities;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.List;
 
+
+@Document(collection = "users")
 public class User {
-    private String id;
-    private String username;
+    @Id
     private String email;
     private String password;
+    private String username;
     private String firstName;
     private String lastName;
     private userType userType;
@@ -24,9 +29,8 @@ public class User {
         MALE, FEMALE
     }
 
-    public User(String id, String username, String email, String password, String firstName, String lastName,
+    public User(String email, String password, String username, String firstName, String lastName,
                 Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender) {
-        this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
@@ -39,9 +43,6 @@ public class User {
         this.gender = gender;
     }
 
-    public String getId() {
-        return id;
-    }
 
     public String getUsername() {
         return username;
@@ -80,5 +81,45 @@ public class User {
 
     public List<String> getSavedPosts() {
         return savedPosts;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setUserType(User.userType userType) {
+        this.userType = userType;
+    }
+
+    public void setGender(User.gender gender) {
+        this.gender = gender;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
+    }
+
+    public void setSavedPosts(List<String> savedPosts) {
+        this.savedPosts = savedPosts;
     }
 }

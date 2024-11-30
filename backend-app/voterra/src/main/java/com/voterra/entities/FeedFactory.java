@@ -1,11 +1,11 @@
 package com.voterra.entities;
-import javax.xml.crypto.Data;
-import java.util.Date;
+
+
 import java.util.List;
 
 public class FeedFactory {
-    private String postID;
-    private String userID;
+
+    private String userEmail;
     private String postContent;
     private category category;
     private privacy privacy;
@@ -19,22 +19,17 @@ public class FeedFactory {
         PUBLIC, PRIVATE
     }
 
-    public FeedFactory(String postID, String userID, String postContent, category category, privacy privacy,
+    public FeedFactory(String userEmail, String postContent, category category, privacy privacy,
                        List<Poll> polls) {
-        this.postID = postID;
-        this.userID = userID;
+        this.userEmail = userEmail;
         this.postContent = postContent;
         this.category = category;
         this.privacy = privacy;
         this.polls = polls;
     }
 
-    public String getPostID() {
-        return postID;
-    }
-
-    public String getUserID() {
-        return userID;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public String getPostContent() {
@@ -53,5 +48,23 @@ public class FeedFactory {
         return polls;
     }
 
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
+    public void setPostContent(String postContent) {
+        this.postContent = postContent;
+    }
+
+    public void setCategory(FeedFactory.category category) {
+        this.category = category;
+    }
+
+    public void setPrivacy(FeedFactory.privacy privacy) {
+        this.privacy = privacy;
+    }
+
+    public void setPolls(List<Poll> polls) {
+        this.polls = polls;
+    }
 }
