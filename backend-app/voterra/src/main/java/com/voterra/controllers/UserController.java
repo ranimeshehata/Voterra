@@ -1,7 +1,5 @@
 package com.voterra.controllers;
 import com.voterra.entities.User;
-import com.voterra.tokenization.JwtResponse;
-import com.voterra.tokenization.LoginRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,21 +53,4 @@ public class UserController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
      }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            Object[] token = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok(new JwtResponse(token));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
-
-    @PostMapping("/signout")
-    public ResponseEntity<?> signOut() {
-        userService.signOut();
-        return ResponseEntity.ok("User signed out successfully!");
-    }
 }
