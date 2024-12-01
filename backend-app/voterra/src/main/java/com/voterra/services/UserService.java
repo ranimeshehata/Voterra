@@ -24,10 +24,6 @@ public class UserService {
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this account already exists: " + user.getEmail());
         }
-        Optional<User> existingUsername = userRepository.findByUsername(user.getUsername());
-        if (existingUsername.isPresent()) {
-            throw new RuntimeException("Username already exists: " + user.getUsername());
-        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -42,19 +38,4 @@ public class UserService {
         System.out.println("User does not exist");
         return userRepository.save(user);
     }
-
-    public Object[] login(String email, String password) {
-        User user = userRepository.findById(email)
-                .orElseThrow(() -> new RuntimeException("User not found with account: " + email));
-
-        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-        return new Object[] {user, jwtUtils.generateToken(email)};
-    }
-
-    public void signOut() {
-        SecurityContextHolder.clearContext();
-    }
-
 }
