@@ -33,14 +33,14 @@ public class UserService {
         return userRepository.save(user);
     }
   
-      public User signupWithGoogleOrFacebook(User user) {
+      public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
             System.out.println("User already exists");
-            return existingUser;
+            return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
         System.out.println("User does not exist");
-        return userRepository.save(user);
+        return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
 
     public Object[] login(String email, String password) {
