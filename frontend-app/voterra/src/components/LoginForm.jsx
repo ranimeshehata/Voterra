@@ -26,18 +26,15 @@ function LoginForm() {
 
     useEffect(() => {
       const handleStorageChange = event => {
-          console.log('Storage event detected:', event);
           if (event.key === 'token' && event.newValue) {
               toast.info('Another user is already logged in!');
               navigate('/homepage');
           }
       };
   
-      console.log('Adding storage event listener');
       window.addEventListener('storage', handleStorageChange);
   
       return () => {
-          console.log('Removing storage event listener');
           window.removeEventListener('storage', handleStorageChange);
       };
   }, [navigate, setIsAuthenticated]);
