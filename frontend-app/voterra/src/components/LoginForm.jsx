@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import { Col} from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { axios } from 'react-axios';
+import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useNavigate } from 'react-router-dom';
 import mailIcon from '../assets/mail-icon.svg';
@@ -25,19 +25,22 @@ function LoginForm() {
     };
 
     useEffect(() => {
-        const handleStorageChange = event => {
+      const handleStorageChange = event => {
+          console.log('Storage event detected:', event);
           if (event.key === 'token' && event.newValue) {
-            toast.info('Another user is already logged in!');
-            navigate('/homepage');
+              toast.info('Another user is already logged in!');
+              navigate('/homepage');
           }
-        };
-    
-        window.addEventListener('storage', handleStorageChange);
-    
-        return () => {
+      };
+  
+      console.log('Adding storage event listener');
+      window.addEventListener('storage', handleStorageChange);
+  
+      return () => {
+          console.log('Removing storage event listener');
           window.removeEventListener('storage', handleStorageChange);
-        };
-      }, [navigate, setIsAuthenticated]);
+      };
+  }, [navigate, setIsAuthenticated]);
 
     const validateEmail = inputEmail => {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,7 +48,7 @@ function LoginForm() {
       };
     
       const validatePassword = inputPassword => {
-        const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const re = /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/;
         return re.test(inputPassword);
       };
     
@@ -60,6 +63,7 @@ function LoginForm() {
           valid = false;
         }
     
+        console.log('pswd', password)
         if (!password) {
           validationErrors.password = 'This field cannot be empty.';
           valid = false;
@@ -86,7 +90,7 @@ function LoginForm() {
             password,
           })
           .then(response => {
-            const token = response.headers.authorization;
+            const token = response.data.token;
             if (token) {
               localStorage.setItem('token', token);
               localStorage.setItem('user', response.data);
@@ -100,7 +104,7 @@ function LoginForm() {
           .catch(err => {
             if (!err.response) {
                 setLoginError('No server response.');
-              } else if (err.response.status === 401||err.response.status === 422) { // wrong email,pwd
+              } else if (err.response.status === 400) {
                 setLoginError('Invalid Email or Password.');
               } else {
                 setLoginError('Login failed. Please try again.');
@@ -152,10 +156,10 @@ function LoginForm() {
                     />
                 </div>
                 {errors.email && (
-          <p className="errorMsg">
-            {errors.email}
-          </p>
-        )}
+                  <p className="errorMsg">
+                    {errors.email}
+                  </p>
+                )}
             </Col>
 
             <Col className="relative mb-5 inputField">
@@ -185,13 +189,13 @@ function LoginForm() {
                     </a>
                 </div>
                 {errors.password && (
-          <p className="errorMsg">
-            {errors.password}
-          </p>
-        )}
-        {loginError && (
-          <p className="errorMsg">{loginError}</p>
-        )}
+                  <p className="errorMsg">
+                    {errors.password}
+                  </p>
+                )}
+                {loginError && (
+                  <p className="errorMsg">{loginError}</p>
+                )}
             </Col>
             <Col className="mb-4">
                 <button
