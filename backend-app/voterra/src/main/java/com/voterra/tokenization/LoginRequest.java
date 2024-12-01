@@ -2,15 +2,15 @@ package com.voterra.tokenization;
 
 public class LoginRequest {
 
-    private String account;
+    private String email;
     private String password;
 
-    public String getAccount() {
-        return account;
+    public String getEmail() {
+        return email;
     }
 
     public void setAccount(String account) {
-        this.account = account;
+        this.email = account;
     }
 
     public String getPassword() {
