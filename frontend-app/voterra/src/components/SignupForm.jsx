@@ -5,7 +5,7 @@ import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils"
 import SignUpHeader from "./SignupHeader";
 import ContinueSep from "./ContinueSep";
 const SignupForm = () => {
-    const {data, post}=useFetch();
+    const {data,error,loading,get,post}=useFetch();
     const [otpDone,setOtpDone]=useState(false);
     const [showOtp,setShowOpt]=useState(false);
     const [otp,setOpt]=useState(0);
@@ -69,8 +69,10 @@ const SignupForm = () => {
     return ( 
         <div className="w-[90%]  md:w-[50%] lg:w-[30%] bg-white rounded-lg shadow-2xl p-8 font-Roboto ">
             <SignUpHeader/>
+            <div>
+                <p className="text-red-600">{error}</p>
+            </div>
             <div className="flex flex-col gap-10 w-full">
-                
                 <div className="flex items-center justify-between">
                     <div>
                         <h3 className="emailLabel mb-2">First Name</h3>
