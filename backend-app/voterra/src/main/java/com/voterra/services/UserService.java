@@ -33,7 +33,7 @@ public class UserService {
         userRepository.save(user);
         return new Object[] {user, jwtUtils.generateToken(user.getEmail())};
     }
-  
+    
       public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {

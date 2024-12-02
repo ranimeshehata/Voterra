@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +9,7 @@ import mailIcon from '../assets/mail-icon.svg';
 import eyeOffIcon from '../assets/eye-off-icon.svg';
 import eyeIcon from '../assets/eye-icon.svg';
 import useFetch from '../hooks/useFetch';
+import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils";
 import { useRecoilState } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
 
@@ -19,11 +20,17 @@ function LoginForm() {
   const [loginError, setLoginError] = useState('');
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpInput, setOtpInput] = useState('');
+  const otpRef = useRef(null);
   const { post } = useFetch();
 
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userState);
   const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
+  const [formData,setFormData]=useState({email:"",password:""});
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -78,11 +85,34 @@ function LoginForm() {
     return false;
   };
 
+  const handleSendOtp = () => {
+    if (!email) {
+      setErrors({ email: 'Email is required to send OTP.' });
+      return;
+    }
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000);
+    setOtp(generatedOtp);
+    sendOtp(generatedOtp, email);
+    setOtpSent(true);
+  };
+
+  const handleVerifyOtp = () => {
+    if (otpInput === otp.toString()) {
+      navigate('/resetpassword');
+    } else {
+      toast.error('Invalid OTP. Please try again.');
+    }
+  };
+
   const resetLoginForm = () => {
     setEmail('');
     setPassword('');
     setLoginError('');
   };
+
+  function handleChange(e){
+    setFormData({...formData,[e.target.name]:e.target.value});
+}
 
   const callBackend = () => {
     post('http://localhost:8080/users/login', { email, password }, (response, err) => {
@@ -110,6 +140,43 @@ function LoginForm() {
       }
     });
   };
+
+  function loginProv(userObj,provIndex){
+    if(!userObj || !userObj.email){
+        return
+    }
+    let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"NOT_SPECIFIED",userType:"USER",dateOfBirth:"",}
+    setFormData(formatted);
+    console.log(formatted);
+
+    if(provIndex===0){
+        post("http://localhost:8080/users/loginWithFacebook",formatted,(res)=>{
+            console.log(res);
+            if(res){
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('user', JSON.stringify(res.user));
+                setUser(res.user);
+                setIsAuthenticated(true);
+                navigate('/homepage');
+                resetLoginForm();
+            }
+        });
+    } else if(provIndex===1){
+        post("http://localhost:8080/users/loginWithGoogle",formatted,(res)=>{
+            console.log(res);
+            if(res){
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('user', JSON.stringify(res.user));
+                setUser(res.user);
+                setIsAuthenticated(true);
+                navigate('/homepage');
+                resetLoginForm();
+            }
+        });
+    }
+}
+
+
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -176,7 +243,7 @@ function LoginForm() {
               />
             </div>
             <div className="text-right mt-2">
-              <a href="#" className="forgot-password">
+              <a href="#" onClick={handleSendOtp} className="hyperlinks">
                 Forgot Password?
               </a>
             </div>
@@ -189,12 +256,30 @@ function LoginForm() {
             </button>
           </Col>
         </form>
+
+        {otpSent && (
+          <div className="otp-verification">
+            <h3>Enter OTP sent to your email</h3>
+            <input
+              ref={otpRef}
+              type="text"
+              placeholder="Enter OTP"
+              value={otpInput}
+              onChange={e => setOtpInput(e.target.value)}
+              className="otp-input"
+            />
+            <button onClick={handleVerifyOtp} className="verify-otp-button">
+              Verify OTP
+            </button>
+          </div>
+        )}
+        
         <ContinueSep />
         <div className="btns flex justify-between w-full">
           <button
             onClick={async () => {
-              // let data=await authUsingProv(1);
-              // signUpProv(data);
+              let data=await authUsingProv(1);
+              loginProv(data, 1);
             }}
             className="w-2/5 p-4 shadow-lg rounded-lg"
           >
@@ -202,8 +287,8 @@ function LoginForm() {
           </button>
           <button
             onClick={async () => {
-              // let data=await authUsingProv(0);
-              // signUpProv(data);
+              let data=await authUsingProv(0);
+              loginProv(data, 0);
             }}
             className="w-2/5 p-4 shadow-lg rounded-lg"
           >
@@ -211,7 +296,7 @@ function LoginForm() {
           </button>
         </div>
         <p className="mt-6 text-center text-sm">
-          Don’t have an account? <a href="/signup">Sign up</a>
+          Don’t have an account? <a href="/signup" className='hyperlinks'>Sign up</a>
         </p>
       </div>
     </div>

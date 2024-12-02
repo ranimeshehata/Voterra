@@ -248,3 +248,8 @@ html,body{
 .errorBorder {
   border: 0.109375vh solid red;
 }
+
+.hyperlinks{
+  color: blue;
+  text-decoration: underline;
+}
