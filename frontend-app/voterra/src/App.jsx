@@ -1,23 +1,24 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import './style.css'
-import Login from './pages/Login'
-import IntroPage from './pages/IntroPage'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { Suspense } from 'react';
+import './style.css';
+const Login = React.lazy(() => import('./pages/Login'));
+const IntroPage = React.lazy(() => import('./pages/IntroPage'));
+const SignUp = React.lazy(() => import('./pages/SignUp'));
 
 function App() {
-
   return (
-    <>
-      <div>
-        <Router>
+    <div>
+      <Router>
+        <Suspense>
           <Routes>
-            <Route path="/" element={ <IntroPage />} />
-            <Route path="/login" element={ <Login />} />
+            <Route path="/" element={<IntroPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
           </Routes>
-        </Router>
-      </div>
-      
-    </>
-  )
+        </Suspense>
+      </Router>
+    </div>
+  );
 }
 
-export default App
+export default App;
