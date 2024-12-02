@@ -12,9 +12,17 @@ export const validateForm = (formData) => {
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
         newErrors.email = "Email is invalid";
-    if (!formData.password.trim()) newErrors.password = "Password is required";
-    else if (formData.password.length < 6)
-        newErrors.password = "Password must be at least 6 characters";
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+  } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+  } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one uppercase letter";
+  } else if (!/[a-z]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one lowercase letter";
+  } else if (!/[^a-zA-Z0-9]/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one special character";
+  }
     return { valid: Object.keys(newErrors).length === 0, errors: newErrors };
 };
 
@@ -48,7 +56,6 @@ export const authUsingProv = async (providerIndex) => {
   } else if (providerIndex === 0) {
       provider = new FacebookAuthProvider();
   }
-
   try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;

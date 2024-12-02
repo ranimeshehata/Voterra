@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import mailIcon from '../assets/mail-icon.svg';
 import eyeOffIcon from '../assets/eye-off-icon.svg';
 import eyeIcon from '../assets/eye-icon.svg';
+import useFetch from '../hooks/useFetch';
 
 function LoginForm() {
     const validationErrors={};
@@ -16,6 +17,7 @@ function LoginForm() {
     const [loginError, setLoginError] = useState('');
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
+    const {data,error,loading,post,get}=useFetch();
 
     const navigate = useNavigate();
     const { setUser, login, setIsAuthenticated } = useContext(UserContext);
@@ -46,7 +48,7 @@ function LoginForm() {
     
       const validatePassword = inputPassword => {
         const re = /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,}$/;
-        return re.test(inputPassword);
+        return true;
       };
     
       const handleValidation = () => {
@@ -80,34 +82,37 @@ function LoginForm() {
         setLoginError('');
       };
 
-    const callBackend = () => {
-        axios
-          .post('http://localhost:8080/users/login', {
-            email,
-            password,
-          })
-          .then(response => {
-            const token = response.data.token;
-            if (token) {
-              localStorage.setItem('token', token);
-              localStorage.setItem('user', response.data);
+    const callBackend=()=>{
+        post("http://localhost:8080/users/login",{email,password,},(response)=>{
+            if(response){
+                console.log(response);
+                
+                const token = response.token;
+                if (token) {
+                    let z=JSON.stringify(response.user);    
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', z);
+                    
+                }
+                const user = response.data;
+                setUser(user);
+                login();
+                navigate('/homepage');
+                resetLoginForm();
             }
-            const user = response.data;
-            setUser(user);
-            login();
-            navigate('/homepage');
-            resetLoginForm();
-          })
-          .catch(err => {
-            if (!err.response) {
-                setLoginError('No server response.');
-              } else if (err.response.status === 400) {
-                setLoginError('Invalid Email or Password.');
-              } else {
-                setLoginError('Login failed. Please try again.');
-              }
-          });
-    }
+            else{
+                console.log("hi");
+                
+                if (!err.response) {
+                    setLoginError('No server response.');
+                } else if (err.response.status === 400) {
+                    setLoginError('Invalid Email or Password.');
+                } else {
+                    setLoginError('Login failed. Please try again.');
+                }
+            }
+        })
+    }  
 
       const handleSubmit = e => {
         e.preventDefault();
@@ -116,6 +121,8 @@ function LoginForm() {
           return;
         }
         const isValid=handleValidation();
+        console.log(isValid);
+        
         if (isValid) {
           callBackend();
         }

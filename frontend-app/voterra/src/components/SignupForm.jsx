@@ -6,7 +6,7 @@ import SignUpHeader from "./SignupHeader";
 import ContinueSep from "./ContinueSep";
 const SignupForm = () => {
     const {data,error,loading,post,get}=useFetch();
-    const [otpDone,setOtpDone]=useState(true);
+    const [otpDone,setOtpDone]=useState(false);
     const [showOtp,setShowOpt]=useState(false);
     const [otp,setOpt]=useState(0);
     const [errors, setErrors] = useState({});
