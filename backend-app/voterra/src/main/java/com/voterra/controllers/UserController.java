@@ -26,8 +26,8 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
         try {
-            User newUser = userService.signup(user);
-            return ResponseEntity.ok("User created successfully!");
+            Object[] newUser = userService.signup(user);
+            return ResponseEntity.ok(new JwtResponse(newUser));
         } catch (RuntimeException e) {
             System.out.println("Error: " + e.getMessage());
             return ResponseEntity.status(400).body(e.getMessage()); // Return error message if account already exists
