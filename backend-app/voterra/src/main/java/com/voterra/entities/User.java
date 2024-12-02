@@ -21,6 +21,22 @@ public class User {
     private List<String> friends;
     private List<String> savedPosts;            //list of (userID - postID)
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userType=" + userType +
+                ", gender=" + gender +
+                ", dateOfBirth=" + dateOfBirth +
+                ", friends=" + friends +
+                ", savedPosts=" + savedPosts +
+                '}';
+    }
+
     public enum userType {
         ADMIN, USER, SUPERADMIN
     }

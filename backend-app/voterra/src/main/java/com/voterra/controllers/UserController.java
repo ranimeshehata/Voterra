@@ -75,6 +75,7 @@ public class UserController {
 
     @PostMapping("/loginWithGoogle")
     public ResponseEntity<?> loginWithGoogle(@RequestBody User user) {
+        System.out.println(user);
         try {
             Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
             return ResponseEntity.ok(new JwtResponse(token));

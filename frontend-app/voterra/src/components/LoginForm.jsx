@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +20,10 @@ function LoginForm() {
   const [loginError, setLoginError] = useState('');
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpInput, setOtpInput] = useState('');
+  const otpRef = useRef(null);
   const { post } = useFetch();
 
   const navigate = useNavigate();
@@ -81,6 +85,25 @@ function LoginForm() {
     return false;
   };
 
+  const handleSendOtp = () => {
+    if (!email) {
+      setErrors({ email: 'Email is required to send OTP.' });
+      return;
+    }
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000);
+    setOtp(generatedOtp);
+    sendOtp(generatedOtp, email);
+    setOtpSent(true);
+  };
+
+  const handleVerifyOtp = () => {
+    if (otpInput === otp.toString()) {
+      navigate('/resetpassword');
+    } else {
+      toast.error('Invalid OTP. Please try again.');
+    }
+  };
+
   const resetLoginForm = () => {
     setEmail('');
     setPassword('');
@@ -122,7 +145,7 @@ function LoginForm() {
     if(!userObj || !userObj.email){
         return
     }
-    let formatted={email:userObj.email, password:""}
+    let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"NOT_SPECIFIED",userType:"USER",dateOfBirth:"",}
     setFormData(formatted);
     console.log(formatted);
 
@@ -220,7 +243,7 @@ function LoginForm() {
               />
             </div>
             <div className="text-right mt-2">
-              <a href="#" className="hyperlinks">
+              <a href="#" onClick={handleSendOtp} className="hyperlinks">
                 Forgot Password?
               </a>
             </div>
@@ -233,6 +256,24 @@ function LoginForm() {
             </button>
           </Col>
         </form>
+
+        {otpSent && (
+          <div className="otp-verification">
+            <h3>Enter OTP sent to your email</h3>
+            <input
+              ref={otpRef}
+              type="text"
+              placeholder="Enter OTP"
+              value={otpInput}
+              onChange={e => setOtpInput(e.target.value)}
+              className="otp-input"
+            />
+            <button onClick={handleVerifyOtp} className="verify-otp-button">
+              Verify OTP
+            </button>
+          </div>
+        )}
+        
         <ContinueSep />
         <div className="btns flex justify-between w-full">
           <button

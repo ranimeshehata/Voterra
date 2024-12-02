@@ -65,6 +65,7 @@ export const authUsingProv = async (providerIndex) => {
             email: user.email,
             firstName: user.displayName,
         };
+        console.log("User authenticated successfully:", res);
         return res;
       }
   } catch (error) {
