@@ -9,7 +9,7 @@ const SignUp = React.lazy(() => import('./pages/SignUp'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 
 function App() {
-  useAuth(); // Initialize authentication state
+  useAuth();
 
   return (
     <div>
