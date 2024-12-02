@@ -21,7 +21,8 @@ function LoginForm() {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [otpDone, setOtpDone] = useState(false);
+  const [otp, setOtp] = useState(0);
   const [otpInput, setOtpInput] = useState('');
   const otpRef = useRef(null);
   const { post } = useFetch();
@@ -29,8 +30,7 @@ function LoginForm() {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userState);
   const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
-  const [formData,setFormData]=useState({email:"",password:""});
-
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -85,12 +85,16 @@ function LoginForm() {
     return false;
   };
 
+  const generateOtp = () => {
+    return Math.floor(100000 + Math.random() * 900000);
+  };
+
   const handleSendOtp = () => {
     if (!email) {
       setErrors({ email: 'Email is required to send OTP.' });
       return;
     }
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000);
+    const generatedOtp = generateOtp();
     setOtp(generatedOtp);
     sendOtp(generatedOtp, email);
     setOtpSent(true);
@@ -98,6 +102,7 @@ function LoginForm() {
 
   const handleVerifyOtp = () => {
     if (otpInput === otp.toString()) {
+      setOtpDone(true);
       navigate('/resetpassword');
     } else {
       toast.error('Invalid OTP. Please try again.');
@@ -110,9 +115,9 @@ function LoginForm() {
     setLoginError('');
   };
 
-  function handleChange(e){
-    setFormData({...formData,[e.target.name]:e.target.value});
-}
+  function handleChange(e) {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
 
   const callBackend = () => {
     post('http://localhost:8080/users/login', { email, password }, (response, err) => {
@@ -129,54 +134,52 @@ function LoginForm() {
         resetLoginForm();
         console.log(response);
       } else {
-          console.log(err);
-          if (!err.status) {
-            setLoginError('No server response.');
-          } else if (err.status === 400) {
-            setLoginError('Invalid Email or Password.');
-          } else {
-            setLoginError('Login failed. Please try again.');
-          }
+        console.log(err);
+        if (!err.status) {
+          setLoginError('No server response.');
+        } else if (err.status === 400) {
+          setLoginError('Invalid Email or Password.');
+        } else {
+          setLoginError('Login failed. Please try again.');
+        }
       }
     });
   };
 
-  function loginProv(userObj,provIndex){
-    if(!userObj || !userObj.email){
-        return
+  function loginProv(userObj, provIndex) {
+    if (!userObj || !userObj.email) {
+      return;
     }
-    let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"NOT_SPECIFIED",userType:"USER",dateOfBirth:"",}
+    let formatted = { email: userObj.email, password: "", username: "", firstName: userObj.firstName, lastName: "", gender: "NOT_SPECIFIED", userType: "USER", dateOfBirth: "", }
     setFormData(formatted);
     console.log(formatted);
 
-    if(provIndex===0){
-        post("http://localhost:8080/users/loginWithFacebook",formatted,(res)=>{
-            console.log(res);
-            if(res){
-                localStorage.setItem('token', res.token);
-                localStorage.setItem('user', JSON.stringify(res.user));
-                setUser(res.user);
-                setIsAuthenticated(true);
-                navigate('/homepage');
-                resetLoginForm();
-            }
-        });
-    } else if(provIndex===1){
-        post("http://localhost:8080/users/loginWithGoogle",formatted,(res)=>{
-            console.log(res);
-            if(res){
-                localStorage.setItem('token', res.token);
-                localStorage.setItem('user', JSON.stringify(res.user));
-                setUser(res.user);
-                setIsAuthenticated(true);
-                navigate('/homepage');
-                resetLoginForm();
-            }
-        });
+    if (provIndex === 0) {
+      post("http://localhost:8080/users/loginWithFacebook", formatted, (res) => {
+        console.log(res);
+        if (res) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
+          setUser(res.user);
+          setIsAuthenticated(true);
+          navigate('/homepage');
+          resetLoginForm();
+        }
+      });
+    } else if (provIndex === 1) {
+      post("http://localhost:8080/users/loginWithGoogle", formatted, (res) => {
+        console.log(res);
+        if (res) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('user', JSON.stringify(res.user));
+          setUser(res.user);
+          setIsAuthenticated(true);
+          navigate('/homepage');
+          resetLoginForm();
+        }
+      });
     }
-}
-
-
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -195,7 +198,7 @@ function LoginForm() {
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
           <h2 className="form-title-welcome">Welcome Back!</h2>
-          <p className="form-title-guide">Enter your credentials to access your account</p>
+          <p className="text-gray-500">Enter your credentials to access your account</p>
         </div>
 
         <form className="login-form">
@@ -223,11 +226,7 @@ function LoginForm() {
             </label>
             <div className="flex items-center border rounded-lg">
               <input
-                className={`password-input ${
-                  (!errors.email || (errors.email && errors.password)) && (errors.email || errors.password || loginError)
-                    ? 'errorBorder'
-                    : ''
-                }`}
+                className={`password-input ${(!errors.email || (errors.email && errors.password)) && (errors.email || errors.password || loginError) ? 'errorBorder' : ''}`}
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter password"
@@ -260,42 +259,44 @@ function LoginForm() {
         {otpSent && (
           <div className="otp-verification">
             <h3>Enter OTP sent to your email</h3>
-            <input
-              ref={otpRef}
-              type="text"
-              placeholder="Enter OTP"
-              value={otpInput}
-              onChange={e => setOtpInput(e.target.value)}
-              className="otp-input"
-            />
-            <button onClick={handleVerifyOtp} className="verify-otp-button">
-              Verify OTP
-            </button>
+            <div className="flex justify-between">
+              <input
+                ref={otpRef}
+                type="text"
+                placeholder="Enter OTP"
+                value={otpInput}
+                onChange={e => setOtpInput(e.target.value)}
+                className="otp-input"
+              />
+              <button className={`${otpDone ? 'bg-green-600 p-1 rounded-full' : ''} h-7 w-7 shadow-xl flex justify-center items-center`} onClick={handleVerifyOtp}>
+                <i className="fa-solid fa-check"></i>
+              </button>
+            </div>
           </div>
         )}
-        
+
         <ContinueSep />
         <div className="btns flex justify-between w-full">
           <button
             onClick={async () => {
-              let data=await authUsingProv(1);
+              let data = await authUsingProv(1);
               loginProv(data, 1);
             }}
-            className="w-2/5 p-4 shadow-lg rounded-lg"
+            className="google-btn w-2/5 p-4 shadow-lg rounded-lg"
           >
             <i className="fa-brands fa-google"></i> Google
           </button>
           <button
             onClick={async () => {
-              let data=await authUsingProv(0);
+              let data = await authUsingProv(0);
               loginProv(data, 0);
             }}
-            className="w-2/5 p-4 shadow-lg rounded-lg"
+            className="facebook-btn w-2/5 p-4 shadow-lg rounded-lg"
           >
             <i className="fa-brands fa-facebook-f"></i> Facebook
           </button>
         </div>
-        <p className="mt-6 text-center text-sm">
+        <p className="mt-6 text-center text-md">
           Don’t have an account? <a href="/signup" className='hyperlinks'>Sign up</a>
         </p>
       </div>

@@ -59,16 +59,12 @@ function ResetPasswordForm() {
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
           <h2 className="form-title-welcome">Reset Password</h2>
-          <p className="form-title-guide">Enter your new password</p>
+          <p className="text-gray-500">Enter your new password</p>
         </div>
 
         <form className="reset-password-form" onSubmit={handleSubmit}>
           <Col className="relative mb-5 inputField">
             <div className="flex items-center border rounded-lg">
-
-              {/* <label htmlFor="newPassword" className="passwordLabel">
-                New Password
-              </label> */}
               <input
                 className={`password-input ${errors.newPassword ? 'errorBorder' : ''}`}
                 id="newPassword"
@@ -92,9 +88,6 @@ function ResetPasswordForm() {
 
           <Col className="relative mb-5 inputField">
             <div className="flex items-center border rounded-lg">
-              {/* <label htmlFor="confirmPassword" className="passwordLabel">
-                Confirm Password
-              </label> */}
               <input
                 className={`password-input ${errors.confirmPassword ? 'errorBorder' : ''}`}
                 id="confirmPassword"
