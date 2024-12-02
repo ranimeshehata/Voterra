@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
-import useFetch from "../hooks/useFetch";
+// import useFetch from "../hooks/useFetch";
 import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils";
 import SignUpHeader from "./SignupHeader";
 import ContinueSep from "./ContinueSep";
 const SignupForm = () => {
-    const {data,error,loading,post,get}=useFetch();
+    // const {data,error,loading,post,get}=useFetch();
     const [otpDone,setOtpDone]=useState(true);
     const [showOtp,setShowOpt]=useState(false);
     const [otp,setOpt]=useState(0);
