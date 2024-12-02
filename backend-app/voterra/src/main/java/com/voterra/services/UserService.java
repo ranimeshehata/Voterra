@@ -19,7 +19,7 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User signup(User user) {
+    public Object[] signup(User user) {
         Optional<User> existingUser = userRepository.findById(user.getEmail());
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this account already exists: " + user.getEmail());
@@ -30,7 +30,8 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return new Object[] {user, jwtUtils.generateToken(user.getEmail())};
     }
   
       public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
