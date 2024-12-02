@@ -22,11 +22,11 @@ public class UserService {
     public Object[] signup(User user) {
         Optional<User> existingUser = userRepository.findById(user.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with this account already exists: " + user.getEmail());
+            throw new RuntimeException("Email already exists");
         }
         Optional<User> existingUsername = userRepository.findByUsername(user.getUsername());
         if (existingUsername.isPresent()) {
-            throw new RuntimeException("Username already exists: " + user.getUsername());
+            throw new RuntimeException("Username already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -46,12 +46,20 @@ public class UserService {
 
     public Object[] login(String email, String password) {
         User user = userRepository.findById(email)
-                .orElseThrow(() -> new RuntimeException("User not found with account: " + email));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
         return new Object[] {user, jwtUtils.generateToken(email)};
+    }
+
+    public boolean forgetPassword(String email , String newPassword) {
+        User user = userRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("User not found with account: " + email));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
     }
 
     public void signOut() {
