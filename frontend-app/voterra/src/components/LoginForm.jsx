@@ -25,7 +25,7 @@ function LoginForm() {
   const [otp, setOtp] = useState(0);
   const [otpInput, setOtpInput] = useState('');
   const otpRef = useRef(null);
-  const { post } = useFetch();
+  const { post,error } = useFetch();
 
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userState);
@@ -143,7 +143,7 @@ function LoginForm() {
           setLoginError('Login failed. Please try again.');
         }
       }
-    });
+    },()=>{});
   };
 
   function loginProv(userObj, provIndex) {
@@ -200,6 +200,11 @@ function LoginForm() {
           <h2 className="form-title-welcome">Welcome Back!</h2>
           <p className="text-gray-500">Enter your credentials to access your account</p>
         </div>
+        {error&&<div>
+            <p className='text-red-600'>
+                {error}
+            </p>
+        </div>}
 
         <form className="login-form">
           <Col className="relative mb-5 inputField">
@@ -247,7 +252,7 @@ function LoginForm() {
               </a>
             </div>
             {errors.password && <p className="errorMsg">{errors.password}</p>}
-            {loginError && <p className="errorMsg">{loginError}</p>}
+            {/* {loginError && <p className="errorMsg">{loginError}</p>} */}
           </Col>
           <Col className="mb-4">
             <button className="loginButton" type="submit" onClick={handleSubmit}>

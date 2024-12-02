@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @CrossOrigin(
@@ -30,7 +32,7 @@ public class UserController {
             return ResponseEntity.ok(new JwtResponse(newUser));
         } catch (RuntimeException e) {
             System.out.println("Error: " + e.getMessage());
-            return ResponseEntity.status(400).body(e.getMessage()); // Return error message if account already exists
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
   
@@ -41,7 +43,7 @@ public class UserController {
             return ResponseEntity.ok(new JwtResponse(userToken));
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
   
@@ -52,7 +54,7 @@ public class UserController {
             return ResponseEntity.ok(new JwtResponse(userToken));
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
      }
 
@@ -62,7 +64,7 @@ public class UserController {
             Object[] token = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             return ResponseEntity.ok(new JwtResponse(token));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
 
@@ -80,7 +82,7 @@ public class UserController {
             Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
             return ResponseEntity.ok(new JwtResponse(token));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
 
@@ -90,7 +92,7 @@ public class UserController {
             Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
             return ResponseEntity.ok(new JwtResponse(token));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
 
@@ -100,7 +102,7 @@ public class UserController {
             boolean response = userService.forgetPassword(forgetPasswordRequest.getEmail(), forgetPasswordRequest.getPassword());
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
 }

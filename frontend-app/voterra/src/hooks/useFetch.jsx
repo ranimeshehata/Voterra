@@ -5,13 +5,14 @@ function useFetch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async (url, options = {}, onComplete) => {
+  const fetchData = async (url, options = {}, onComplete,onError) => {
     setLoading(true);
     setError(null);
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
-        const error = new Error(`HTTP error! Status: ${response.status}`);
+        const errorJson = await response.json(); 
+        const error = new Error(errorJson.message || `HTTP error! Status: ${response.status}`);
         error.status = response.status;
         throw error;
       }
@@ -23,6 +24,8 @@ function useFetch() {
       }
     } catch (err) {
       setError(err.message);
+      onError();
+      console.log(err.message);
       if (onComplete) {
         onComplete(null, err);
       }
@@ -30,12 +33,13 @@ function useFetch() {
       setLoading(false);
     }
   };
+  
 
   const get = (url, onComplete) => {
     fetchData(url, { method: "GET" }, onComplete);
   };
 
-  const post = (url, body, onComplete) => {
+  const post = (url, body, onComplete,onError) => {
     fetchData(
       url,
       {
@@ -45,7 +49,7 @@ function useFetch() {
         },
         body: JSON.stringify(body),
       },
-      onComplete
+      onComplete,onError
     );
   };
 

@@ -5,7 +5,7 @@ import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils"
 import SignUpHeader from "./SignupHeader";
 import ContinueSep from "./ContinueSep";
 const SignupForm = () => {
-    const {data, post}=useFetch();
+    const {data,error,loading,get,post}=useFetch();
     const [otpDone,setOtpDone]=useState(false);
     const [showOtp,setShowOpt]=useState(false);
     const [otp,setOpt]=useState(0);
@@ -49,10 +49,11 @@ const SignupForm = () => {
             console.log(res);
             if(res.valid){
                 console.log(formData);
-                
-                post("http://localhost:8080/users/signup",formData,(res)=>{
-                    console.log(res);
-                    
+                post("http://localhost:8080/users/signup",formData,(res)=>{console.log(res);},()=>{
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 });
                 
             }
@@ -69,40 +70,43 @@ const SignupForm = () => {
     return ( 
         <div className="w-[90%]  md:w-[50%] lg:w-[30%] bg-white rounded-lg shadow-2xl p-8 font-Roboto ">
             <SignUpHeader/>
+            {error&&<div>
+                <p className="text-red-600">{error}</p>
+            </div>}
             <div className="flex flex-col gap-10 w-full">
                 
                 <div className="flex items-center justify-between">
                     <div>
-                        <h3 className="emailLabel mb-2">First Name</h3>
+                        <h3 className=" mb-2">First Name</h3>
                         <input placeholder="Enter first name"  type="text" onChange={handleChange} value={formData.firstName} name="firstName" className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.firstName ? "border-red-500" : ""}`}/>
 
                     </div>
                     <div>
-                        <h3 className="emailLabel mb-2">Last Name</h3>
+                        <h3 className=" mb-2">Last Name</h3>
                         <input placeholder="Enter last name"  type="tex" onChange={handleChange} value={formData.lastName} name="lastName" className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.lastName ? "border-red-500" : ""}`}/>
                     </div>
                 </div>
                 <div className="w-full">
-                    <h3 className="emailLabel mb-2">Gender</h3>
+                    <h3 className=" mb-2">Gender</h3>
                     <select className="w-full border-2 border-gray-300 rounded-lg" onChange={handleChange} value={formData.gender} name="gender" id="">
                         <option value="MALE">Male</option>
                         <option value="FEMALE">Female</option>
                     </select>
                 </div>
                 <div className="w-full">
-                    <h3 className="emailLabel mb-2">Birth date</h3>
+                    <h3 className=" mb-2">Birth date</h3>
                     <input name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} className={`border-2 border-gray-300 rounded-lg w-full ${errors.dateOfBirth ? "border-red-500" : ""}`} type="date" />
                 </div>
                 <div className="">
-                    <h3 className="emailLabel mb-2">Username</h3>
+                    <h3 className=" mb-2">Username</h3>
                     <input placeholder="Enter username"  type="text" onChange={handleChange} value={formData.username} name="username" className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.username ? "border-red-500" : ""}`} />
                 </div>
                 <div className="">
-                    <h3 className="emailLabel mb-2">Email</h3>
+                    <h3 className=" mb-2">Email</h3>
                     <input placeholder="Enter email"  type="email" onChange={handleChange} value={formData.email} name="email" className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.email ? "border-red-500" : ""}`} />
                 </div>
                 <div className="">
-                    <h3 className="emailLabel mb-2">Password</h3>
+                    <h3 className=" mb-2">Password</h3>
                     <input placeholder="Enter password"  type="password" onChange={handleChange} value={formData.password} name="password" className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.password ? "border-red-500" : ""}`}/>
                 </div>
                 
@@ -121,11 +125,11 @@ const SignupForm = () => {
                     <button onClick={async()=>{
                         let data=await authUsingProv(1);
                         signUpProv(data);
-                    }} className="google-btn w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-google"></i>  Google</button>
+                    }} className="w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-google"></i>  Google</button>
                     <button onClick={async()=>{
                         let data=await authUsingProv(0);
                         signUpProv(data);
-                    }} className="facebook-btn w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-facebook-f"></i>  Facebook</button>
+                    }} className="w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-facebook-f"></i>  Facebook</button>
                 </div>
 
                 <p className="mt-6 text-center text-md">
