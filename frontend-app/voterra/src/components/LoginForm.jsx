@@ -9,6 +9,7 @@ import mailIcon from '../assets/mail-icon.svg';
 import eyeOffIcon from '../assets/eye-off-icon.svg';
 import eyeIcon from '../assets/eye-icon.svg';
 import useFetch from '../hooks/useFetch';
+import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils";
 import { useRecoilState } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
 
@@ -24,6 +25,8 @@ function LoginForm() {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userState);
   const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
+  const [formData,setFormData]=useState({email:"",password:""});
+
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -84,6 +87,10 @@ function LoginForm() {
     setLoginError('');
   };
 
+  function handleChange(e){
+    setFormData({...formData,[e.target.name]:e.target.value});
+}
+
   const callBackend = () => {
     post('http://localhost:8080/users/login', { email, password }, (response, err) => {
       if (response) {
@@ -110,6 +117,43 @@ function LoginForm() {
       }
     });
   };
+
+  function loginProv(userObj,provIndex){
+    if(!userObj || !userObj.email){
+        return
+    }
+    let formatted={email:userObj.email, password:""}
+    setFormData(formatted);
+    console.log(formatted);
+
+    if(provIndex===0){
+        post("http://localhost:8080/users/loginWithFacebook",formatted,(res)=>{
+            console.log(res);
+            if(res){
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('user', JSON.stringify(res.user));
+                setUser(res.user);
+                setIsAuthenticated(true);
+                navigate('/homepage');
+                resetLoginForm();
+            }
+        });
+    } else if(provIndex===1){
+        post("http://localhost:8080/users/loginWithGoogle",formatted,(res)=>{
+            console.log(res);
+            if(res){
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('user', JSON.stringify(res.user));
+                setUser(res.user);
+                setIsAuthenticated(true);
+                navigate('/homepage');
+                resetLoginForm();
+            }
+        });
+    }
+}
+
+
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -176,7 +220,7 @@ function LoginForm() {
               />
             </div>
             <div className="text-right mt-2">
-              <a href="#" className="forgot-password">
+              <a href="#" className="hyperlinks">
                 Forgot Password?
               </a>
             </div>
@@ -193,8 +237,8 @@ function LoginForm() {
         <div className="btns flex justify-between w-full">
           <button
             onClick={async () => {
-              // let data=await authUsingProv(1);
-              // signUpProv(data);
+              let data=await authUsingProv(1);
+              loginProv(data, 1);
             }}
             className="w-2/5 p-4 shadow-lg rounded-lg"
           >
@@ -202,8 +246,8 @@ function LoginForm() {
           </button>
           <button
             onClick={async () => {
-              // let data=await authUsingProv(0);
-              // signUpProv(data);
+              let data=await authUsingProv(0);
+              loginProv(data, 0);
             }}
             className="w-2/5 p-4 shadow-lg rounded-lg"
           >
@@ -211,7 +255,7 @@ function LoginForm() {
           </button>
         </div>
         <p className="mt-6 text-center text-sm">
-          Don’t have an account? <a href="/signup">Sign up</a>
+          Don’t have an account? <a href="/signup" className='hyperlinks'>Sign up</a>
         </p>
       </div>
     </div>
