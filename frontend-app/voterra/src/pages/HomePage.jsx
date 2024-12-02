@@ -1,16 +1,26 @@
-import { useContext } from 'react';
-import { UserContext } from '../context/UserContext';
+import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+import { userState, isAuthenticatedState } from '../recoil/atoms';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function HomePage() {
+  const user = useRecoilValue(userState);
+  const isAuthenticated = useRecoilValue(isAuthenticatedState);
 
-  const { user } = useContext(UserContext);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast.warn('Please log in to access all features.');
+    }
+  }, [isAuthenticated]);
 
-    return (
-      <div>
-        <h1>Home Page</h1>
-        <p> Welcome {user.username}</p>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h1>Home Page</h1>
+      <p>Welcome, {user ? user.firstName + " !" : 'Voterra user !'}</p>
+      <ToastContainer />
+    </div>
+  );
+}
 
-    export default HomePage;
+export default HomePage;

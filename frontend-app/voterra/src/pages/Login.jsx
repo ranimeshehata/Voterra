@@ -3,7 +3,7 @@ import LoginForm from "../components/LoginForm";
 
 function Login() {
     return (
-        <div className="bg-gray-100 w-full absolute top-0 ">
+        <div className="bg-white-100 w-full absolute top-0 ">
             <div className="header">
                 <Header />
             </div>
