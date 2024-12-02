@@ -26,8 +26,8 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody User user) {
         try {
-            User newUser = userService.signup(user);
-            return ResponseEntity.ok("User created successfully!");
+            Object[] newUser = userService.signup(user);
+            return ResponseEntity.ok(new JwtResponse(newUser));
         } catch (RuntimeException e) {
             System.out.println("Error: " + e.getMessage());
             return ResponseEntity.status(400).body(e.getMessage()); // Return error message if account already exists
@@ -37,8 +37,8 @@ public class UserController {
     @PostMapping("/signupWithFacebook")
     public ResponseEntity<?> signupWithFacebook(@RequestBody User user) {
         try {
-            User newUser = userService.signupWithGoogleOrFacebook(user);
-            return ResponseEntity.ok(newUser);
+            Object[] userToken = userService.signupOrLoginWithGoogleOrFacebook(user);
+            return ResponseEntity.ok(new JwtResponse(userToken));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -48,8 +48,8 @@ public class UserController {
      @PostMapping("/signupWithGoogle")
      public ResponseEntity<?> signupWithGoogle(@RequestBody User user) {
         try {
-            User newUser = userService.signupWithGoogleOrFacebook(user);
-            return ResponseEntity.ok(newUser);
+            Object[] userToken = userService.signupOrLoginWithGoogleOrFacebook(user);
+            return ResponseEntity.ok(new JwtResponse(userToken));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
@@ -71,5 +71,25 @@ public class UserController {
     public ResponseEntity<?> signOut() {
         userService.signOut();
         return ResponseEntity.ok("User signed out successfully!");
+    }
+
+    @PostMapping("/loginWithGoogle")
+    public ResponseEntity<?> loginWithGoogle(@RequestBody User user) {
+        try {
+            Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/loginWithFacebook")
+    public ResponseEntity<?> loginWithFacebook(@RequestBody User user) {
+        try {
+            Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 }

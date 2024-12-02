@@ -123,7 +123,7 @@ function LoginForm() {
     
 
     return (
-      <div className="flex justify-center items-center min-h-screen form-container">
+      <div className="flex justify-center items-center  form-container">
         <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg">
             <div className="form-title">
                 <h2 className="form-title-welcome">Welcome Back!</h2>

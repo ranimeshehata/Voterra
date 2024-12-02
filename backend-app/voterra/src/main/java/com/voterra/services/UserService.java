@@ -19,7 +19,7 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User signup(User user) {
+    public Object[] signup(User user) {
         Optional<User> existingUser = userRepository.findById(user.getEmail());
         if (existingUser.isPresent()) {
             throw new RuntimeException("User with this account already exists: " + user.getEmail());
@@ -30,17 +30,18 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return new Object[] {user, jwtUtils.generateToken(user.getEmail())};
     }
   
-      public User signupWithGoogleOrFacebook(User user) {
+      public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
             System.out.println("User already exists");
-            return existingUser;
+            return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
         System.out.println("User does not exist");
-        return userRepository.save(user);
+        return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
 
     public Object[] login(String email, String password) {
