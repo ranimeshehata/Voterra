@@ -19,7 +19,6 @@ function ResetPasswordForm() {
     setShowPassword(!showPassword);
   };
 
-
   const handleValidation = () => {
     const validationErrors = {};
     let valid = true;

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal" created-in="IU-233.13135.103">
+    <data-source name="voterra@voterra.ntjxn.mongodb.net" uuid="7ec65f25-dde7-427b-9a9b-48e177d3a7bf">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MONGO" />
+      <user-name>voterraapp</user-name>
+      <schema-mapping />
+    </data-source>
+  </component>
+</project>
