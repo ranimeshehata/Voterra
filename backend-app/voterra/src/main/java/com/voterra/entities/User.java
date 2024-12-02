@@ -26,7 +26,7 @@ public class User {
     }
 
     public enum gender {
-        MALE, FEMALE
+        MALE, FEMALE, NOT_SPECIFIED
     }
 
     public User(String email, String password, String username, String firstName, String lastName,
