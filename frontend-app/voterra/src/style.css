@@ -90,6 +90,21 @@ html,body{
 }
 
 
+.form-container {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0vh 1.859375vh 4.375vh 0.4375vh rgba(14, 16, 19, 0.11);
+  border-radius: 0.725vh;
+  padding: 1vh;
+  margin: 10px 693px;
+  display: flex;
+  justify-content: center;
+  width: 500px;
+  height: 620px;
+  top: 149px;
+  left: 892px;
+  gap: 37px;
+  opacity: 0px;
+}
 
 .form-title {
   margin: 5px 10px 5px 10px;
@@ -212,4 +227,24 @@ html,body{
 .facebook-btn:hover{
   background-color: #B90000;
   color: white;
+}
+
+.error-section p{
+  font-size: 20px;
+}
+
+.error-section h1{
+  font-size:var(--error-section-size) ;
+  font-weight: var(--error-section-weight);
+}
+
+.errorMsg{
+  font-weight: 400;
+  line-height: 22.4px;
+  text-align: left;
+  color: rgba(144, 11, 9, 1);
+}
+
+.errorBorder {
+  border: 0.109375vh solid red;
 }
