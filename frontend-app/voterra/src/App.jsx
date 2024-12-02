@@ -6,8 +6,8 @@ import IntroPage from './pages/IntroPage'
 import { UserProvider } from './context/UserContext'
 import React, { Suspense } from 'react';
 import './style.css';
-const Login = React.lazy(() => import('./pages/Login'));
-const IntroPage = React.lazy(() => import('./pages/IntroPage'));
+// const Login = React.lazy(() => import('./pages/Login'));
+// const IntroPage = React.lazy(() => import('./pages/IntroPage'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 
 function App() {
