@@ -1,16 +1,17 @@
+
 import { useRef, useState } from "react";
-// import useFetch from "../hooks/useFetch";
+import useFetch from "../hooks/useFetch";
 import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils";
 import SignUpHeader from "./SignupHeader";
 import ContinueSep from "./ContinueSep";
 const SignupForm = () => {
-    // const {data,error,loading,post,get}=useFetch();
+    const {data,error,loading,post,get}=useFetch();
     const [otpDone,setOtpDone]=useState(true);
     const [showOtp,setShowOpt]=useState(false);
     const [otp,setOpt]=useState(0);
     const [errors, setErrors] = useState({});
     let otpRef=useRef(null);
-    const [formData,setFormData]=useState({email:"",password:"",username:"",firstName:"",lastName:"",gender:"Male",userType:"USER",dateOfBirth:"",})
+    const [formData,setFormData]=useState({email:"",password:"",username:"",firstName:"",lastName:"",gender:"MALE",userType:"USER",dateOfBirth:"",})
     function handleChange(e){
         setFormData({...formData,[e.target.name]:e.target.value});
     }
@@ -25,7 +26,9 @@ const SignupForm = () => {
         setFormData(formatted);
         console.log(formatted);
         
-        //post("http://localhost:8080/users/signup",formatted);
+        post("http://localhost:8080/users/signup",formatted);
+        console.log(data);
+        
     }
     function verify(){
         let temp=generateOtp();
@@ -45,7 +48,13 @@ const SignupForm = () => {
         if(otpDone){
             console.log(res);
             if(res.valid){
-                //post("http://localhost:8080/users/signup",formData);
+                console.log(formData);
+                
+                post("http://localhost:8080/users/signup",formData,(res)=>{
+                    console.log(res);
+                    
+                });
+                
             }
             else{
                 setErrors(res.errors);
@@ -76,8 +85,8 @@ const SignupForm = () => {
                 <div className="w-full">
                     <h3 className="mb-2">Gender</h3>
                     <select className="w-full border-2 border-gray-300 rounded-lg" onChange={handleChange} value={formData.gender} name="gender" id="">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
+                        <option value="MALE">Male</option>
+                        <option value="FEMALE">Female</option>
                     </select>
                 </div>
                 <div className="w-full">
