@@ -205,23 +205,6 @@ html,body{
   height: 2.40625vh;
 }
 
-.btns {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.google-btn,
-.facebook-btn{
-  background-color: #D8D8D8;
-  width: 150px;
-  height: 38px;
-  gap: 0px;
-  border-radius: 10px;
-  opacity: 0px;
-  font-size: 16px;
-  transition: all 200ms ease-in 100ms;
-}
 
 .google-btn:hover,
 .facebook-btn:hover{
