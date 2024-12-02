@@ -18,16 +18,25 @@ const SignupForm = () => {
     const generateOtp = () => {
         return Math.floor(100000 + Math.random() * 900000);
     };
-    function signUpProv(userObj){
+    function signUpProv(userObj,provIndex){
         if(!userObj || !userObj.email){
             return
         }
-        let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"",userType:"USER",dateOfBirth:"",}
+        let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"NOT_SPECIFIED",userType:"USER",dateOfBirth:"",}
         setFormData(formatted);
         console.log(formatted);
         
-        post("http://localhost:8080/users/signup",formatted);
-        console.log(data);
+        if(provIndex==1){
+            post("http://localhost:8080/users/signupWithGoogle",formatted,(res)=>{
+                console.log(res);
+                
+            });
+        }
+        else{
+            post("http://localhost:8080/users//signupWithFacebook",formatted,(res)=>{
+                console.log(res); 
+            });
+        }
         
     }
     function verify(){
@@ -120,11 +129,11 @@ const SignupForm = () => {
                 <div className="flex justify-between w-full">
                     <button onClick={async()=>{
                         let data=await authUsingProv(1);
-                        signUpProv(data);
+                        signUpProv(data,1);
                     }} className="w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-google"></i>  Google</button>
                     <button onClick={async()=>{
                         let data=await authUsingProv(0);
-                        signUpProv(data);
+                        signUpProv(data,0);
                     }} className="w-2/5 p-4 shadow-lg rounded-lg"><i className="fa-brands fa-facebook-f"></i>  Facebook</button>
                 </div>
 
