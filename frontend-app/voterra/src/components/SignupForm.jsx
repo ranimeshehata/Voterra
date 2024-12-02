@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 
 import { useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import useFetch from "../hooks/useFetch";
 import { authUsingProv, sendOtp, validateForm } from "../voterraUtils/formUtils";
 import SignUpHeader from "./SignupHeader";
@@ -12,6 +14,8 @@ const SignupForm = () => {
     const [errors, setErrors] = useState({});
     let otpRef=useRef(null);
     const [formData,setFormData]=useState({email:"",password:"",username:"",firstName:"",lastName:"",gender:"MALE",userType:"USER",dateOfBirth:"",})
+    const navigate=useNavigate();
+
     function handleChange(e){
         setFormData({...formData,[e.target.name]:e.target.value});
     }
@@ -49,7 +53,9 @@ const SignupForm = () => {
             console.log(res);
             if(res.valid){
                 console.log(formData);
-                post("http://localhost:8080/users/signup",formData,(res)=>{console.log(res);},()=>{
+                post("http://localhost:8080/users/signup",formData,(res)=>{console.log(res);
+                navigate("/homepage");
+                },()=>{
                     window.scrollTo({
                         top: 0,
                         behavior: 'smooth'

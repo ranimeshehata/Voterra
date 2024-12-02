@@ -103,7 +103,7 @@ function LoginForm() {
   const handleVerifyOtp = () => {
     if (otpInput === otp.toString()) {
       setOtpDone(true);
-      navigate('/resetpassword');
+      navigate('/resetpassword', { state: { email } });
     } else {
       toast.error('Invalid OTP. Please try again.');
     }

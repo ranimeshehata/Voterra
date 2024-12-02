@@ -1,19 +1,20 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import eyeOffIcon from '../assets/eye-off-icon.svg';
 import eyeIcon from '../assets/eye-icon.svg';
 
 function ResetPasswordForm() {
-  const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const { post } = useFetch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const email = location.state?.email || '';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -22,35 +23,51 @@ function ResetPasswordForm() {
   const handleValidation = () => {
     const validationErrors = {};
     let valid = true;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+  
     if (!newPassword) {
       validationErrors.newPassword = 'New password is required.';
       valid = false;
     } else if (newPassword.length < 8) {
-      validationErrors.newPassword = 'Password must be at least 8 characters.';
+      validationErrors.newPassword = 'Password is too short.';
+      valid = false;
+    } else if (!passwordRegex.test(newPassword)) {
+      validationErrors.newPassword = 'Invalid password format.';
       valid = false;
     }
-
-    if (newPassword !== confirmPassword) {
+  
+    if (!confirmPassword) {
+      validationErrors.confirmPassword = 'Confirm password is required.';
+      valid = false;
+    } else if (newPassword !== confirmPassword) {
       validationErrors.confirmPassword = 'Passwords do not match.';
       valid = false;
     }
-
+  
     setErrors(validationErrors);
     return valid;
   };
 
   const handleSubmit = e => {
-    // e.preventDefault();
-    // const isValid = handleValidation();
-    // if (isValid) {
-    //   post('http://localhost:8080/users/resetpassword', { email, newPassword }, (response, err) => {
-    //     if (response) {
-    //       navigate('/login');
-    //     } else {
-    //       console.log(err);
-    //     }
-    //   });
-    // }
+    e.preventDefault();
+    const isValid = handleValidation();
+    if (isValid) {
+      post(
+        'http://localhost:8080/users/forgetPassword',
+        { email, password: newPassword },
+        (response, err) => {
+          if (response) {
+            console.log(response);
+            navigate('/login');
+          } else {
+            console.log(err);
+          }
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    }
   };
 
   return (
