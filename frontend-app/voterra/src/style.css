@@ -43,7 +43,8 @@ html,body{
 
 .signup-btn-intro:hover,
 .login-btn-intro:hover,
-.loginButton:hover {
+.loginButton:hover,
+.logout-button:hover {
   background-color: #D8D8D8;
   color: black;
 }
@@ -226,4 +227,37 @@ html,body{
 .hyperlinks{
   color: blue;
   text-decoration: underline;
+}
+
+.welcome-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+  font-weight: 600;
+  color: #333333;
+
+}
+
+.logout-button{
+  height: 48px;
+  padding: 8px 0px 11px 0px;
+  gap: 0px;
+  border-radius: 10px ;
+  opacity: 0px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 29.26px;
+  text-align: center;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  width: 10%;
+  border: 0.109375vh;
+  color: rgba(245, 245, 245, 1);
+  background-color: #B90000;
+  transition: all 200ms ease-in 100ms;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 100px 860px;
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(
-        origins = {"*"}
+
 )
 @RequestMapping("/users")
 public class UserController {

@@ -5,27 +5,29 @@ function useFetch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async (url, options = {}, onComplete,onError) => {
+  const fetchData = async (url, options = {}, onComplete, onError) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(url, options);
-      if (!response.ok) {
-        const errorJson = await response.json(); 
-        const error = new Error(errorJson.message || `HTTP error! Status: ${response.status}`);
-        error.status = response.status;
-        throw error;
-      }
-      const result = await response.json();
-      console.log(result);
+      console.log("Fetching:", url, options);
+      const response = await fetch(url, { ...options, mode: "cors" });
+      console.log("Response:", response);
+  
+      const result = response.headers.get("Content-Type")?.includes("application/json")
+        ? await response.json()
+        : await response.text(); // Handle plain text responses
+      
+      console.log("Result:", result);
       setData(result);
       if (onComplete) {
         onComplete(result, null);
       }
     } catch (err) {
+      console.error("Error:", err);
       setError(err.message);
-      onError();
-      console.log(err.message);
+      if (onError) {
+        onError();
+      }
       if (onComplete) {
         onComplete(null, err);
       }
@@ -33,6 +35,8 @@ function useFetch() {
       setLoading(false);
     }
   };
+  
+  
   
 
   const get = (url, onComplete) => {
@@ -53,7 +57,27 @@ function useFetch() {
     );
   };
 
-  return { data, loading, error, get, post };
+  const postSignout = (url, options = {}, onComplete, onError) => {
+    console.log(options);
+    console.log(options.headers.Authorization);
+    fetchData(
+      url,
+      {
+        method: "POST",
+        mode: "cors",
+        credentials: 'include',
+        headers: {
+        "Content-Type": "application/json",
+        "Authorization": options.headers.Authorization,
+      },
+      },
+      onComplete,
+      onError
+    );
+  };
+  
+
+  return { data, loading, error, get, post, postSignout };
 }
 
 export default useFetch;
