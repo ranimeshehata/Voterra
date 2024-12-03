@@ -37,10 +37,8 @@ public class UserService {
       public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
-            System.out.println("User already exists");
             return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
-        System.out.println("User does not exist");
         return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
 
@@ -64,7 +62,6 @@ public class UserService {
 
     public void signOut() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("Signing out: " + email);
         SecurityContextHolder.clearContext();
     }
 

@@ -19,7 +19,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        System.out.println(bearerToken);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -30,7 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws ServletException, IOException {
         // Check if the request is for /signup or /login
         String requestUri = request.getRequestURI();
-        System.out.println(requestUri);
         if ("/users/signup".equals(requestUri) || "/users/login".equals(requestUri) || "/users/signupWithGoogle".equals(requestUri) ||
                 "/users/signupWithFacebook".equals(requestUri) || "/users/loginWithGoogle".equals(requestUri)
                 || "/users/loginWithFacebook".equals(requestUri) || "/users/forgetPassword".equals(requestUri)) {
@@ -41,7 +39,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Extract token from the Authorization header
         String token = getJwtFromRequest((HttpServletRequest) request);
-        System.out.println(token);
         if (token != null && jwtUtils.validateToken(token)) {
             // Token is valid, extract user information (e.g., account)
             String account = jwtUtils.extractAccount(token);

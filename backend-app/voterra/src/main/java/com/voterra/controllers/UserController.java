@@ -31,7 +31,6 @@ public class UserController {
             Object[] newUser = userService.signup(user);
             return ResponseEntity.ok(new JwtResponse(newUser));
         } catch (RuntimeException e) {
-            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
@@ -77,7 +76,6 @@ public class UserController {
 
     @PostMapping("/loginWithGoogle")
     public ResponseEntity<?> loginWithGoogle(@RequestBody User user) {
-        System.out.println(user);
         try {
             Object[] token = userService.signupOrLoginWithGoogleOrFacebook(user);
             return ResponseEntity.ok(new JwtResponse(token));
