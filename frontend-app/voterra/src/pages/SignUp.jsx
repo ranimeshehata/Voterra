@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Header from "../components/Header";
 import SignupForm from "../components/SignupForm";
 
@@ -11,7 +10,6 @@ const SignUp = () => {
             <div className="w-full flex justify-center">
                 <SignupForm/>
             </div>
-
         </div>
      );
 }

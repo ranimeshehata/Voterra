@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { Col } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -57,7 +56,6 @@ function ResetPasswordForm() {
         { email, password: newPassword },
         (response, err) => {
           if (response) {
-            console.log(response);
             navigate('/login');
           } else {
             console.log(err);
@@ -77,12 +75,11 @@ function ResetPasswordForm() {
           <h2 className="form-title-welcome">Reset Password</h2>
           <p className="text-gray-500">Enter your new password</p>
         </div>
-
         <form className="reset-password-form" onSubmit={handleSubmit}>
           <Col className="relative mb-5 inputField">
             <div className="flex items-center border rounded-lg">
               <input
-                className={`password-input ${errors.newPassword ? 'errorBorder' : ''}`}
+                className={`password-input ${ errors.newPassword ? 'errorBorder' : '' }`}
                 id="newPassword"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter New Password"
@@ -97,15 +94,17 @@ function ResetPasswordForm() {
                 className="h-5 w-5 cursor-pointer mx-2"
                 onClick={togglePasswordVisibility}
               />
-
-              {errors.newPassword && <p className="errorMsg">{errors.newPassword}</p>}
+              {errors.newPassword &&
+              <p className="errorMsg">
+                {errors.newPassword}
+              </p>
+              }
             </div>
           </Col>
-
           <Col className="relative mb-5 inputField">
             <div className="flex items-center border rounded-lg">
               <input
-                className={`password-input ${errors.confirmPassword ? 'errorBorder' : ''}`}
+                className={`password-input ${ errors.confirmPassword ? 'errorBorder' : '' }`}
                 id="confirmPassword"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Confirm New Password"
@@ -118,11 +117,13 @@ function ResetPasswordForm() {
                 className="h-5 w-5 cursor-pointer mx-2"
                 onClick={togglePasswordVisibility}
               />
-
-              {errors.confirmPassword && <p className="errorMsg">{errors.confirmPassword}</p>}
+              {errors.confirmPassword &&
+              <p className="errorMsg">
+                { errors.confirmPassword }
+              </p>
+              }
             </div>
           </Col>
-
           <button className="loginButton" type="submit">
             Reset
           </button>

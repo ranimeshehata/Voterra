@@ -2,12 +2,16 @@ import Logo from "../assets/Logo.svg";
 import { useNavigate } from 'react-router-dom';
 
 function IntroPage() {
-
     const navigate = useNavigate();
 
     return(
         <div className="intro-container">
-            <img src={Logo} alt="Vottera Logo" style={{ width: '600px', height: 'auto'}} />
+            <img
+                src={Logo}
+                alt ="Vottera Logo"
+                style =
+                {{ width: '600px', height: 'auto'}} 
+            />
             <div>
                 <button
                     className="signup-btn-intro"
