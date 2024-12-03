@@ -30,10 +30,8 @@ public class JwtUtils {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            System.out.println("Token is valid");
             return true;
         } catch (Exception e) {
-            System.out.println("Invalid token: " + e.getMessage());
             return false;
         }
     }
@@ -41,7 +39,6 @@ public class JwtUtils {
     // Extract Account from JWT
     public String extractAccount(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-        System.out.println("Extracted account: " + claims.getSubject());
         return claims.getSubject();
     }
 }
