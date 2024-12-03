@@ -48,6 +48,8 @@ const SignupForm = () => {
         return Math.floor(100000 + Math.random() * 900000);
     };
 
+    
+
     function signUpProv(userObj,provIndex){
         if(!userObj || !userObj.email){
             return
@@ -150,7 +152,7 @@ const SignupForm = () => {
                         </h3>
                         <input
                             placeholder="Enter first name"
-                            type="text"
+                            type = "text"
                             onChange = { handleChange }
                             value = { formData.firstName }
                             name = "firstName"
@@ -158,16 +160,16 @@ const SignupForm = () => {
                         />
                     </div>
                     <div>
-                        <h3 className=" mb-2">
+                        <h3 className = " mb-2">
                             Last Name
                         </h3>
                         <input 
-                            placeholder="Enter last name"
-                            type="tex"
-                            onChange={handleChange}
-                            value={formData.lastName}
-                            name="lastName"
-                            className={`w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.lastName ? "border-red-500" : ""}`}
+                            placeholder = "Enter last name"
+                            type = "text"
+                            onChange = { handleChange }
+                            value = { formData.lastName }
+                            name = "lastName"
+                            className = { `w-full border-2 rounded-lg h-8 text-sm p-2 ${errors.lastName ? "border-red-500" : ""}` }
                         />
                     </div>
                 </div>
@@ -177,9 +179,10 @@ const SignupForm = () => {
                     </h3>
                     <select
                         className="w-full border-2 border-gray-300 rounded-lg"
-                        onChange={handleChange}
+                        onChange = { handleChange }
                         value={formData.gender}
-                        name="gender" id=""
+                        name="gender"
+                        id=""
                     >
                         <option value="MALE">
                             Male
@@ -190,7 +193,9 @@ const SignupForm = () => {
                     </select>
                 </div>
                 <div className="w-full">
-                    <h3 className=" mb-2">Birth date</h3>
+                    <h3 className=" mb-2">
+                        Birth date
+                    </h3>
                     <input
                         name="dateOfBirth"
                         value={formData.dateOfBirth}
