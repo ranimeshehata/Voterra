@@ -1,5 +1,7 @@
 package com.voterra.controllers;
 import com.voterra.entities.User;
+import com.voterra.tokenization.JwtResponse;
+import com.voterra.tokenization.LoginRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,8 +57,6 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
      }
-<<<<<<< HEAD
-=======
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -69,7 +69,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/signout")
+    @PostMapping("/signout")
     public ResponseEntity<?> signOut() {
         userService.signOut();
         return ResponseEntity.ok(Map.of("message", "Signed out successfully"));
@@ -105,5 +105,4 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
->>>>>>> SCRUM-17-user-login
 }

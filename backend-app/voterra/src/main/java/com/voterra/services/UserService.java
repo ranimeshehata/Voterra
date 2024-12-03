@@ -24,13 +24,10 @@ public class UserService {
         if (existingUser.isPresent()) {
             throw new RuntimeException("Email already exists");
         }
-<<<<<<< HEAD
-=======
         Optional<User> existingUsername = userRepository.findByUsername(user.getUsername());
         if (existingUsername.isPresent()) {
             throw new RuntimeException("Username already exists");
         }
->>>>>>> SCRUM-17-user-login
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -46,8 +43,6 @@ public class UserService {
         System.out.println("User does not exist");
         return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
-<<<<<<< HEAD
-=======
 
     public Object[] login(String email, String password) {
         User user = userRepository.findById(email)
@@ -73,5 +68,4 @@ public class UserService {
         SecurityContextHolder.clearContext();
     }
 
->>>>>>> SCRUM-17-user-login
 }

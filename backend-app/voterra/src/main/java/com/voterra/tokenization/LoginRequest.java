@@ -2,13 +2,9 @@ package com.voterra.tokenization;
 
 public class LoginRequest {
 
-    private String account;
+    private String email;
     private String password;
 
-<<<<<<< HEAD
-    public String getAccount() {
-        return account;
-=======
     public LoginRequest() {
     }
 
@@ -19,11 +15,10 @@ public class LoginRequest {
 
     public String getEmail() {
         return email;
->>>>>>> SCRUM-17-user-login
     }
 
     public void setAccount(String account) {
-        this.account = account;
+        this.email = account;
     }
 
     public String getPassword() {
