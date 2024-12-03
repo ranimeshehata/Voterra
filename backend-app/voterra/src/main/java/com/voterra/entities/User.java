@@ -21,12 +21,28 @@ public class User {
     private List<String> friends;
     private List<String> savedPosts;            //list of (userID - postID)
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userType=" + userType +
+                ", gender=" + gender +
+                ", dateOfBirth=" + dateOfBirth +
+                ", friends=" + friends +
+                ", savedPosts=" + savedPosts +
+                '}';
+    }
+
     public enum userType {
         ADMIN, USER, SUPERADMIN
     }
 
     public enum gender {
-        MALE, FEMALE
+        MALE, FEMALE, NOT_SPECIFIED
     }
 
     public User(String email, String password, String username, String firstName, String lastName,
@@ -41,6 +57,9 @@ public class User {
         this.savedPosts = savedPosts;
         this.userType = userType;
         this.gender = gender;
+    }
+
+    public User() {
     }
 
 

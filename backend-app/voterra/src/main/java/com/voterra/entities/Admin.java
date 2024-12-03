@@ -7,7 +7,6 @@ import java.util.List;
 
 @Document
 public class Admin extends User {
-    private List<String> reportedList;
 
     public Admin(String email, String password, String username,  String firstName, String lastName, Date dateOfBirth, List<String> friends, List<String> savedPosts, User.userType userType, User.gender gender) {
         super(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender);
@@ -19,13 +18,5 @@ public class Admin extends User {
 
     public void leavePost(String postId) {
         // Logic to leave a post
-    }
-
-    public List<String> getReportedList() {
-        return reportedList;
-    }
-
-    public void setReportedList(List<String> reportedList) {
-        this.reportedList = reportedList;
     }
 }

@@ -19,23 +19,59 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public User signup(User user) {
+    public Object[] signup(User user) {
         Optional<User> existingUser = userRepository.findById(user.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("User with this account already exists: " + user.getEmail());
+            throw new RuntimeException("Email already exists");
         }
+<<<<<<< HEAD
+=======
+        Optional<User> existingUsername = userRepository.findByUsername(user.getUsername());
+        if (existingUsername.isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+>>>>>>> SCRUM-17-user-login
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return new Object[] {user, jwtUtils.generateToken(user.getEmail())};
     }
-  
-      public User signupWithGoogleOrFacebook(User user) {
+    
+      public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
             System.out.println("User already exists");
-            return existingUser;
+            return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
         System.out.println("User does not exist");
-        return userRepository.save(user);
+        return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
+<<<<<<< HEAD
+=======
+
+    public Object[] login(String email, String password) {
+        User user = userRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+        return new Object[] {user, jwtUtils.generateToken(email)};
+    }
+
+    public boolean forgetPassword(String email , String newPassword) {
+        User user = userRepository.findById(email)
+                .orElseThrow(() -> new RuntimeException("User not found with account: " + email));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return true;
+    }
+
+    public void signOut() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("Signing out: " + email);
+        SecurityContextHolder.clearContext();
+    }
+
+>>>>>>> SCRUM-17-user-login
 }
