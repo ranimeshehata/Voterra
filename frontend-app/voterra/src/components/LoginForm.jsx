@@ -285,7 +285,7 @@ function LoginForm() {
             <button 
               className="loginButton" 
               type="submit" 
-              onClick={handleSubmit}
+              onClick = { handleSubmit }
             >
               Login
             </button>
