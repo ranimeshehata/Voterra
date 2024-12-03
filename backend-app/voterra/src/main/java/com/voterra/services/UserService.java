@@ -1,4 +1,5 @@
 package com.voterra.services;
+import com.voterra.entities.SuperAdmin;
 import com.voterra.entities.User;
 import com.voterra.repos.UserRepository;
 import com.voterra.tokenization.JwtUtils;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
+
+import static com.voterra.entities.User.userType.SUPERADMIN;
 
 @Service
 public class UserService {
@@ -28,13 +31,18 @@ public class UserService {
         if (existingUsername.isPresent()) {
             throw new RuntimeException("Username already exists");
         }
-
+        if(user.getUserType()==SUPERADMIN){
+            SuperAdmin superAdmin = new SuperAdmin(user.getEmail(), user.getPassword(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getDateOfBirth(), user.getFriends(), user.getSavedPosts(), user.getUserType(), user.getGender());
+            superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
+            userRepository.save(superAdmin);
+            return new Object[] {superAdmin, jwtUtils.generateToken(superAdmin.getEmail())};
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return new Object[] {user, jwtUtils.generateToken(user.getEmail())};
     }
-    
-      public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
+
+    public Object[] signupOrLoginWithGoogleOrFacebook(User user) {
         User existingUser = userRepository.findByEmail(user.getEmail());
         if (existingUser != null) {
             return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
