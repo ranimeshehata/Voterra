@@ -26,7 +26,7 @@ const SignupForm = () => {
         if(!userObj || !userObj.email){
             return
         }
-        let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"",userType:"USER",dateOfBirth:"",}
+        let formatted={email:userObj.email, password:"",username:"",firstName:userObj.firstName,lastName:"",gender:"NOT_SPECIFIED",userType:"USER",dateOfBirth:"",}
         setFormData(formatted);
         console.log(formatted);
         
