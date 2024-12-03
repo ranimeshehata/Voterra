@@ -127,6 +127,8 @@ function LoginForm() {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(response.user));
         }
+        console.log("alo");
+        
         const user = response.user;
         setUser(user);
         setIsAuthenticated(true);

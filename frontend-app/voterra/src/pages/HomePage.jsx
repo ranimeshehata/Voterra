@@ -11,7 +11,7 @@ function HomePage() {
   const user = useRecoilValue(userState);
   const isAuthenticated = useRecoilValue(isAuthenticatedState);
   const navigate = useNavigate();
-  const { post } = useFetch();
+  const { post,postSignout } = useFetch();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -34,13 +34,13 @@ function HomePage() {
       return;
     }
   
-    post(
+    postSignout(
       "http://localhost:8080/users/signout",
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      },
+      },{},
       (response, error) => {
         console.log("Response:", response);
         console.log("Error:", error);

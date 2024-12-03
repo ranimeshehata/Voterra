@@ -63,6 +63,8 @@ public class UserService {
     }
 
     public void signOut() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("Signing out: " + email);
         SecurityContextHolder.clearContext();
     }
 

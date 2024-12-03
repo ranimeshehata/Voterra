@@ -5,29 +5,27 @@ function useFetch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async (url, options = {}, onComplete, onError) => {
+  const fetchData = async (url, options = {}, onComplete,onError) => {
     setLoading(true);
     setError(null);
     try {
-      console.log("Fetching:", url, options);
-      const response = await fetch(url, { ...options, mode: "cors" });
-      console.log("Response:", response);
-  
-      const result = response.headers.get("Content-Type")?.includes("application/json")
-        ? await response.json()
-        : await response.text(); // Handle plain text responses
-      
-      console.log("Result:", result);
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const errorJson = await response.json(); 
+        const error = new Error(errorJson.message || `HTTP error! Status: ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
+      const result = await response.json();
+      console.log(result);
       setData(result);
       if (onComplete) {
         onComplete(result, null);
       }
     } catch (err) {
-      console.error("Error:", err);
       setError(err.message);
-      if (onError) {
-        onError();
-      }
+      onError();
+      console.log(err.message);
       if (onComplete) {
         onComplete(null, err);
       }
@@ -36,11 +34,22 @@ function useFetch() {
     }
   };
   
-  
-  
 
   const get = (url, onComplete) => {
     fetchData(url, { method: "GET" }, onComplete);
+  };
+  const postSignout = (url,options={}, body, onComplete,onError) => {
+    fetchData(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization":"Bearer "+options.headers.Authorization
+        },
+      },
+      onComplete,onError
+    );
   };
 
   const post = (url, body, onComplete,onError) => {
@@ -57,27 +66,7 @@ function useFetch() {
     );
   };
 
-  const postSignout = (url, options = {}, onComplete, onError) => {
-    console.log(options);
-    console.log(options.headers.Authorization);
-    fetchData(
-      url,
-      {
-        method: "POST",
-        mode: "cors",
-        credentials: 'include',
-        headers: {
-        "Content-Type": "application/json",
-        "Authorization": options.headers.Authorization,
-      },
-      },
-      onComplete,
-      onError
-    );
-  };
-  
-
-  return { data, loading, error, get, post, postSignout };
+  return { data, loading, error, get, post,postSignout };
 }
 
 export default useFetch;

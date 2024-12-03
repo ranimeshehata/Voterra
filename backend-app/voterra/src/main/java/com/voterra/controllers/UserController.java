@@ -16,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(
-
+        origins = {"*"}
 )
 @RequestMapping("/users")
 public class UserController {
@@ -72,7 +72,7 @@ public class UserController {
     @PostMapping("/signout")
     public ResponseEntity<?> signOut() {
         userService.signOut();
-        return ResponseEntity.ok("User signed out successfully!");
+        return ResponseEntity.ok(Map.of("message", "Signed out successfully"));
     }
 
     @PostMapping("/loginWithGoogle")
