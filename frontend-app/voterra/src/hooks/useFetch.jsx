@@ -38,14 +38,15 @@ function useFetch() {
   const get = (url, onComplete) => {
     fetchData(url, { method: "GET" }, onComplete);
   };
-  const postSignout = (url,options={}, body, onComplete,onError) => {
+  const postSignout = (url,token, onComplete, onError) => {
+    console.log(token.token);
     fetchData(
       url,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization":"Bearer "+options.headers.Authorization
+          Authorization:"Bearer "+ token.token,
         },
       },
       onComplete,onError

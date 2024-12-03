@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
@@ -28,6 +29,7 @@ function HomePage() {
 
   const handleLogout = () => {
     const token = localStorage.getItem("token");
+    console.log("Token:", token);
     if (!token) {
       toast.error("Session expired. Please log in again.");
       navigate("/login");
@@ -37,19 +39,18 @@ function HomePage() {
     postSignout(
       "http://localhost:8080/users/signout",
       {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },{},
+        token
+      },
       (response, error) => {
-        console.log("Response:", response);
+        console.log("Response:", response.message);
         console.log("Error:", error);
         console.log("Token:", token);
-        if(response){
-          console.log("Logout successful:", response);
-          toast.success("User signed out successfully!");
+        if(response.message){
           localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          console.log("Logout successful:", response.message);
           navigate("/login");
+          toast.success("User signed out successfully!");
         }
         else{
           console.error("Logout failed:", error);
