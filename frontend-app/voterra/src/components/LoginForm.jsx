@@ -199,14 +199,20 @@ function LoginForm() {
     <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg ">
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
-          <h2 className="form-title-welcome">Welcome Back!</h2>
-          <p className="text-gray-500">Enter your credentials to access your account</p>
+          <h2 className="form-title-welcome">
+            Welcome Back!
+          </h2>
+          <p className="text-gray-500">
+            Enter your credentials to access your account
+          </p>
         </div>
-        {error&&<div>
+        {error&&
+        <div>
             <p className='text-red-600'>
                 {error}
             </p>
-        </div>}
+        </div>
+        }
         <form className="login-form">
           <Col className="relative mb-5 inputField">
             <label
@@ -237,7 +243,10 @@ function LoginForm() {
             }
           </Col>
           <Col className="relative mb-5 inputField">
-            <label htmlFor="password" className="passwordLabel">
+            <label 
+              htmlFor="password"
+              className="passwordLabel"
+            >
               Password
             </label>
             <div className="flex items-center border rounded-lg">

@@ -72,10 +72,17 @@ function ResetPasswordForm() {
     <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg ">
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
-          <h2 className="form-title-welcome">Reset Password</h2>
-          <p className="text-gray-500">Enter your new password</p>
+          <h2 className="form-title-welcome">
+            Reset Password
+          </h2>
+          <p className="text-gray-500">
+            Enter your new password
+          </p>
         </div>
-        <form className="reset-password-form" onSubmit={handleSubmit}>
+        <form
+          className="reset-password-form"
+          onSubmit={handleSubmit}
+        >
           <Col className="relative mb-5 inputField">
             <div className="flex items-center border rounded-lg">
               <input
