@@ -3,7 +3,6 @@ import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "fireb
 import {auth} from '../auth/firebase';
 export const validateForm = (formData) => {
     const newErrors = {};
-
     if (!formData.username.trim()) newErrors.username = "Username is required";
     if(!formData.gender.trim()) newErrors.gender = "Gender is required";
     if(!formData.firstName.trim()) newErrors.firstName = "First Name is required";
@@ -48,7 +47,6 @@ export const sendOtp = (otpCode,email) => {
       );
 };
 
-
 export const authUsingProv = async (providerIndex) => {
   let provider;
   if (providerIndex === 1) {
@@ -65,7 +63,6 @@ export const authUsingProv = async (providerIndex) => {
             email: user.email,
             firstName: user.displayName,
         };
-        console.log("User authenticated successfully:", res);
         return res;
       }
   } catch (error) {

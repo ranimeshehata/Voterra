@@ -26,7 +26,6 @@ function LoginForm() {
   const [otpInput, setOtpInput] = useState('');
   const otpRef = useRef(null);
   const { post,error } = useFetch();
-
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userState);
   const [isAuthenticated, setIsAuthenticated] = useRecoilState(isAuthenticatedState);
@@ -43,9 +42,7 @@ function LoginForm() {
         navigate('/homepage');
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
-
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -126,17 +123,13 @@ function LoginForm() {
         if (token) {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(response.user));
-        }
-        console.log("alo");
-        
+        }        
         const user = response.user;
         setUser(user);
         setIsAuthenticated(true);
         navigate('/homepage');
         resetLoginForm();
-        console.log(response);
       } else {
-        console.log(err);
         if (!err.status) {
           setLoginError('No server response.');
         } else if (err.status === 400) {
@@ -152,13 +145,21 @@ function LoginForm() {
     if (!userObj || !userObj.email) {
       return;
     }
-    let formatted = { email: userObj.email, password: "", username: "", firstName: userObj.firstName, lastName: "", gender: "NOT_SPECIFIED", userType: "USER", dateOfBirth: "", }
+    let formatted =
+    {
+      email: userObj.email,
+      password: "",
+      username: "",
+      firstName: userObj.firstName,
+      lastName: "",
+      gender: "NOT_SPECIFIED",
+      userType: "USER",
+      dateOfBirth: ""
+    }
     setFormData(formatted);
-    console.log(formatted);
 
     if (provIndex === 0) {
       post("http://localhost:8080/users/loginWithFacebook", formatted, (res) => {
-        console.log(res);
         if (res) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
@@ -170,7 +171,6 @@ function LoginForm() {
       });
     } else if (provIndex === 1) {
       post("http://localhost:8080/users/loginWithGoogle", formatted, (res) => {
-        console.log(res);
         if (res) {
           localStorage.setItem('token', res.token);
           localStorage.setItem('user', JSON.stringify(res.user));
@@ -199,23 +199,35 @@ function LoginForm() {
     <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg ">
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
-          <h2 className="form-title-welcome">Welcome Back!</h2>
-          <p className="text-gray-500">Enter your credentials to access your account</p>
+          <h2 className="form-title-welcome">
+            Welcome Back!
+          </h2>
+          <p className="text-gray-500">
+            Enter your credentials to access your account
+          </p>
         </div>
-        {error&&<div>
+        {error&&
+        <div>
             <p className='text-red-600'>
                 {error}
             </p>
-        </div>}
-
+        </div>
+        }
         <form className="login-form">
           <Col className="relative mb-5 inputField">
-            <label htmlFor="email" className="emailLabel">
+            <label
+              htmlFor="email"
+              className="emailLabel"
+            >
               Email
             </label>
             <div className="flex items-center border rounded-lg">
               <input
-                className={`email-input ${errors.email || errors.password || loginError ? 'errorBorder' : ''}`}
+                className={`email-input
+                          ${
+                            errors.email || errors.password || loginError
+                            ? 'errorBorder' : ''}`
+                          }
                 id="email"
                 type="text"
                 placeholder="Enter email"
@@ -224,16 +236,27 @@ function LoginForm() {
               />
               <img src={mailIcon} alt="mail-icon" className="h-5 w-5 cursor-pointer mx-2" />
             </div>
-            {errors.email && <p className="errorMsg">{errors.email}</p>}
+            {errors.email &&
+            <p className="errorMsg">
+              {errors.email}
+            </p>
+            }
           </Col>
-
           <Col className="relative mb-5 inputField">
-            <label htmlFor="password" className="passwordLabel">
+            <label 
+              htmlFor="password"
+              className="passwordLabel"
+            >
               Password
             </label>
             <div className="flex items-center border rounded-lg">
               <input
-                className={`password-input ${(!errors.email || (errors.email && errors.password)) && (errors.email || errors.password || loginError) ? 'errorBorder' : ''}`}
+                className={`password-input 
+                          ${(!errors.email || 
+                            (errors.email && errors.password)) &&
+                            (errors.email || errors.password || loginError) 
+                            ? 'errorBorder' : ''}`
+                            }
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter password"
@@ -253,16 +276,21 @@ function LoginForm() {
                 Forgot Password?
               </a>
             </div>
-            {errors.password && <p className="errorMsg">{errors.password}</p>}
-            {/* {loginError && <p className="errorMsg">{loginError}</p>} */}
+            {errors.password &&
+            <p className="errorMsg">
+              { errors.password }
+            </p>}
           </Col>
           <Col className="mb-4">
-            <button className="loginButton" type="submit" onClick={handleSubmit}>
+            <button 
+              className="loginButton" 
+              type="submit" 
+              onClick = { handleSubmit }
+            >
               Login
             </button>
           </Col>
         </form>
-
         {otpSent && (
           <div className="otp-verification">
             <h3>Enter OTP sent to your email</h3>
@@ -275,13 +303,15 @@ function LoginForm() {
                 onChange={e => setOtpInput(e.target.value)}
                 className="otp-input"
               />
-              <button className={`${otpDone ? 'bg-green-600 p-1 rounded-full' : ''} h-7 w-7 shadow-xl flex justify-center items-center`} onClick={handleVerifyOtp}>
-                <i className="fa-solid fa-check"></i>
+              <button
+                className={`${otpDone ? 'bg-green-600 p-1 rounded-full' : ''} h-7 w-7 shadow-xl flex justify-center items-center`}
+                onClick={handleVerifyOtp}>
+                <i className="fa-solid fa-check">
+                </i>
               </button>
             </div>
           </div>
         )}
-
         <ContinueSep />
         <div className="btns flex justify-between w-full">
           <button
@@ -304,7 +334,10 @@ function LoginForm() {
           </button>
         </div>
         <p className="mt-6 text-center text-md">
-          Don’t have an account? <a href="/signup" className='hyperlinks'>Sign up</a>
+          Don’t have an account? 
+          <a href="/signup" className='hyperlinks'>
+            Sign up
+          </a>
         </p>
       </div>
     </div>

@@ -17,7 +17,6 @@ function useFetch() {
         throw error;
       }
       const result = await response.json();
-      console.log(result);
       setData(result);
       if (onComplete) {
         onComplete(result, null);
@@ -34,12 +33,10 @@ function useFetch() {
     }
   };
   
-
   const get = (url, onComplete) => {
     fetchData(url, { method: "GET" }, onComplete);
   };
   const postSignout = (url,token, onComplete, onError) => {
-    console.log(token.token);
     fetchData(
       url,
       {
@@ -49,7 +46,8 @@ function useFetch() {
           Authorization:"Bearer "+ token.token,
         },
       },
-      onComplete,onError
+      onComplete,
+      onError
     );
   };
 
@@ -63,11 +61,19 @@ function useFetch() {
         },
         body: JSON.stringify(body),
       },
-      onComplete,onError
+      onComplete,
+      onError
     );
   };
 
-  return { data, loading, error, get, post,postSignout };
+  return { 
+    data, 
+    loading, 
+    error, 
+    get, 
+    post,
+    postSignout 
+  };
 }
 
 export default useFetch;

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
@@ -12,7 +11,7 @@ function HomePage() {
   const user = useRecoilValue(userState);
   const isAuthenticated = useRecoilValue(isAuthenticatedState);
   const navigate = useNavigate();
-  const { post,postSignout } = useFetch();
+  const { postSignout } = useFetch();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -29,22 +28,17 @@ function HomePage() {
 
   const handleLogout = () => {
     const token = localStorage.getItem("token");
-    console.log("Token:", token);
     if (!token) {
       toast.error("Session expired. Please log in again.");
       navigate("/login");
       return;
     }
-  
     postSignout(
       "http://localhost:8080/users/signout",
       {
         token
       },
       (response, error) => {
-        console.log("Response:", response.message);
-        console.log("Error:", error);
-        console.log("Token:", token);
         if(response.message){
           localStorage.removeItem("token");
           localStorage.removeItem("user");
@@ -56,30 +50,24 @@ function HomePage() {
           console.error("Logout failed:", error);
           toast.error("Error signing out. Please try again.");
         }
-      },()=>{}
+      },
+      ()=>{}
     );
   };
   
-  
-  
-  
-
   return (
     <div className="bg-white-100 w-full absolute top-0">
       <div className="header">
         <Header />
       </div>
-
       <div className="welcome-message">
         <p>Welcome, {user ? user.firstName + '!' : 'Voterra user!'}</p>
       </div>
-
       <div className="logout-button">
         <button onClick={handleLogout} className="btn btn-primary">
           Sign Out
         </button>
       </div>
-
       <ToastContainer />
     </div>
   );
