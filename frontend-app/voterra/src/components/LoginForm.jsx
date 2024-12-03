@@ -3,7 +3,6 @@ import { Col } from "react-bootstrap";
 import mailIcon from "../assets/mail-icon.svg";
 import eyeOffIcon from "../assets/eye-off-icon.svg";
 import eyeIcon from "../assets/eye-icon.svg";
-import axios from "axios";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,9 +14,15 @@ function LoginForm() {
     e.preventDefault();
     try {
       console.log(username, password);
-      const response = await axios.post("http://localhost:8080/api/login", {
-        username,
-        password,
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username,
+            password,
+        }),
       });
 
       // Handle successful login (e.g., save token, redirect)
