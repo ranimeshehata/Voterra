@@ -10,6 +10,10 @@ public class Poll {
         this.pollContent = pollContent;
         this.voters = voters;
     }
+
+    public Poll() {
+    }
+
     public String getPollContent() {
         return pollContent;
     }

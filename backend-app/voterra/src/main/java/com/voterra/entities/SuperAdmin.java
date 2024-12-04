@@ -14,11 +14,13 @@ public class SuperAdmin extends User {
     }
 
     public void makeAdmin(String userId) {
-        // Logic to promote a user to admin
+        if (!listOfAdmins.contains(userId)) {
+            listOfAdmins.add(userId);
+        }
     }
 
     public void removeAdmin(String adminId) {
-        // Logic to demote an admin
+        listOfAdmins.remove(adminId);
     }
 
     public List<String> getListOfAdmins() {
