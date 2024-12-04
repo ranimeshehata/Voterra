@@ -17,7 +17,7 @@ public class LoginRequest {
         return email;
     }
 
-    public void setAccount(String account) {
+    public void setEmail(String account) {
         this.email = account;
     }
 

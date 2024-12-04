@@ -28,6 +28,9 @@ public class FeedFactory {
         this.polls = polls;
     }
 
+    public FeedFactory() {
+    }
+
     public String getUserEmail() {
         return userEmail;
     }
