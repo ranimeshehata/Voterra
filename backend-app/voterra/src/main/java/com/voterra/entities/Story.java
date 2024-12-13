@@ -10,9 +10,9 @@ import java.util.List;
 public class Story extends FeedFactory{
     @Indexed(expireAfterSeconds = 86400)
     private Date publishedDate;
-    public Story(String userEmail, String postContent, FeedFactory.category category,
+    public Story(String userEmail, String userName, String postContent, FeedFactory.category category,
                 FeedFactory.privacy privacy, List<Poll> polls, Date publishedDate) {
-        super(userEmail, postContent, category, privacy, polls);
+        super(userEmail, userName , postContent, category, privacy, polls);
         this.publishedDate = publishedDate;
     }
     public Date getPublishedDate() {

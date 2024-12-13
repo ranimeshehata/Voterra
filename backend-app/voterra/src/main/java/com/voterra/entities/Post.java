@@ -1,5 +1,6 @@
 package com.voterra.entities;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -8,11 +9,12 @@ import java.util.List;
 
 @Document(collection = "posts")
 public class Post extends FeedFactory{
+    @Indexed
     private Date publishedDate;
 
-    public Post(String userEmail, String postContent, FeedFactory.category category,
+    public Post(String userEmail, String userName , String postContent, FeedFactory.category category,
                 FeedFactory.privacy privacy, List<Poll> polls, Date publishedDate) {
-        super(userEmail, postContent, category, privacy, polls);
+        super(userEmail, userName, postContent, category, privacy, polls);
         this.publishedDate = publishedDate;
     }
 
