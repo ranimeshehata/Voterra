@@ -262,7 +262,6 @@ html,body {
   margin: 100px 200px;
 } */
 
-/* Container for the whole page */
 .homepage-container {
   display: flex;
   flex-direction: column;
@@ -278,7 +277,7 @@ html,body {
 }
 
 .sidebar {
-  flex: 0 0 250px; /* Fixed sidebar width */
+  flex: 0 0 250px;
   background-color: #ffffff;
   border-right: 1px solid #e0e0e0;
   /* min-height: calc(100vh - 60px); */
@@ -295,7 +294,7 @@ html,body {
 }
 
 .feed {
-  flex: 1; /* Take the remaining space */
+  flex: 1;
   padding: 20px;
   background-color: #ffffff;
   margin-left: 10px;
