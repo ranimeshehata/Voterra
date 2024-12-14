@@ -72,5 +72,7 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         SecurityContextHolder.clearContext();
     }
-
+    public static boolean isAdmin(User user) {
+        return user.getUserType() == User.userType.ADMIN ;
+    }
 }
