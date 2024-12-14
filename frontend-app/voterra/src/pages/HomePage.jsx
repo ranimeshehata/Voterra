@@ -1,11 +1,15 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
+import { Col, Row, Container } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
+import SideBarHomePage from '../components/SideBarHomePage';
+import UserFeed from '../components/UserFeed';
 
 function HomePage() {
   const user = useRecoilValue(userState);
@@ -56,17 +60,20 @@ function HomePage() {
   };
   
   return (
-    <div className="bg-white-100 w-full absolute top-0">
+
+    <div className="homepage-container bg-white-100 w-full absolute top-0">
       <div className="header">
         <Header />
       </div>
-      <div className="welcome-message">
-        <p>Welcome, {user ? user.firstName + '!' : 'Voterra user!'}</p>
-      </div>
-      <div className="logout-button">
-        <button onClick={handleLogout} className="btn btn-primary">
-          Sign Out
-        </button>
+
+      <div className="main-content">
+        <div className="sidebar">
+          <SideBarHomePage user={user} handleLogout={handleLogout} />
+        </div>
+
+        <div className="feed">
+          <UserFeed />
+        </div>
       </div>
       <ToastContainer />
     </div>
