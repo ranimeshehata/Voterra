@@ -75,24 +75,6 @@ function HomePage() {
           <UserFeed />
         </div>
       </div>
-
-      {/* <Row className="home-page d-flex flex-row">
-      <Col className="sidebar-wrap align-items-center d-flex justify-content-center">
-        <SideBarHomePage />
-      </Col>
-      <Col xs={12} md={8} xl={9}>
-        <UserFeed />
-      </Col>
-    </Row> */}
-{/* 
-      <div className="welcome-message">
-        <p>Welcome, {user ? user.firstName + '!' : 'Voterra user!'}</p>
-      </div>
-      <div className="logout-button">
-        <button onClick={handleLogout} className="btn btn-primary">
-          Sign Out
-        </button>
-      </div> */}
       <ToastContainer />
     </div>
   );

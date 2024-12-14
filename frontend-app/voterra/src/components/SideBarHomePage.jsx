@@ -10,17 +10,18 @@ function SideBarHomePage({ user, handleLogout }) {
         <div className="profile">
             <div className="profile-pic">
                 <Avatar
-                name= {user.firstName + " " + user.lastName}
+                name= {user.username}
                 size="40"
                 className="avatar"
                 round
                 color="#B90000"
                 boxShadow="0px 17px 40px 4px rgba(25, 30, 36, 0.11)"
+                placeholder="V"
                 />
             </div>
             <div  className="profile-name">
                 <span className="profile-name-text" data-tooltip-id="profile-name-tooltip" data-tooltip-content={`${user.firstName} ${user.lastName}`}>
-                    {user.firstName} {user.lastName}
+                    {user.username}
                 </span>
             </div>
             <ReactTooltip id="profile-name-tooltip" />
@@ -80,6 +81,7 @@ SideBarHomePage.propTypes = {
   user: PropTypes.shape({
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired
   }).isRequired,
   handleLogout: PropTypes.func.isRequired,
 };
