@@ -239,7 +239,7 @@ html,body {
   color: #333333;
 }
 
-.logout-button {
+/* .logout-button {
   height: 48px;
   padding: 8px 0px 11px 0px;
   gap: 0px;
@@ -259,5 +259,106 @@ html,body {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 100px 860px;
+  margin: 100px 200px;
+} */
+
+/* Container for the whole page */
+.homepage-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f4f5f7;
 }
+
+.main-content {
+  display: flex;
+  flex: 1;
+  margin-top: 10px;
+}
+
+.sidebar {
+  flex: 0 0 250px; /* Fixed sidebar width */
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  /* min-height: calc(100vh - 60px); */
+  padding: 20px;
+  box-shadow: 0vh 1.859375vh 4.375vh 0.4375vh rgba(112, 144, 176, 0.11);
+  box-sizing: border-box;
+  border-radius: 2.1875vh;
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    min-height: 90%;
+
+}
+
+.feed {
+  flex: 1; /* Take the remaining space */
+  padding: 20px;
+  background-color: #ffffff;
+  margin-left: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.profile{
+    margin-top: 10px;
+    border-radius: 30px;
+    width: 100%;
+    margin-bottom: 3.28125vh;
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 1.53125vh 1.859375vh 4.375vh 0.4375vh rgba(28, 35, 43, 0.08);
+    display: flex;
+    flex-direction: row;
+}
+.avatar{
+    margin: 5px;
+}
+
+.profile-name{
+    font-size: 18px;
+    font-weight: 700;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    margin: 10px;
+}
+.profile-name-text {
+  margin: 7px 0px 6px 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    position: relative;
+    max-width: 150px;
+  }
+
+  .sidebar-links {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 30px;
+  }
+  
+  .sidebar-link {
+    margin: 10px 0;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+  }
+  
+  .sidebar-link:hover {
+    text-decoration: underline;
+    color: #B90000;
+  }
+
+  .sidebar-link-text{
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 1);
+    text-align: center;
+    margin: 0 0 0 12px;
+  }

@@ -16,21 +16,20 @@ const useAuth = () => {
         if (decodedToken.exp > currentTime) {
           setIsAuthenticated(true);
           setUser(decodedToken);
+        
         } else {
-            setIsAuthenticated(false);
-            setUser(null);
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            throw new Error('TokenExpired');
+          setIsAuthenticated(false);
+          setUser(null);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          throw new Error('TokenExpired');
         }
+      
       } catch (error) {
-        if (error.message === 'TokenExpired') {
-          console.error('Token has expired.');
-        } else if (error.name === 'InvalidTokenError') {
-          console.error('Invalid token format.');
-        } else {
-          console.error('An unknown error occurred while decoding the token.');
-        }
+        if (error.message === 'TokenExpired')  console.error('Token has expired.');        
+        else if (error.name === 'InvalidTokenError')  console.error('Invalid token format.');
+        else console.error('An unknown error occurred while decoding the token.');
+        
         setIsAuthenticated(false);
         setUser(null);
         localStorage.removeItem('token');
