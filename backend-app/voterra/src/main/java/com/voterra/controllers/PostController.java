@@ -47,7 +47,7 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
         }
         try {
-            boolean deletedPost = postService.deletePostById(post.getId());
+            postService.deletePostById(post.getId());
             return ResponseEntity.ok("post deleted successfully");
         } catch (PostNotFoundException e) {
             System.out.println("Error: " + e.getMessage());

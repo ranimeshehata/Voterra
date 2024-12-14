@@ -13,10 +13,9 @@ public class PostService {
     public Post createPost(Post post){
         return postRepository.save(post) ;
     }
-    public boolean deletePostById(String id) {
+    public void deletePostById(String id) {
         if (postRepository.existsById(id)) {
             postRepository.deleteById(id);
-            return true;
         } else {
             throw new PostNotFoundException(id);
         }
