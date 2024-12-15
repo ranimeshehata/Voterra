@@ -10,6 +10,7 @@ import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
 import UserFeed from '../components/UserFeed';
+import MainSection from '../components/MainSection';
 
 function HomePage() {
   const user = useRecoilValue(userState);
@@ -67,12 +68,12 @@ function HomePage() {
       </div>
 
       <div className="main-content">
-        <div className="sidebar">
+        <div className="hidden md:block w-[20%]">
           <SideBarHomePage user={user} handleLogout={handleLogout} />
         </div>
 
-        <div className="feed">
-          <UserFeed />
+        <div className="w-[100%] md:w-[80%] lg:w-[60%] min-h-screen  p-3">
+          <MainSection/>
         </div>
       </div>
       <ToastContainer />
