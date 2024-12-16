@@ -66,13 +66,30 @@ function useFetch() {
     );
   };
 
+  const postCreate = (url, body, onComplete,onError) => {
+    fetchData(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:"Bearer "+ body.token
+        },
+        body: JSON.stringify(body),
+      },
+      onComplete,
+      onError
+    );
+  };
+
   return { 
     data, 
     loading, 
     error, 
     get, 
     post,
-    postSignout 
+    postSignout,
+    postCreate
   };
 }
 

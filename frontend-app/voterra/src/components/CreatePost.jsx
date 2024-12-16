@@ -1,15 +1,23 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
+import useFetch from "../hooks/useFetch";
 import { createPost } from "../voterraUtils/PostUtils";
 
 const CreatePost = () => {
-  const [polls, setPolls] = useState(["", ""]);
+  const [polls, setPolls] = useState(['']);
   const [show, setShow] = useState(false);
   const [privacy, setPrivacy] = useState("PUBLIC");
   const [category, setCategory] = useState("SPORTS");
   const [content, setContent] = useState("");
   const [user,setUser]=useRecoilState(userState);
+  const { postCreate } = useFetch();
+  // useEffect(()=>{
+  //   console.log(user);
+    
+  // },[])
+
   const [us,setUs]=useState({})
   useEffect(()=>{
     setUs(JSON.parse(localStorage.getItem('user')));
@@ -27,7 +35,11 @@ const CreatePost = () => {
   };
 
   const addPoll = () => {
-    setPolls([...polls, ""]);
+    if (polls.length < 10) {
+      setPolls([...polls, '']);
+    } else {
+      alert('You can only add up to 10 polls.');
+    }
   };
 
   const handlePrivacyChange = (e) => {
@@ -42,6 +54,112 @@ const CreatePost = () => {
     setContent(e.target.value);
   };
 
+  const postValidate = () => {
+    const email=user.email;
+    const userName=user.username;
+    const postContent=content;
+    const postCategory=category;
+    const postPrivacy=privacy;
+    const postPolls=polls;
+    const publishedDate=new Date().toLocaleDateString();
+
+    console.log({email,userName,postContent,postCategory,postPrivacy,postPolls,publishedDate});
+
+    if(postContent.length<1){
+      alert("Content cannot be empty");
+      return false;
+    }
+
+    if(postPolls.length<2){
+      alert("Add at least 2 polls");
+      return false;
+    }
+
+    for (let poll of postPolls) {
+      if (poll.trim().length < 1) {
+        alert("Each poll must have at least 1 character");
+        return false;
+      }
+    }
+    
+    return true;
+  }
+
+  const resetPost = () =>{
+    setContent("");
+    setPolls(['']);
+    setPrivacy("PUBLIC");
+    setCategory("SPORTS");
+  }
+
+  const callBackend = () => {
+    console.log("Creating post");
+    const token=localStorage.getItem("token");
+    console.log(token);
+
+    postCreate("http://localhost:8080/posts/createPost", {
+      token,
+      userEmail: user.email,
+      userName: user.username,
+      postContent: content,
+      category: category,
+      privacy: privacy,
+      polls: polls.map(poll => ({ pollContent: poll, voters: [] })),
+      publishedDate: new Date().toISOString(),
+    },(response,error)=>{
+      if(response){
+        console.log("Post created successfully:", response);
+        resetPost();
+      }
+      else{
+        console.error("Error creating post:", error);
+      }
+    },()=>{});
+    // fetch("http://localhost:8080/posts/createPost", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "Authorization": "Bearer " + token,
+    //   },
+    //   body: JSON.stringify({
+    //     userEmail: user.email,
+    //     userName: user.username,
+    //     postContent: content,
+    //     category: category,
+    //     privacy: privacy,
+    //     polls: polls.map(poll => ({ pollContent: poll, voters: [] })),
+    //     publishedDate: new Date().toISOString(),
+    //   }),
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     return response.json();
+
+    //   })
+    //   .then((data) => {
+    //     console.log("Post created successfully:", data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error creating post:", error);
+    //   });
+  }
+
+
+  const postSubmit = () => {
+    console.log('Post submitted:', { content, polls, privacy, category });
+    const isValid = postValidate();
+    console.log(isValid);
+    if (!isValid) return;
+    else{
+      callBackend();
+    }
+  };
+
+  console.log('User object:', user);
+
+
   return (
     <div className="rounded-lg shadow-lg p-3 font-[nunito]">
       <h1 className="mb-2 text-xl">
@@ -49,6 +167,7 @@ const CreatePost = () => {
       </h1>
       <textarea
         placeholder="What's on your mind?... "
+        minLength={1}
         maxLength={1000}
         value={content} 
         onChange={handleContentChange}
@@ -66,6 +185,8 @@ const CreatePost = () => {
               onChange={(e) => handlePollChange(index, e.target.value)}
               placeholder={`Poll ${index + 1}`}
               className="bg-gray-100 w-full p-2 rounded-xl shadow-lg my-2"
+              minLength={1}
+              maxLength={20}
             />
           ))}
         </div>
@@ -105,7 +226,10 @@ const CreatePost = () => {
           </div>
         </div>
         <div className="flex flex-row-reverse">
-          <button onClick={()=>createPost(content,polls,category,privacy,us.username,us.email)} className="bg-red-500 mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow">
+          <button 
+            className="bg-red-500 mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow"
+            onClick={postSubmit}
+          >
             Post
           </button>
         </div>
