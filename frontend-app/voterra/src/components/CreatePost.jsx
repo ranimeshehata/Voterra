@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
+import PropTypes from 'prop-types';
 import { createPost } from "../voterraUtils/PostUtils";
 
-const CreatePost = () => {
+const CreatePost = ({ addPost } ) => {
   const [polls, setPolls] = useState(['']);
   const [show, setShow] = useState(false);
   const [privacy, setPrivacy] = useState("PUBLIC");
@@ -110,6 +111,8 @@ const CreatePost = () => {
       if(response){
         console.log("Post created successfully:", response);
         resetPost();
+        setShow(false);
+        addPost(response);
       }
       else{
         console.error("Error creating post:", error);
@@ -236,6 +239,9 @@ const CreatePost = () => {
       </div>
     </div>
   );
+};
+CreatePost.propTypes = {
+  addPost: PropTypes.func.isRequired,
 };
 
 export default CreatePost;

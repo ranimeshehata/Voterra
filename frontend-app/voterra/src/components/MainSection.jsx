@@ -6,6 +6,7 @@ import { fetchPosts } from "../voterraUtils/PostUtils";
 
 const MainSection = () => {
     const [posts,setPosts]=useState([]);
+
     useEffect(()=>{
         async function getPosts(){
             let data=await fetchPosts(0);
@@ -13,9 +14,14 @@ const MainSection = () => {
         }
         getPosts();
     },[])
+
+    const addPost = (newPost) => {
+        setPosts([newPost, ...posts]);
+      };
+    
     return ( 
         <div className="flex flex-col gap-10">
-            <CreatePost/>
+            <CreatePost addPost={addPost} />
             <PostContainer posts={posts}/>
         </div>
      );

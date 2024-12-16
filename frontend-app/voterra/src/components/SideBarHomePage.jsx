@@ -4,13 +4,13 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 import PropTypes from 'prop-types';
 
 
-function SideBarHomePage({ handleLogout }) {
+function SideBarHomePage({ user, handleLogout }) {
   return (
     <div>
         <div className="profile">
             <div className="profile-pic">
                 <Avatar
-                
+                name={user.username}
                 size="40"
                 className="avatar"
                 round
@@ -21,7 +21,7 @@ function SideBarHomePage({ handleLogout }) {
             </div>
             <div  className="profile-name">
                 <span className="profile-name-text" data-tooltip-id="profile-name-tooltip" >
-                    
+                    {user.username}
                 </span>
             </div>
             <ReactTooltip id="profile-name-tooltip" />

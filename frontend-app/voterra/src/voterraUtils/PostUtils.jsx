@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export const createPost=async(content,polls,category,privacy,username,email)=>{
   const today = new Date();
   const formattedDate = today.toISOString();
