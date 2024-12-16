@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,8 +49,10 @@ public class UserService {
         if (existingUser != null) {
             return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
-        String username = user.getEmail().hashCode() + "";
+        String username =  user.getEmail().split("@")[0] + user.getEmail().hashCode();
         user.setUsername(username);
+        user.setFriends(new ArrayList<String>());
+        user.setSavedPosts(new ArrayList<String>());
         return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
 

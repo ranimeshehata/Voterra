@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
+import { createPost } from "../voterraUtils/PostUtils";
 
 const CreatePost = () => {
   const [polls, setPolls] = useState(['']);
@@ -17,6 +18,10 @@ const CreatePost = () => {
     
   // },[])
 
+  const [us,setUs]=useState({})
+  useEffect(()=>{
+    setUs(JSON.parse(localStorage.getItem('user')));
+  },[])
   const categories = [
     "SPORTS", "TECHNOLOGY", "ENTERTAINMENT", "HEALTH", "EDUCATION",
     "BUSINESS", "FASHION", "FOOD", "JOBS", "MEDICAL", "CARS", "EVENTS",

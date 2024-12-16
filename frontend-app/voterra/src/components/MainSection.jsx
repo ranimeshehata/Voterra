@@ -8,11 +8,11 @@ const MainSection = () => {
     const [posts,setPosts]=useState([]);
     useEffect(()=>{
         async function getPosts(){
-            let data=await fetchPosts(1);
+            let data=await fetchPosts(0);
             setPosts(data);
         }
-        //getPosts();
-    })
+        getPosts();
+    },[])
     return ( 
         <div className="flex flex-col gap-10">
             <CreatePost/>
