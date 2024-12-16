@@ -55,4 +55,16 @@ public class PostController {
         }
     }
 
+    @PostMapping("/savePost")
+    public ResponseEntity<?> savePost(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String postId = request.get("postId");
+            postService.savePost(email, postId);
+            return ResponseEntity.ok("post saved successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
 }
