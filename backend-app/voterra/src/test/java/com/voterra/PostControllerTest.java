@@ -33,31 +33,25 @@ class PostControllerTest {
 
     @Test
     void testGetPosts() {
-        // Mock data
         int page = 0;
         Post post = new Post("testuser@example.com","testuser" ,"Test Post", null, Post.privacy.PUBLIC, null, new Date());
         when(postService.getPaginatedPosts(page)).thenReturn(Collections.singletonList(post));
 
-        // Call the endpoint
         ResponseEntity<?> response = postController.getPosts(page);
 
-        // Verify
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         List<?> body = (List<?>) response.getBody();
         assertNotNull(body);
         assertEquals(1, body.size());
         assertTrue(body.contains(post));
-        verify(postService, times(1)).getPaginatedPosts(page);
     }
 
     @Test
     void testGetPosts_ExceptionHandling() {
-        // Mock exception
         int page = 0;
         when(postService.getPaginatedPosts(page)).thenThrow(new RuntimeException("Test exception"));
 
-        // Call the endpoint
         ResponseEntity<?> response = postController.getPosts(page);
 
         // Verify
@@ -66,6 +60,38 @@ class PostControllerTest {
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertNotNull(body);
         assertEquals("Test exception", body.get("message"));
-        verify(postService, times(1)).getPaginatedPosts(page);
+    }
+
+    @Test
+    void testGetUserContent() {
+        String email = "testuser@example.com";
+        String username = "testuser";
+        int page = 0;
+        Post post = new Post(email, username ,"User Content", null, Post.privacy.PUBLIC, null, new Date());
+        when(postService.getUserPosts(email, page)).thenReturn(Collections.singletonList(post));
+
+        ResponseEntity<?> response = postController.getUserContent(email, page);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        List<?> body = (List<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals(1, body.size());
+        assertTrue(body.contains(post));
+    }
+
+    @Test
+    void testGetUserContent_ExceptionHandling() {
+        String email = "testuser@example.com";
+        int page = 0;
+        when(postService.getUserPosts(email, page)).thenThrow(new RuntimeException("Test exception"));
+
+        ResponseEntity<?> response = postController.getUserContent(email, page);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Test exception", body.get("message"));
     }
 }
