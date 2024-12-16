@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import PropTypes from 'prop-types';
-import { mockPosts } from "../mockdata";
 import PostCard from "./PostCard";
 
 const PostContainer = ({posts}) => {
@@ -10,7 +9,7 @@ const PostContainer = ({posts}) => {
     return ( 
         <div className="flex flex-col gap-4">
             {posts.map((post)=>(
-                <PostCard post={post}/>
+                <PostCard key={post.id} post={post}/>
             ))}
         </div>
      );
