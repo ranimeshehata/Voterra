@@ -79,9 +79,9 @@ function SideBarHomePage({ user, handleLogout }) {
 }
 SideBarHomePage.propTypes = {
   user: PropTypes.shape({
-    firstName: PropTypes.string.isRequired,
-    lastName: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired
+    firstName: PropTypes.string,
+    lastName: PropTypes.string,
+    username: PropTypes.string
   }).isRequired,
   handleLogout: PropTypes.func.isRequired,
 };
