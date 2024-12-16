@@ -27,7 +27,11 @@ const CreatePost = () => {
   };
 
   const addPoll = () => {
-    setPolls([...polls, ""]);
+    if (polls.length < 10) {
+      setPolls([...polls, '']);
+    } else {
+      alert('You can only add up to 10 polls.');
+    }
   };
 
   const handlePrivacyChange = (e) => {
