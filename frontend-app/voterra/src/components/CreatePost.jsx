@@ -55,7 +55,7 @@ const CreatePost = () => {
         className="bg-gray-100 w-full p-3 rounded-xl shadow-lg mb-2"
       ></textarea>
       <div className={`relative overflow-hidden ${show ? 'max-h-screen' : 'max-h-0'} transition-all ease-out duration-500`}>
-        <div id="polls">
+        <div id="polls" className="p-1">
           <h1 className="mb-2 text-xl">Polls <i className="fa-solid fa-chart-simple fa-sm"></i></h1>
           {polls.map((poll, index) => (
             <input
@@ -70,7 +70,7 @@ const CreatePost = () => {
         </div>
         <button
           onClick={addPoll}
-          className="bg-[#B90000] mb-5 w-10 h-10 text-white p-2 rounded-full mt-2 shadow"
+          className="bg-red-500 mb-5 w-10 h-10 text-white p-2 rounded-full mt-2 shadow"
         >
           +
         </button>
@@ -104,7 +104,7 @@ const CreatePost = () => {
           </div>
         </div>
         <div className="flex flex-row-reverse">
-          <button className="bg-[#B90000] mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow">
+          <button className="bg-red-500 mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow">
             Post
           </button>
         </div>

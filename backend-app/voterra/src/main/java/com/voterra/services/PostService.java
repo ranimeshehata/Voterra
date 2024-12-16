@@ -29,14 +29,14 @@ public class PostService {
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
 
         List<Post> userPosts = postRepository.findByUserEmail(email, pageable);
-
+        System.out.println("done1");
         List<String> friends = userService.getFriends(email);
         List<Post> friendPosts = postRepository.findByUserEmailInWithSpecificPrivacy(friends, pageable);
-
+        System.out.println("done2");
         List<String> excludedEmails = new ArrayList<>(friends);
         excludedEmails.add(email);
         List<Post> nonFriendPosts = postRepository.findByUserEmailNotInWithPublicPrivacy(excludedEmails, pageable);
-
+        System.out.println("done3");
         List<Post> combinedPosts = new ArrayList<>();
         combinedPosts.addAll(userPosts);
         combinedPosts.addAll(friendPosts);

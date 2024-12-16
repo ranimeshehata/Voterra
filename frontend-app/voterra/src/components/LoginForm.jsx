@@ -117,6 +117,8 @@ function LoginForm() {
   }
 
   const callBackend = () => {
+    console.log("hiii");
+    
     post('http://localhost:8080/users/login', { email, password }, (response, err) => {
       if (response) {
         const token = response.token;

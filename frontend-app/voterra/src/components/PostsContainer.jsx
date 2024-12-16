@@ -4,8 +4,7 @@ import PostCard from "./PostCard";
 
 const PostContainer = ({posts}) => {
     useEffect(()=>{
-        console.log(mockPosts);
-        
+        console.log(posts);
     },[])
     return ( 
         <div className="flex flex-col gap-4">
