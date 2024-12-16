@@ -13,4 +13,6 @@ public interface StoryRepository extends MongoRepository<Story, String> {
     @Query("{ 'userEmail': { $in: ?0 }, 'privacy': { $in: ['FRIENDS', 'PUBLIC'] } }")
     List<Story> findFriendStoriesOrderByPublishedDateAsc(List<String> friendEmails);
 
+    @Query("{ 'userEmail': ?0, 'privacy': 'PUBLIC' }")
+    List<Story> findNonFriendStoriesOrderByPublishedDateAsc(String userEmail);
 }

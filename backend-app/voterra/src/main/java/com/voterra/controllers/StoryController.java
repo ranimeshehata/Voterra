@@ -26,4 +26,13 @@ public class StoryController {
     public Map<String, List<Story>> getStoriesGroupedByUser() {
         return storyService.getStoriesForHomepageGroupedByUser();
     }
+
+    @GetMapping("/userStories")
+    public ResponseEntity<?> getUserStories(@RequestParam String email) {
+        try {
+            return ResponseEntity.ok(storyService.getUserStories(email));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
 }
