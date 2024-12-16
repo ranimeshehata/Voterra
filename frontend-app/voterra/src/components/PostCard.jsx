@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
+import useFetch from "../hooks/useFetch";
 
 const PostCard = ({post}) => {
     const [totalVotes,setTotalVotes]=useState(0);
@@ -10,6 +11,9 @@ const PostCard = ({post}) => {
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
+    const [isSaved, setIsSaved] = useState(false);
+    const { postSave } = useFetch();
+
 
     useEffect(()=>{
         let x=0;
@@ -30,24 +34,76 @@ const PostCard = ({post}) => {
         return new Date(dateString).toLocaleDateString(undefined, options);
       };
 
+    const savePost = (id) => {
+        console.log("saving post with id: ", id);
+        const email=user.email;
+        const token=localStorage.getItem("token");
+        postSave("http://localhost:8080/posts/savePost",{
+            token,
+            postId:id,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                setIsSaved(true);
+                console.log("Post saved successfully");
+                console.log(response);
+                console.log("bravo");
+            }
+            else{
+                console.error("Error saving post:", error);
+                console.log("bad");
+            }
+        },
+        (error)=>{
+            console.error("Error saving post:", error);
+        });
+
+        console.log("Post saved with id: ", id);
+
+    }
+
     function vote(){
         if(voted){
             return;
         }
         setVoted(true);
         setTotalVotes(prev=>prev+1);
-        
+        const token=localStorage.getItem("token");
         //backend call
+        postSave("http://localhost:8080/posts/vote",{
+            token,
+            email:user.email,
+            postId:post.id,
+            pollIndex:votedPoll,
+        },
+        (response,error)=>{
+            if(response){
+                console.log("Vote successful");
+            }
+            else{
+                console.error("Error voting:", error);
+            }
+        },
+        (error)=>{
+            console.error("Error voting:", error);
+        });
     }
 
     console.log(post);
     console.log(post.userName);
-    return ( 
+    return (
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
                 <i onClick={()=>setPostMenu(prev=>!prev)} className="fa-solid fa-ellipsis-vertical"></i>
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
-                    <p className="hover:bg-gray-100">Save Post</p>
+                    <p
+                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        onClick={() => savePost(post.id)}
+                        style={isSaved ? { pointerEvents: 'none' } : {}}
+                    >
+                        {isSaved ? 'Post Saved' : 'Save Post'}
+                    </p>
                     <p className="hover:bg-gray-100">Delete Post</p>
                 </div>
             </div>
@@ -81,6 +137,7 @@ const PostCard = ({post}) => {
 }
 PostCard.propTypes = {
     post: PropTypes.shape({
+        id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
             PropTypes.shape({
                 voters: PropTypes.arrayOf(PropTypes.string).isRequired,

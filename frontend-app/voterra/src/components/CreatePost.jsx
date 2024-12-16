@@ -4,7 +4,6 @@ import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import PropTypes from 'prop-types';
-import { createPost } from "../voterraUtils/PostUtils";
 
 const CreatePost = ({ addPost } ) => {
   const [polls, setPolls] = useState(['']);
