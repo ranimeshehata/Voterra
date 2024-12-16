@@ -71,6 +71,19 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PostMapping("/vote")
+    public ResponseEntity<?> vote(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String postId = request.get("postId");
+            int pollIndex = Integer.parseInt(request.get("pollIndex"));
+            postService.vote(email, postId, pollIndex);
+            return ResponseEntity.ok("voted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
   
    @GetMapping("/homepage")
     public ResponseEntity<?> getPosts(

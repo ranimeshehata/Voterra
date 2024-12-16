@@ -18,6 +18,10 @@ public class Post extends FeedFactory{
         this.publishedDate = publishedDate;
     }
 
+    public Post() {
+
+    }
+
     public Date getPublishedDate() {
         return publishedDate;
     }
