@@ -78,4 +78,14 @@ public class PostService {
         return combinedPosts;
     }
 
+    public List<Post> getSavedPosts(String email, int page) {
+        int size = 5;
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+
+        User user = userRepository.findByEmail(email);
+        List<String> savedPostIds = user.getSavedPosts();
+
+        return postRepository.findByIdIn(savedPostIds,pageable);
+    }
+
 }

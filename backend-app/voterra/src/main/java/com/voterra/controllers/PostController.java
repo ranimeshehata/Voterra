@@ -71,8 +71,19 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
-  
-   @GetMapping("/homepage")
+
+    @GetMapping("/getSavedPosts")
+    public ResponseEntity<?> getSavedPosts(@RequestParam int page) {
+        try {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            return ResponseEntity.ok(postService.getSavedPosts(email , page));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/homepage")
     public ResponseEntity<?> getPosts(
             @RequestParam int page) {
         try {
