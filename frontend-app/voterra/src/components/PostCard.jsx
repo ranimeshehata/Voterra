@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
+import PropTypes from 'prop-types';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 
@@ -33,7 +35,7 @@ const PostCard = ({post}) => {
     return ( 
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
-                <i onClick={()=>setPostMenu(prev=>!prev)} class="fa-solid fa-ellipsis-vertical"></i>
+                <i onClick={()=>setPostMenu(prev=>!prev)} className="fa-solid fa-ellipsis-vertical"></i>
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
                     <p className="hover:bg-gray-100">Save Post</p>
                     <p className="hover:bg-gray-100">Delete Post</p>
@@ -50,13 +52,14 @@ const PostCard = ({post}) => {
 
             <div id="polls" className="flex flex-col gap-4">
                 {post.polls.map((poll,index)=>(
-                    <div>
+                    <div key={index}>
                         <div onClick={vote} className={`${votedPoll==index?"bg-red-500":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`}>
                             <h2>{poll.pollContent}</h2>
                         </div>
                         <div className={`h-2 rounded-b-lg bg-red-500 transition-all duration-500 ease-in-out`}
-                            style={{width: voted ? `${((poll.voters.length / totalVotes) * 100).toFixed()}%` : '0%',}}></div>
+                            style={{width: voted ? `${((poll.voters.length / totalVotes) * 100).toFixed()}%` : '0%',}}>
                         </div>
+                    </div>
                 ))}
             </div>
             <p>{totalVotes} voters</p>
@@ -66,5 +69,19 @@ const PostCard = ({post}) => {
         </div>
      );
 }
- 
+PostCard.propTypes = {
+    post: PropTypes.shape({
+        polls: PropTypes.arrayOf(
+            PropTypes.shape({
+                voters: PropTypes.arrayOf(PropTypes.string).isRequired,
+                pollContent: PropTypes.string.isRequired,
+            })
+        ).isRequired,
+        userName: PropTypes.string.isRequired,
+        publishedDate: PropTypes.string.isRequired,
+        postContent: PropTypes.string.isRequired,
+        category: PropTypes.string.isRequired,
+    }).isRequired,
+};
+
 export default PostCard;

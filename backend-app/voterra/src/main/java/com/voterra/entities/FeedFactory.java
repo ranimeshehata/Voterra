@@ -7,14 +7,6 @@ import java.util.List;
 
 public class FeedFactory {
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Id // This field will act as the unique identifier.
     private String id;
 
@@ -44,6 +36,14 @@ public class FeedFactory {
     }
 
     public FeedFactory() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserEmail() {
