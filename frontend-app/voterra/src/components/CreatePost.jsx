@@ -118,35 +118,6 @@ const CreatePost = ({ addPost } ) => {
         console.error("Error creating post:", error);
       }
     },()=>{});
-    // fetch("http://localhost:8080/posts/createPost", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": "Bearer " + token,
-    //   },
-    //   body: JSON.stringify({
-    //     userEmail: user.email,
-    //     userName: user.username,
-    //     postContent: content,
-    //     category: category,
-    //     privacy: privacy,
-    //     polls: polls.map(poll => ({ pollContent: poll, voters: [] })),
-    //     publishedDate: new Date().toISOString(),
-    //   }),
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-    //     return response.json();
-
-    //   })
-    //   .then((data) => {
-    //     console.log("Post created successfully:", data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error creating post:", error);
-    //   });
   }
 
 

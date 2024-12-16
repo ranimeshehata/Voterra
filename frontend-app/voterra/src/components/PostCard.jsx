@@ -10,6 +10,7 @@ const PostCard = ({post}) => {
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
+
     useEffect(()=>{
         let x=0;
         for(let i=0;i<post.polls.length;i++){
@@ -23,6 +24,12 @@ const PostCard = ({post}) => {
             }
         }
     },[post.polls, user.email]);
+
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      };
+
     function vote(){
         if(voted){
             return;
@@ -48,7 +55,7 @@ const PostCard = ({post}) => {
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
                     <p>{post.userName[0]}</p>
                 </div>
-                <p>posted by {post.userName} &#9679; {post.publishedDate}</p>
+                <p>posted by {post.userName} &#9679; {formatDate(post.publishedDate)}</p>
             </div>
 
             <h1 className="text-2xl">{post.postContent}</h1>
