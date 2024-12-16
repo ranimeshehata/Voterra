@@ -22,7 +22,7 @@ const PostCard = ({post}) => {
                 setVotedPoll(i);
             }
         }
-    },[]);
+    },[post.polls, user.email]);
     function vote(){
         if(voted){
             return;
@@ -32,6 +32,9 @@ const PostCard = ({post}) => {
         
         //backend call
     }
+
+    console.log(post);
+    console.log(post.userName);
     return ( 
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
@@ -43,7 +46,7 @@ const PostCard = ({post}) => {
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
-                    {post.userName[0]}
+                    <p>{post.userName[0]}</p>
                 </div>
                 <p>posted by {post.userName} &#9679; {post.publishedDate}</p>
             </div>
