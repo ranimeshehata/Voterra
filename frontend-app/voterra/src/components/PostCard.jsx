@@ -51,7 +51,7 @@ const PostCard = ({post}) => {
             <div id="polls" className="flex flex-col gap-4">
                 {post.polls.map((poll,index)=>(
                     <div>
-                        <div onClick={vote} className={`${votedPoll==index?"bg-red-500":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`}>
+                        <div onClick={vote} className={`${votedPoll==index?"bg-red-100":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`}>
                             <h2>{poll.pollContent}</h2>
                         </div>
                         <div className={`h-2 rounded-b-lg bg-red-500 transition-all duration-500 ease-in-out`}

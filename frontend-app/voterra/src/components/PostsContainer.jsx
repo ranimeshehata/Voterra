@@ -8,7 +8,7 @@ const PostContainer = ({posts}) => {
     },[])
     return ( 
         <div className="flex flex-col gap-4">
-            {mockPosts.map((post)=>(
+            {posts.map((post)=>(
                 <PostCard post={post}/>
             ))}
         </div>
