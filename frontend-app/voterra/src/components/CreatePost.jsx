@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
+import { createPost } from "../voterraUtils/PostUtils";
 
 const CreatePost = () => {
   const [polls, setPolls] = useState(["", ""]);
   const [show, setShow] = useState(false);
   const [privacy, setPrivacy] = useState("PUBLIC");
   const [category, setCategory] = useState("SPORTS");
-  const [content, setContent] = useState(""); // Added state for textarea value
+  const [content, setContent] = useState("");
   const [user,setUser]=useRecoilState(userState);
+  const [us,setUs]=useState({})
   useEffect(()=>{
-    console.log(user);
-    
+    setUs(JSON.parse(localStorage.getItem('user')));
   },[])
   const categories = [
     "SPORTS", "TECHNOLOGY", "ENTERTAINMENT", "HEALTH", "EDUCATION",
@@ -104,7 +105,7 @@ const CreatePost = () => {
           </div>
         </div>
         <div className="flex flex-row-reverse">
-          <button className="bg-red-500 mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow">
+          <button onClick={()=>createPost(content,polls,category,privacy,us.username,us.email)} className="bg-red-500 mb-5 w-20 text-white p-2 rounded-lg mt-2 shadow">
             Post
           </button>
         </div>

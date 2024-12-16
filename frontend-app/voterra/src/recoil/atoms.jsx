@@ -5,6 +5,7 @@ export const userState = atom({
   default: JSON.parse(localStorage.getItem('user'))||null,
 });
 
+
 export const isAuthenticatedState = atom({
   key: 'isAuthenticatedState',
   default: true,

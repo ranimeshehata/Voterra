@@ -18,6 +18,7 @@ import java.util.Map;
 public class StoryController {
     @Autowired
     private StoryService storyService;
+    @Autowired
     private StoryRepository storyRepository;
 
 
