@@ -41,7 +41,7 @@ const PostCard = ({post}) => {
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
-                    {post.userName[0]}
+                    {post.userName}
                 </div>
                 <p>posted by {post.userName} &#9679; {post.publishedDate}</p>
             </div>
