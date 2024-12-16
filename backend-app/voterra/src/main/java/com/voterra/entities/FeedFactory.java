@@ -9,6 +9,7 @@ public class FeedFactory {
     @Id // This field will act as the unique identifier.
     private String id;
     private String userEmail;
+    private String userName;
     private String postContent;
     private category category;
     private privacy privacy;
@@ -19,12 +20,13 @@ public class FeedFactory {
         PLACES, CELEBRITIES, NATURE, MOVIES, OTHER
     }
     public enum privacy {
-        PUBLIC, PRIVATE
+        PUBLIC,FRIENDS, PRIVATE
     }
 
-    public FeedFactory(String userEmail, String postContent, category category, privacy privacy,
+    public FeedFactory(String userEmail,String userName, String postContent, category category, privacy privacy,
                        List<Poll> polls) {
         this.userEmail = userEmail;
+        this.userName = userName;
         this.postContent = postContent;
         this.category = category;
         this.privacy = privacy;
@@ -45,6 +47,8 @@ public class FeedFactory {
         return userEmail;
     }
 
+    public String getUserName() {return userName;}
+
     public String getPostContent() {
         return postContent;
     }
@@ -64,6 +68,8 @@ public class FeedFactory {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
+
+    public void setUserName(String userName) { this.userName = userName;}
 
     public void setPostContent(String postContent) {
         this.postContent = postContent;

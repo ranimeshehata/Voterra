@@ -36,7 +36,9 @@ const SignupForm = () => {
         lastName:"",
         gender:"MALE",
         userType:"USER",
-        dateOfBirth:""
+        dateOfBirth:"",
+        friends:[],
+        savedPosts:[]
     })
     const navigate=useNavigate();
 
@@ -63,7 +65,9 @@ const SignupForm = () => {
             lastName:"",
             gender:"NOT_SPECIFIED",
             userType:"USER",
-            dateOfBirth:""
+            dateOfBirth:"",
+            friends:[],
+            savedPosts:[]
         }
         setFormData(formatted);        
         if(provIndex == 1){
@@ -94,6 +98,8 @@ const SignupForm = () => {
 
     function verify(){
         let temp=generateOtp();
+        console.log(temp);
+        
         setOpt(temp);
         sendOtp(temp,formData.email);
     }
@@ -113,7 +119,14 @@ const SignupForm = () => {
                 post("http://localhost:8080/users/signup",
                     formData,
                     (res)=> {
+                        if(!res){
+                            return;
+                        }
                         console.log(res);
+                        localStorage.setItem("token",res.token);
+                        localStorage.setItem("user",JSON.stringify(res.user));
+                        setUser(res.user);
+                        setIsAuthenticated(true);
                         navigate("/homepage");
                     },
                     ()=>{

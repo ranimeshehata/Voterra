@@ -1,17 +1,23 @@
 package com.voterra.entities;
 
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 
 @Document (collection = "reportedPosts")
 public class ReportedPost {
     private String postId;
     private String reporterId;
     private String reason;
+    @Indexed
+    private Date reportedDate ;
 
-    public ReportedPost(String postId, String reporterId, String reason) {
+    public ReportedPost(String postId, String reporterId, String reason, Date reportedDate) {
         this.postId = postId;
         this.reporterId = reporterId;
         this.reason = reason;
+        this.reportedDate = reportedDate;
     }
 
     public String getPostId() {
@@ -36,5 +42,13 @@ public class ReportedPost {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public Date getReportedDate() {
+        return reportedDate;
+    }
+
+    public void setReportedDate(Date reportedDate) {
+        this.reportedDate = reportedDate;
     }
 }

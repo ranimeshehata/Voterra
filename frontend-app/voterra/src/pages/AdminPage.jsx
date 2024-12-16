@@ -4,7 +4,6 @@ import { Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import ContinueSep from './ContinueSep';
 import mailIcon from '../assets/mail-icon.svg';
 import eyeOffIcon from '../assets/eye-off-icon.svg';
 import eyeIcon from '../assets/eye-icon.svg';
@@ -112,13 +111,7 @@ function LoginForm() {
     setLoginError('');
   };
 
-  function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  }
-
   const callBackend = () => {
-    console.log("hiii");
-    
     post('http://localhost:8080/users/login', { email, password }, (response, err) => {
       if (response) {
         const token = response.token;
@@ -143,47 +136,6 @@ function LoginForm() {
     },()=>{});
   };
 
-  function loginProv(userObj, provIndex) {
-    if (!userObj || !userObj.email) {
-      return;
-    }
-    let formatted =
-    {
-      email: userObj.email,
-      password: "",
-      username: "",
-      firstName: userObj.firstName,
-      lastName: "",
-      gender: "NOT_SPECIFIED",
-      userType: "USER",
-      dateOfBirth: ""
-    }
-    setFormData(formatted);
-
-    if (provIndex === 0) {
-      post("http://localhost:8080/users/loginWithFacebook", formatted, (res) => {
-        if (res) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('user', JSON.stringify(res.user));
-          setUser(res.user);
-          setIsAuthenticated(true);
-          navigate('/homepage');
-          resetLoginForm();
-        }
-      });
-    } else if (provIndex === 1) {
-      post("http://localhost:8080/users/loginWithGoogle", formatted, (res) => {
-        if (res) {
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('user', JSON.stringify(res.user));
-          setUser(res.user);
-          setIsAuthenticated(true);
-          navigate('/homepage');
-          resetLoginForm();
-        }
-      });
-    }
-  }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -198,7 +150,8 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg ">
+   <div className='flex justify-center items-center h-[100vh]'>
+     <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg ">
       <div className="flex flex-col gap-10 w-full">
         <div className="form-title">
           <h2 className="form-title-welcome">
@@ -273,11 +226,6 @@ function LoginForm() {
                 onClick={togglePasswordVisibility}
               />
             </div>
-            <div className="text-right mt-2">
-              <a href="#" onClick={handleSendOtp} className="hyperlinks">
-                Forgot Password?
-              </a>
-            </div>
             {errors.password &&
             <p className="errorMsg">
               { errors.password }
@@ -293,56 +241,9 @@ function LoginForm() {
             </button>
           </Col>
         </form>
-        {otpSent && (
-          <div className="otp-verification">
-            <h3>Enter OTP sent to your email</h3>
-            <div className="flex justify-between">
-              <input
-                ref={otpRef}
-                type="text"
-                placeholder="Enter OTP"
-                value={otpInput}
-                onChange={e => setOtpInput(e.target.value)}
-                className="otp-input"
-              />
-              <button
-                className={`${otpDone ? 'bg-green-600 p-1 rounded-full' : ''} h-7 w-7 shadow-xl flex justify-center items-center`}
-                onClick={handleVerifyOtp}>
-                <i className="fa-solid fa-check">
-                </i>
-              </button>
-            </div>
-          </div>
-        )}
-        <ContinueSep />
-        <div className="btns flex justify-between w-full">
-          <button
-            onClick={async () => {
-              let data = await authUsingProv(1);
-              loginProv(data, 1);
-            }}
-            className="google-btn w-2/5 p-4 shadow-lg rounded-lg"
-          >
-            <i className="fa-brands fa-google"></i> Google
-          </button>
-          <button
-            onClick={async () => {
-              let data = await authUsingProv(0);
-              loginProv(data, 0);
-            }}
-            className="facebook-btn w-2/5 p-4 shadow-lg rounded-lg"
-          >
-            <i className="fa-brands fa-facebook-f"></i> Facebook
-          </button>
-        </div>
-        <p className="mt-6 text-center text-md">
-          Don’t have an account? 
-          <a href="/signup" className='hyperlinks'>
-            Sign up
-          </a>
-        </p>
       </div>
     </div>
+   </div>
   );
 }
 

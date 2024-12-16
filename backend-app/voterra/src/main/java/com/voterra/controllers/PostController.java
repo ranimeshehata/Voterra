@@ -3,6 +3,7 @@ import com.voterra.entities.Post;
 import com.voterra.entities.User;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.UserRepository;
+import com.voterra.repos.PostRepository;
 import com.voterra.services.PostService;
 import com.voterra.tokenization.JwtUtils;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,9 @@ public class PostController {
     private PostService postService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
+
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -63,6 +67,20 @@ public class PostController {
             postService.savePost(email, postId);
             return ResponseEntity.ok("post saved successfully");
         } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+  
+   @GetMapping("/homepage")
+    public ResponseEntity<?> getPosts(
+            @RequestParam int page) {
+        System.out.println("hiii");
+        try {
+
+            System.out.println(postService.getPaginatedPosts(page));
+            return ResponseEntity.ok(postService.getPaginatedPosts(page));
+        } catch (Exception e) {
+            System.out.println("hi");
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }

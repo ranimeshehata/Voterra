@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.voterra.entities.User.userType.SUPERADMIN;
@@ -47,6 +48,8 @@ public class UserService {
         if (existingUser != null) {
             return new Object[] {existingUser, jwtUtils.generateToken(user.getEmail())};
         }
+        String username = user.getEmail().hashCode() + "";
+        user.setUsername(username);
         return new Object[] {userRepository.save(user), jwtUtils.generateToken(user.getEmail())};
     }
 
@@ -72,7 +75,14 @@ public class UserService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         SecurityContextHolder.clearContext();
     }
+  
     public static boolean isAdmin(User user) {
         return user.getUserType() == User.userType.ADMIN ;
+    }
+
+    public List<String> getFriends(String userEmail) {
+        User user = userRepository.findById(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return user.getFriends();
     }
 }
