@@ -62,24 +62,42 @@ const PostCard = ({post}) => {
         console.log("Post saved with id: ", id);
 
     }
-
-    function vote(){
+const vote = (pollIndex) => {
         if(voted){
             return;
         }
         setVoted(true);
+        setVotedPoll(pollIndex);
         setTotalVotes(prev=>prev+1);
         const token=localStorage.getItem("token");
-        //backend call
+
+        console.log("Voting for poll: ", pollIndex);
+        console.log("Post id: ", post.id);
+        console.log("User email: ", user.email);
+        console.log("Token: ", token);
+
         postSave("http://localhost:8080/posts/vote",{
             token,
             email:user.email,
             postId:post.id,
-            pollIndex:votedPoll,
+            pollIndex:pollIndex,
         },
         (response,error)=>{
             if(response){
                 console.log("Vote successful");
+                console.log(response);
+                const updatedPolls = post.polls.map((poll, index) => {
+                    if (index === pollIndex) {
+                        return {
+                            ...poll,
+                            voters: [...poll.voters, user.email]
+                        };
+                    }
+                    return poll;
+                });
+                setTotalVotes(prev => prev + 1);
+                post.polls = updatedPolls;
+                
             }
             else{
                 console.error("Error voting:", error);
@@ -117,14 +135,16 @@ const PostCard = ({post}) => {
             <h1 className="text-2xl">{post.postContent}</h1>
 
             <div id="polls" className="flex flex-col gap-4">
-                {post.polls.map((poll,index)=>(
+                {post.polls.map((poll, index)=>(
                     <div key={index}>
-                        <div onClick={vote} className={`${votedPoll==index?"bg-red-500":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`}>
+                        <div onClick={() => vote(index)} className={`${votedPoll==index?"bg-red-500":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`} >
                             <h2>{poll.pollContent}</h2>
                         </div>
                         <div className={`h-2 rounded-b-lg bg-red-500 transition-all duration-500 ease-in-out`}
                             style={{width: voted ? `${((poll.voters.length / totalVotes) * 100).toFixed()}%` : '0%',}}>
                         </div>
+                        <p>{voted ? `${((poll.voters.length / totalVotes) * 100).toFixed()}%` : '0%'}</p>
+
                     </div>
                 ))}
             </div>

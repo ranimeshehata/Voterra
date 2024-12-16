@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import CreatePost from "./CreatePost";
 import PostContainer from "./PostsContainer";
 import { fetchPosts } from "../voterraUtils/PostUtils";
@@ -11,7 +10,7 @@ const MainSection = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef(null);
-    const loadPosts = async (page) => {
+    const loadPosts = useCallback(async (page) => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
@@ -27,11 +26,8 @@ const MainSection = () => {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    useEffect(() => {
-        loadPosts(page);//first one
-    }, []); 
+    }, [isLoading, hasMore]);
+ 
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -41,12 +37,13 @@ const MainSection = () => {
             },
             { threshold: 1.0 }
         );
-        if (observerRef.current) observer.observe(observerRef.current);
+        const currentObserverRef = observerRef.current;
+        if (currentObserverRef) observer.observe(currentObserverRef);
 
         return () => {
-            if (observerRef.current) observer.unobserve(observerRef.current);
+            if (currentObserverRef) observer.unobserve(currentObserverRef);
         };
-    }, [page, hasMore, isLoading]);
+    }, [page, hasMore, isLoading, loadPosts]);
 
     const addPost = (newPost) => {
         setPosts([newPost, ...posts]);
