@@ -215,12 +215,65 @@ class PostServiceTest {
     }
 
 
+    @Test
+    void testGetUserPosts_UserAccessingOwnPosts() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        String currentUserEmail = "testuser@example.com";
+        when(authentication.getName()).thenReturn(currentUserEmail);
 
+        Post userPost = new Post("testuser@example.com", "testuser" ,"User Post", null, Post.privacy.PUBLIC, null, new Date());
 
+        when(postRepository.findByUserEmail(eq(currentUserEmail), any(PageRequest.class)))
+                .thenReturn(Collections.singletonList(userPost));
 
+        List<Post> result = postService.getUserPosts(currentUserEmail, 0);
 
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(userPost));
+    }
 
+    @Test
+    void testGetUserPosts_UserAccessingFriendPosts() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        String currentUserEmail = "testuser@example.com";
+        when(authentication.getName()).thenReturn(currentUserEmail);
 
+        String friendEmail = "friend@example.com";
+        Post friendPost = new Post(friendEmail, "testuser" ,"Friend Post", null, Post.privacy.FRIENDS, null, new Date());
 
+        when(userService.getFriends(currentUserEmail)).thenReturn(List.of(friendEmail));
+        when(postRepository.findByUserEmailInWithSpecificPrivacy(eq(List.of(friendEmail)), any(PageRequest.class)))
+                .thenReturn(Collections.singletonList(friendPost));
+
+        List<Post> result = postService.getUserPosts(friendEmail, 0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(friendPost));
+    }
+
+    @Test
+    void testGetUserPosts_UserAccessingPublicPosts() {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        String currentUserEmail = "testuser@example.com";
+        when(authentication.getName()).thenReturn(currentUserEmail);
+
+        String publicUserEmail = "publicuser@example.com";
+        Post publicPost = new Post(publicUserEmail, "testuser" ,"Public Post", null, Post.privacy.PUBLIC, null, new Date());
+
+        when(userService.getFriends(currentUserEmail)).thenReturn(Collections.singletonList("friend@example.com"));
+        when(postRepository.findByUserEmailWithPublicPrivacy(eq(publicUserEmail), any(PageRequest.class)))
+                .thenReturn(Collections.singletonList(publicPost));
+
+        List<Post> result = postService.getUserPosts(publicUserEmail, 0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.contains(publicPost));
+    }
 
 }

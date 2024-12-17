@@ -97,4 +97,15 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @GetMapping("/userContent")
+    public ResponseEntity<?> getUserContent(
+            @RequestParam String email ,
+            @RequestParam int page) {
+        try {
+            return ResponseEntity.ok(postService.getUserPosts(email , page));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
 }

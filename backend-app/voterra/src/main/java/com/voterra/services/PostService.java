@@ -95,4 +95,19 @@ public class PostService {
         return combinedPosts;
     }
 
+    public List<Post> getUserPosts(String email, int page) {
+        int size = 10;
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (user.equals(email)) {
+            return postRepository.findByUserEmail(email, pageable);
+        }
+        else if(userService.getFriends(user).contains(email)) {
+            return postRepository.findByUserEmailInWithSpecificPrivacy(List.of(email), pageable);
+        }
+        else {
+            return postRepository.findByUserEmailWithPublicPrivacy(email, pageable);
+        }
+    }
 }

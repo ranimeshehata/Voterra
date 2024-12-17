@@ -40,5 +40,16 @@ public class StoryService {
 
         return groupedStories;
     }
-
+    public List<Story> getUserStories(String email) {
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (user.equals(email)) {
+            return storyRepository.findByUserEmailOrderByPublishedDateAsc(email);
+        }
+        else if(userService.getFriends(user).contains(email)) {
+            return storyRepository.findFriendStoriesOrderByPublishedDateAsc(List.of(email));
+        }
+        else {
+            return storyRepository.findNonFriendStoriesOrderByPublishedDateAsc(email);
+        }
+    }
 }
