@@ -177,7 +177,7 @@ const vote = (pollIndex) => {
 }
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func.isRequired,
-    onSavePost: PropTypes.func.isRequired,
+    onSavePost: PropTypes.func,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
@@ -191,7 +191,7 @@ PostCard.propTypes = {
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
-        isSaved: PropTypes.bool.isRequired
+        isSaved: PropTypes.bool
     }).isRequired,
 
 };

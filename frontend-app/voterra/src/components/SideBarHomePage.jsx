@@ -9,7 +9,6 @@ function SideBarHomePage({ user, handleLogout }) {
     const navigate = useNavigate();
 
     const handleSavedPostsClick = () => {
-        console.log('Saved Posts clicked');
         navigate('/savedPosts', { state: { savedPosts: user.savedPosts } });
     };
 

@@ -23,7 +23,6 @@ export const createPost=async(content,polls,category,privacy,username,email)=>{
 
 export async function fetchPosts(page) {
     const token = localStorage.getItem("token");
-    console.log(token);
     try {
       const response = await fetch(`http://localhost:8080/posts/homepage?page=${page}`, {
         method: 'GET',
@@ -37,18 +36,15 @@ export async function fetchPosts(page) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'failed');
       }
-  
       const data = await response.json();
-      console.log("posts", data);
       return data;
     } catch (error) {
-      console.error('Error fetching posts:', error.message);
+      console.error(error.message);
     }
 }
 
 export async function fetchSavedPosts(page) {
     const token = localStorage.getItem("token");
-    console.log(token);
     try {
       const response = await fetch(`http://localhost:8080/posts/getSavedPosts?page=${page}`, {
         method: 'GET',
@@ -64,9 +60,8 @@ export async function fetchSavedPosts(page) {
       }
   
       const data = await response.json();
-      console.log("saved", data);
       return data;
     } catch (error) {
-      console.error('Error fetching saved posts:', error.message);
+      console.error(error.message);
     }
 }

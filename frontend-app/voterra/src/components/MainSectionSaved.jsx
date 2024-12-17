@@ -14,21 +14,19 @@ const MainSectionSaved = () => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
-            console.log("fetching saved posts");
             const data = await fetchSavedPosts(page);
             if (data.length > 0) {
                 setPosts((prevPosts) => [...prevPosts, ...data]);
                 setPage(page + 1);
-                console.log("posts", posts);
             } else {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
-    }, [isLoading, hasMore, posts]);
+    }, [isLoading, hasMore]);
  
     useEffect(() => {
         const observer = new IntersectionObserver(

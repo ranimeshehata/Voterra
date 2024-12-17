@@ -25,9 +25,9 @@ const PostContainer = ({posts, removePostFromFeed, onSavePost}) => {
      );
 }
 PostContainer.propTypes = {
-    posts: PropTypes.array.isRequired,
-    removePostFromFeed: PropTypes.func.isRequired,
-    onSavePost: PropTypes.func.isRequired
+    posts: PropTypes.array,
+    removePostFromFeed: PropTypes.func,
+    onSavePost: PropTypes.func
     
 };
 

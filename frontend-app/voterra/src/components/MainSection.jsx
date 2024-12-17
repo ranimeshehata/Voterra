@@ -23,7 +23,7 @@ const MainSection = () => {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error("Error fetching posts:", error);
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
