@@ -302,4 +302,44 @@ class PostServiceTest {
         assertEquals(1, result.size());
         assertTrue(result.contains(publicPost));
     }
+    @Test
+    public void testCreatePost() {
+        Post post = new Post();
+        post.setUserEmail("test@example.com");
+        post.setPostContent("Test Content");
+        when(postRepository.save(post)).thenReturn(post);
+
+        Post createdPost = postService.createPost(post);
+
+        assertNotNull(createdPost);
+        assertEquals("test@example.com", createdPost.getUserEmail());
+        assertEquals("Test Content", createdPost.getPostContent());
+
+        verify(postRepository, times(1)).save(post);
+    }
+
+    @Test
+    public void testDeletePostById() {
+        String postId = "123";
+
+        when(postRepository.existsById(postId)).thenReturn(true);
+
+        postService.deletePostById(postId);
+
+        verify(postRepository, times(1)).deleteById(postId);
+    }
+
+    @Test
+    public void testDeletePostById_NotFound() {
+        String postId = "123";
+
+        when(postRepository.existsById(postId)).thenReturn(false);
+
+        assertThrows(PostNotFoundException.class, () -> {
+            postService.deletePostById(postId);
+        });
+
+        verify(postRepository, times(1)).existsById(postId);
+        verify(postRepository, times(0)).deleteById(postId);
+    }
 }

@@ -3,6 +3,7 @@ package com.voterra.Entities;
 import com.voterra.entities.User;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -48,5 +49,42 @@ class UserTest {
         assertEquals(savedPosts, user.getSavedPosts());
         assertEquals(userType, user.getUserType());
         assertEquals(gender, user.getGender());
+    }
+    @Test
+    void testToString() {
+        // Arrange
+        String email = "test@example.com";
+        String password = "password123";
+        String username = "testuser";
+        String firstName = "Test";
+        String lastName = "User";
+        User.userType userType = User.userType.USER;
+        User.gender gender = User.gender.MALE;
+        Date dateOfBirth = new Date(946684800000L); // Jan 1, 2000
+        List<String> friends = Arrays.asList("friend1", "friend2");
+        List<String> savedPosts = Arrays.asList("post1", "post2");
+
+        // Create the User object
+        User user = new User(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender);
+
+        // Expected string representation of the User object
+        String expectedString = "User{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", userType=" + userType +
+                ", gender=" + gender +
+                ", dateOfBirth=" + dateOfBirth +
+                ", friends=" + friends +
+                ", savedPosts=" + savedPosts +
+                '}';
+
+        // Act: Call toString method
+        String actualString = user.toString();
+
+        // Assert: Verify that the actual string matches the expected string
+        assertEquals(expectedString, actualString);
     }
 }
