@@ -29,7 +29,12 @@ const PostCard = ({post, removePostFromFeed}) => {
                 setVotedPoll(i);
             }
         }
-    },[post.polls, user.email]);
+
+        if (user.savedPosts && user.savedPosts.includes(post.id)) {
+            setIsSaved(true);
+        }
+
+    },[post.polls, user.email, user.savedPosts, post.id]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -48,14 +53,15 @@ const PostCard = ({post, removePostFromFeed}) => {
         (response, error)=>{
             if(response){
                 setIsSaved(true);
-                removePostFromFeed(post.id);
                 console.log("Post saved successfully");
                 console.log(response);
-                console.log("bravo");
+                setUser(prevUser => ({
+                    ...prevUser,
+                    savedPosts: [...prevUser.savedPosts, id]
+                }));
             }
             else{
                 console.error("Error saving post:", error);
-                console.log("bad");
             }
         },
         (error)=>{
@@ -74,11 +80,6 @@ const vote = (pollIndex) => {
         setVotedPoll(pollIndex);
         setTotalVotes(prev=>prev+1);
         const token=localStorage.getItem("token");
-
-        console.log("Voting for poll: ", pollIndex);
-        console.log("Post id: ", post.id);
-        console.log("User email: ", user.email);
-        console.log("Token: ", token);
 
         postSave("http://localhost:8080/posts/vote",{
             token,
