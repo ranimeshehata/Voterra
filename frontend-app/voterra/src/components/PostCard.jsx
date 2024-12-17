@@ -4,18 +4,17 @@ import PropTypes from 'prop-types';
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
+import { toast } from "react-toastify";
 
-const PostCard = ({post, removePostFromFeed}) => {
+const PostCard = ({post, removePostFromFeed, onSavePost}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
-    const [isSaved, setIsSaved] = useState(false);
+    const [isSaved, setIsSaved] = useState(post.isSaved);
     const [isDeleted, setIsDeleted] = useState(false);
-
     const { postSave, deletePost } = useFetch();
-
 
     useEffect(()=>{
         let x=0;
@@ -42,7 +41,6 @@ const PostCard = ({post, removePostFromFeed}) => {
       };
 
     const savePost = (id) => {
-        console.log("saving post with id: ", id);
         const email=user.email;
         const token=localStorage.getItem("token");
         postSave("http://localhost:8080/posts/savePost",{
@@ -51,26 +49,22 @@ const PostCard = ({post, removePostFromFeed}) => {
             email:email
         },
         (response, error)=>{
-            if(response){
+            if (response){
                 setIsSaved(true);
-                console.log("Post saved successfully");
-                console.log(response);
                 setUser(prevUser => ({
                     ...prevUser,
                     savedPosts: [...prevUser.savedPosts, id]
                 }));
+                onSavePost(id);
             }
             else{
-                console.error("Error saving post:", error);
+                console.error(error);
             }
         },
         (error)=>{
-            console.error("Error saving post:", error);
+            console.error(error);
         });
-
-        console.log("Post saved with id: ", id);
-
-    }
+    };
 
 const vote = (pollIndex) => {
         if(voted){
@@ -89,8 +83,6 @@ const vote = (pollIndex) => {
         },
         (response,error)=>{
             if(response){
-                console.log("Vote successful");
-                console.log(response);
                 const updatedPolls = post.polls.map((poll, index) => {
                     if (index === pollIndex) {
                         return {
@@ -105,19 +97,18 @@ const vote = (pollIndex) => {
                 
             }
             else{
-                console.error("Error voting:", error);
+                console.error(error);
             }
         },
         (error)=>{
-            console.error("Error voting:", error);
+            console.error(error);
         });
     }
 
     const postDelete = () => {
-        console.log("deleting post with id: ", post.id);
         const token=localStorage.getItem("token");
         if (!token) {
-            console.error("User is not logged in");
+            toast.error("Session expired. Please log in again.");
             return;
         }
 
@@ -129,15 +120,13 @@ const vote = (pollIndex) => {
             if(response){
                 setIsDeleted(true);
                 removePostFromFeed(post.id);
-                console.log(response);
-                console.log("Post deleted with id: ", post.id);
             }
             else{
-                console.error("Error deleting post:", error);
+                console.error(error);
             }
         },
         (error)=>{
-            console.error("Error deleting post:", error);
+            console.error(error);
         });
     };
     
@@ -148,7 +137,7 @@ const vote = (pollIndex) => {
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
                     <p
                         className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                        onClick={() => savePost(post.id)}
+                        onClick={() => !isSaved && savePost(post.id)}
                     >
                         {isSaved ? 'Post Saved' : 'Save Post'}
                     </p>
@@ -188,6 +177,7 @@ const vote = (pollIndex) => {
 }
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func.isRequired,
+    onSavePost: PropTypes.func,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
@@ -201,7 +191,7 @@ PostCard.propTypes = {
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
-
+        isSaved: PropTypes.bool
     }).isRequired,
 
 };

@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import CreatePost from "./CreatePost";
 import PostContainer from "./PostsContainer";
-import { fetchPosts } from "../voterraUtils/PostUtils";
+import { fetchSavedPosts } from "../voterraUtils/PostUtils";
 import Loader from "./Loader";
 
-const MainSection = () => {
+const MainSectionSaved = () => {
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +14,7 @@ const MainSection = () => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
-            const data = await fetchPosts(page);
+            const data = await fetchSavedPosts(page);
             if (data.length > 0) {
                 setPosts((prevPosts) => [...prevPosts, ...data]);
                 setPage(page + 1);
@@ -46,22 +45,23 @@ const MainSection = () => {
         };
     }, [page, hasMore, isLoading, loadPosts]);
 
-    const addPost = (newPost) => {
-        setPosts([newPost, ...posts]);
-    };
-
     const removePostFromFeed = (postId) => {
         setPosts(posts.filter(post => post.id !== postId));
     };
 
+    const handleSavePost = (postId) => {
+        setPosts(posts.map(post => 
+          post.id === postId ? { ...post, isSaved: true } : post
+        ));
+      };
+
     return (
         <div className="flex flex-col gap-10">
-            <CreatePost addPost={addPost} />
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} />
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
         </div>
     );
 };
 
-export default MainSection;
+export default MainSectionSaved;

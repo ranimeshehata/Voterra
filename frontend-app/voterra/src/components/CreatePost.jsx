@@ -13,11 +13,6 @@ const CreatePost = ({ addPost } ) => {
   const [content, setContent] = useState("");
   const [user,setUser]=useRecoilState(userState);
   const { postCreate } = useFetch();
-  // useEffect(()=>{
-  //   console.log(user);
-    
-  // },[])
-
   const [us,setUs]=useState({})
 
   useEffect(()=>{
@@ -65,8 +60,6 @@ const CreatePost = ({ addPost } ) => {
     const postPolls=polls;
     const publishedDate=new Date().toLocaleDateString();
 
-    console.log({email,userName,postContent,postCategory,postPrivacy,postPolls,publishedDate});
-
     if(postContent.length<1){
       alert("Content cannot be empty");
       return false;
@@ -113,15 +106,13 @@ const CreatePost = ({ addPost } ) => {
         addPost(response);
       }
       else{
-        console.error("Error creating post:", error);
+        console.error(error);
       }
     },()=>{});
   }
 
   const postSubmit = () => {
-    console.log('Post submitted:', { content, polls, privacy, category });
     const isValid = postValidate();
-    console.log(isValid);
     if (!isValid) return;
     else{
       callBackend();

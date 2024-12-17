@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useEffect, useState } from 'react';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,16 +8,18 @@ import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
 import MainSection from '../components/MainSection';
+import Loader from '../components/Loader';
 
 function HomePage() {
-  const user = useRecoilValue(userState);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useRecoilState(userState);
   const isAuthenticated = useRecoilValue(isAuthenticatedState);
   const navigate = useNavigate();
   const { postSignout } = useFetch();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     if (!isAuthenticated) {
-      const token = localStorage.getItem('token');
       if (!token || token === 'expired') {
         toast.error('Your session has expired. Please log in again.');
         navigate('/login');
@@ -26,8 +27,14 @@ function HomePage() {
         toast.error('Invalid token. Please log in again.');
         navigate('/login');
       }
+    } else {
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      if (storedUser){
+        setUser(storedUser)
+      }
+      setLoading(false);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, setUser]);
 
   const handleLogout = () => {
     const token = localStorage.getItem("token");
@@ -45,12 +52,11 @@ function HomePage() {
         if(response.message){
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          console.log("Logout successful:", response.message);
           navigate("/login");
           toast.success("User signed out successfully!");
         }
         else{
-          console.error("Logout failed:", error);
+          console.error(error);
           toast.error("Error signing out. Please try again.");
         }
       },
@@ -58,6 +64,14 @@ function HomePage() {
     );
   };
   
+  if (loading) {
+    return (
+    <div>
+      <Loader />
+    </div>
+    );
+  }
+
   return (
     <div className="homepage-container bg-white-100 w-full absolute top-0">
       <div className="header">
@@ -66,7 +80,10 @@ function HomePage() {
 
       <div className="main-content">
         <div className="hidden md:block w-[20%]">
-          <SideBarHomePage user={user} handleLogout={handleLogout} />
+          <SideBarHomePage 
+            user={user} 
+            handleLogout={handleLogout}
+          />
         </div>
 
         <div className="w-[100%] md:w-[80%] lg:w-[60%] min-h-screen  p-3">
