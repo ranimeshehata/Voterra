@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
-import { createPost } from "../voterraUtils/PostUtils";
+import PropTypes from 'prop-types';
 
-const CreatePost = () => {
+const CreatePost = ({ addPost } ) => {
   const [polls, setPolls] = useState(['']);
   const [show, setShow] = useState(false);
   const [privacy, setPrivacy] = useState("PUBLIC");
@@ -19,9 +19,11 @@ const CreatePost = () => {
   // },[])
 
   const [us,setUs]=useState({})
+
   useEffect(()=>{
     setUs(JSON.parse(localStorage.getItem('user')));
   },[])
+  
   const categories = [
     "SPORTS", "TECHNOLOGY", "ENTERTAINMENT", "HEALTH", "EDUCATION",
     "BUSINESS", "FASHION", "FOOD", "JOBS", "MEDICAL", "CARS", "EVENTS",
@@ -93,9 +95,7 @@ const CreatePost = () => {
   }
 
   const callBackend = () => {
-    console.log("Creating post");
     const token=localStorage.getItem("token");
-    console.log(token);
 
     postCreate("http://localhost:8080/posts/createPost", {
       token,
@@ -108,44 +108,15 @@ const CreatePost = () => {
       publishedDate: new Date().toISOString(),
     },(response,error)=>{
       if(response){
-        console.log("Post created successfully:", response);
         resetPost();
+        setShow(false);
+        addPost(response);
       }
       else{
         console.error("Error creating post:", error);
       }
     },()=>{});
-    // fetch("http://localhost:8080/posts/createPost", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     "Authorization": "Bearer " + token,
-    //   },
-    //   body: JSON.stringify({
-    //     userEmail: user.email,
-    //     userName: user.username,
-    //     postContent: content,
-    //     category: category,
-    //     privacy: privacy,
-    //     polls: polls.map(poll => ({ pollContent: poll, voters: [] })),
-    //     publishedDate: new Date().toISOString(),
-    //   }),
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-    //     return response.json();
-
-    //   })
-    //   .then((data) => {
-    //     console.log("Post created successfully:", data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error creating post:", error);
-    //   });
   }
-
 
   const postSubmit = () => {
     console.log('Post submitted:', { content, polls, privacy, category });
@@ -156,9 +127,6 @@ const CreatePost = () => {
       callBackend();
     }
   };
-
-  console.log('User object:', user);
-
 
   return (
     <div className="rounded-lg shadow-lg p-3 font-[nunito]">
@@ -236,6 +204,9 @@ const CreatePost = () => {
       </div>
     </div>
   );
+};
+CreatePost.propTypes = {
+  addPost: PropTypes.func.isRequired,
 };
 
 export default CreatePost;

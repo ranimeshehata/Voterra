@@ -5,7 +5,7 @@ function useFetch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchData = async (url, options = {}, onComplete,onError) => {
+  const fetchData = async (url, options = {}, onComplete, onError) => {
     setLoading(true);
     setError(null);
     try {
@@ -16,14 +16,17 @@ function useFetch() {
         error.status = response.status;
         throw error;
       }
-      const result = await response.json();
+      const contentType = response.headers.get("content-type");
+      const result = contentType && contentType.includes("application/json")
+        ? await response.json()
+        : await response.text();
       setData(result);
       if (onComplete) {
         onComplete(result, null);
       }
     } catch (err) {
       setError(err.message);
-      onError();
+      onError(err);
       console.log(err.message);
       if (onComplete) {
         onComplete(null, err);
@@ -33,9 +36,10 @@ function useFetch() {
     }
   };
   
-  const get = (url, onComplete) => {
-    fetchData(url, { method: "GET" }, onComplete);
+  const get = (url, onComplete, onError) => {
+    fetchData(url, { method: "GET" }, onComplete, onError);
   };
+
   const postSignout = (url,token, onComplete, onError) => {
     fetchData(
       url,
@@ -51,7 +55,7 @@ function useFetch() {
     );
   };
 
-  const post = (url, body, onComplete,onError) => {
+  const post = (url, body, onComplete, onError) => {
     fetchData(
       url,
       {
@@ -66,7 +70,7 @@ function useFetch() {
     );
   };
 
-  const postCreate = (url, body, onComplete,onError) => {
+  const postCreate = (url, body, onComplete, onError) => {
     fetchData(
       url,
       {
@@ -82,6 +86,35 @@ function useFetch() {
     );
   };
 
+  const postSave = (url, body, onComplete, onError) => {
+    fetchData(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:"Bearer "+ body.token
+        },
+        body: JSON.stringify(body),
+      },
+      onComplete,
+      onError
+    );
+  };
+
+  const deletePost = (url, body, onComplete, onError) => {
+    fetchData(
+      url, 
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:"Bearer "+ body.token
+        },
+        body: JSON.stringify(body.post),
+      }, onComplete, onError);
+  };
+
   return { 
     data, 
     loading, 
@@ -89,7 +122,9 @@ function useFetch() {
     get, 
     post,
     postSignout,
-    postCreate
+    postCreate,
+    postSave,
+    deletePost
   };
 }
 

@@ -1,26 +1,21 @@
 /* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
-import { Col, Row, Container } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
-import UserFeed from '../components/UserFeed';
 import MainSection from '../components/MainSection';
 
 function HomePage() {
-  const [user,setUser] = useRecoilState(userState);
-  const [isAuthenticated,setIsAuthenticated] = useRecoilState(isAuthenticatedState);
+  const user = useRecoilValue(userState);
+  const isAuthenticated = useRecoilValue(isAuthenticatedState);
   const navigate = useNavigate();
   const { postSignout } = useFetch();
-  useEffect(()=>{
-    console.log(user);
-    
-  },[])
+
   useEffect(() => {
     if (!isAuthenticated) {
       const token = localStorage.getItem('token');
@@ -64,7 +59,6 @@ function HomePage() {
   };
   
   return (
-
     <div className="homepage-container bg-white-100 w-full absolute top-0">
       <div className="header">
         <Header />
@@ -72,7 +66,7 @@ function HomePage() {
 
       <div className="main-content">
         <div className="hidden md:block w-[20%]">
-          <SideBarHomePage  handleLogout={handleLogout} />
+          <SideBarHomePage user={user} handleLogout={handleLogout} />
         </div>
 
         <div className="w-[100%] md:w-[80%] lg:w-[60%] min-h-screen  p-3">

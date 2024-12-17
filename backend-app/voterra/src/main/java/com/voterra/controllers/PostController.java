@@ -47,10 +47,11 @@ public class PostController {
     public ResponseEntity<?> deletePost(@RequestBody Post post) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(userEmail);
-
+        
         if (!(post.getUserEmail().equals(userEmail) || isAdmin(user))) { // if not the creator of the post or an admin or a superadmin he can not delete the post
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
         }
+
         try {
             postService.deletePostById(post.getId());
             return ResponseEntity.ok("post deleted successfully");
@@ -81,15 +82,38 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+  
+    @PostMapping("/vote")
+    public ResponseEntity<?> vote(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String postId = request.get("postId");
+            int pollIndex = Integer.parseInt(request.get("pollIndex"));
+            postService.vote(email, postId, pollIndex);
+            return ResponseEntity.ok("voted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
 
-
-    @GetMapping("/homepage")
+   @GetMapping("/homepage")
     public ResponseEntity<?> getPosts(
             @RequestParam int page) {
         try {
 
             System.out.println(postService.getPaginatedPosts(page));
             return ResponseEntity.ok(postService.getPaginatedPosts(page));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/userContent")
+    public ResponseEntity<?> getUserContent(
+            @RequestParam String email ,
+            @RequestParam int page) {
+        try {
+            return ResponseEntity.ok(postService.getUserPosts(email , page));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }

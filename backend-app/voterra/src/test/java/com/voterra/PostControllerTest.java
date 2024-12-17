@@ -106,5 +106,36 @@ class PostControllerTest {
         assertTrue(response.getBody() instanceof Map);
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertEquals("Error retrieving saved posts", body.get("message"));
+=======
+    void testGetUserContent() {
+        String email = "testuser@example.com";
+        String username = "testuser";
+        int page = 0;
+        Post post = new Post(email, username ,"User Content", null, Post.privacy.PUBLIC, null, new Date());
+        when(postService.getUserPosts(email, page)).thenReturn(Collections.singletonList(post));
+
+        ResponseEntity<?> response = postController.getUserContent(email, page);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        List<?> body = (List<?>) response.getBody();
+        assertNotNull(body);
+        assertEquals(1, body.size());
+        assertTrue(body.contains(post));
+    }
+
+    @Test
+    void testGetUserContent_ExceptionHandling() {
+        String email = "testuser@example.com";
+        int page = 0;
+        when(postService.getUserPosts(email, page)).thenThrow(new RuntimeException("Test exception"));
+
+        ResponseEntity<?> response = postController.getUserContent(email, page);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Test exception", body.get("message"));
     }
 }

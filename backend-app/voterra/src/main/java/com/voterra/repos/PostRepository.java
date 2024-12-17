@@ -22,4 +22,7 @@ public interface PostRepository extends MongoRepository<Post, String> {
     // Fetch posts by post id in a saved post list
     List<Post> findByIdIn(List<String> savedPostIds, Pageable pageable);
 
+  @Query("{ 'userEmail': ?0, 'privacy': 'PUBLIC' }")
+    List<Post> findByUserEmailWithPublicPrivacy(String userEmail, Pageable pageable);
+
 }
