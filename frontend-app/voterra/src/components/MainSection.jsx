@@ -10,6 +10,7 @@ const MainSection = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef(null);
+
     const loadPosts = useCallback(async (page) => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
@@ -49,10 +50,14 @@ const MainSection = () => {
         setPosts([newPost, ...posts]);
     };
 
+    const removePostFromFeed = (postId) => {
+        setPosts(posts.filter(post => post.id !== postId));
+    };
+
     return (
         <div className="flex flex-col gap-10">
             <CreatePost addPost={addPost} />
-            <PostContainer posts={posts} />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } />
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
         </div>

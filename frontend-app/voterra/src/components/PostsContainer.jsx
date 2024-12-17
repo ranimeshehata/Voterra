@@ -1,21 +1,30 @@
-import { useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import PostCard from "./PostCard";
 
-const PostContainer = ({posts}) => {
+
+const PostContainer = ({posts, removePostFromFeed}) => {
+    const [postList, setPostList] = useState(posts);
+
     useEffect(()=>{
-        console.log(posts);
+        setPostList(posts);
     },[posts])
+
+   
+
     return ( 
         <div className="flex flex-col gap-4">
             {posts.map((post)=>(
-                <PostCard key={post.id} post={post}/>
+                <PostCard key={post.id} post={post} removePostFromFeed={removePostFromFeed} />
             ))}
         </div>
      );
 }
 PostContainer.propTypes = {
     posts: PropTypes.array.isRequired,
+    removePostFromFeed: PropTypes.func.isRequired
+    
 };
 
 export default PostContainer;

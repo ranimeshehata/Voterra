@@ -19,9 +19,11 @@ const CreatePost = ({ addPost } ) => {
   // },[])
 
   const [us,setUs]=useState({})
+
   useEffect(()=>{
     setUs(JSON.parse(localStorage.getItem('user')));
   },[])
+  
   const categories = [
     "SPORTS", "TECHNOLOGY", "ENTERTAINMENT", "HEALTH", "EDUCATION",
     "BUSINESS", "FASHION", "FOOD", "JOBS", "MEDICAL", "CARS", "EVENTS",
@@ -93,9 +95,7 @@ const CreatePost = ({ addPost } ) => {
   }
 
   const callBackend = () => {
-    console.log("Creating post");
     const token=localStorage.getItem("token");
-    console.log(token);
 
     postCreate("http://localhost:8080/posts/createPost", {
       token,
@@ -108,7 +108,6 @@ const CreatePost = ({ addPost } ) => {
       publishedDate: new Date().toISOString(),
     },(response,error)=>{
       if(response){
-        console.log("Post created successfully:", response);
         resetPost();
         setShow(false);
         addPost(response);
@@ -119,7 +118,6 @@ const CreatePost = ({ addPost } ) => {
     },()=>{});
   }
 
-
   const postSubmit = () => {
     console.log('Post submitted:', { content, polls, privacy, category });
     const isValid = postValidate();
@@ -129,9 +127,6 @@ const CreatePost = ({ addPost } ) => {
       callBackend();
     }
   };
-
-  console.log('User object:', user);
-
 
   return (
     <div className="rounded-lg shadow-lg p-3 font-[nunito]">

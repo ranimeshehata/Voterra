@@ -47,10 +47,11 @@ public class PostController {
     public ResponseEntity<?> deletePost(@RequestBody Post post) {
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(userEmail);
-
+        
         if (!(post.getUserEmail().equals(userEmail) || isAdmin(user))) { // if not the creator of the post or an admin or a superadmin he can not delete the post
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
         }
+
         try {
             postService.deletePostById(post.getId());
             return ResponseEntity.ok("post deleted successfully");

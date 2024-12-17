@@ -5,14 +5,16 @@ import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 
-const PostCard = ({post}) => {
+const PostCard = ({post, removePostFromFeed}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
     const [isSaved, setIsSaved] = useState(false);
-    const { postSave } = useFetch();
+    const [isDeleted, setIsDeleted] = useState(false);
+
+    const { postSave, deletePost } = useFetch();
 
 
     useEffect(()=>{
@@ -46,6 +48,7 @@ const PostCard = ({post}) => {
         (response, error)=>{
             if(response){
                 setIsSaved(true);
+                removePostFromFeed(post.id);
                 console.log("Post saved successfully");
                 console.log(response);
                 console.log("bravo");
@@ -62,6 +65,7 @@ const PostCard = ({post}) => {
         console.log("Post saved with id: ", id);
 
     }
+
 const vote = (pollIndex) => {
         if(voted){
             return;
@@ -108,8 +112,34 @@ const vote = (pollIndex) => {
         });
     }
 
-    console.log(post);
-    console.log(post.userName);
+    const postDelete = () => {
+        console.log("deleting post with id: ", post.id);
+        const token=localStorage.getItem("token");
+        if (!token) {
+            console.error("User is not logged in");
+            return;
+        }
+
+        deletePost("http://localhost:8080/posts/deletePost",{
+            token:token,
+            post: post
+        },
+        (response, error)=>{
+            if(response){
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+                console.log(response);
+                console.log("Post deleted with id: ", post.id);
+            }
+            else{
+                console.error("Error deleting post:", error);
+            }
+        },
+        (error)=>{
+            console.error("Error deleting post:", error);
+        });
+    };
+    
     return (
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
@@ -118,11 +148,11 @@ const vote = (pollIndex) => {
                     <p
                         className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         onClick={() => savePost(post.id)}
-                        style={isSaved ? { pointerEvents: 'none' } : {}}
                     >
                         {isSaved ? 'Post Saved' : 'Save Post'}
                     </p>
-                    <p className="hover:bg-gray-100">Delete Post</p>
+                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                    )}
                 </div>
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
@@ -137,7 +167,7 @@ const vote = (pollIndex) => {
             <div id="polls" className="flex flex-col gap-4">
                 {post.polls.map((poll, index)=>(
                     <div key={index}>
-                        <div onClick={() => vote(index)} className={`${votedPoll==index?"bg-red-500":""} p-2 cursor-pointer hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`} >
+                        <div onClick={() => vote(index)} className={`${votedPoll==index?"bg-red-100":""} p-2 ${voted? "cursor-not-allowed":"cursor-pointer"} hover:shadow-[0_0_15px_2px_rgba(239,68,68,1)] transition-shadow duration-300 shadow-lg rounded-lg bg-gray-100`} >
                             <h2>{poll.pollContent}</h2>
                         </div>
                         <div className={`h-2 rounded-b-lg bg-red-500 transition-all duration-500 ease-in-out`}
@@ -156,6 +186,7 @@ const vote = (pollIndex) => {
      );
 }
 PostCard.propTypes = {
+    removePostFromFeed: PropTypes.func.isRequired,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
@@ -168,7 +199,10 @@ PostCard.propTypes = {
         publishedDate: PropTypes.string.isRequired,
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
+        userEmail: PropTypes.string.isRequired,
+
     }).isRequired,
+
 };
 
 export default PostCard;

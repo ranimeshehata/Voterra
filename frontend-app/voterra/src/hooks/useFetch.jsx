@@ -102,6 +102,19 @@ function useFetch() {
     );
   };
 
+  const deletePost = (url, body, onComplete, onError) => {
+    fetchData(
+      url, 
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization:"Bearer "+ body.token
+        },
+        body: JSON.stringify(body.post),
+      }, onComplete, onError);
+  };
+
   return { 
     data, 
     loading, 
@@ -110,7 +123,8 @@ function useFetch() {
     post,
     postSignout,
     postCreate,
-    postSave
+    postSave,
+    deletePost
   };
 }
 
