@@ -9,7 +9,6 @@ public class FeedFactory {
 
     @Id // This field will act as the unique identifier.
     private String id;
-
     private String userEmail;
     private String userName;
     private String postContent;

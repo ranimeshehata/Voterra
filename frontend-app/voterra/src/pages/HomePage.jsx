@@ -2,14 +2,12 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
-import { Col, Row, Container } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
-import UserFeed from '../components/UserFeed';
 import MainSection from '../components/MainSection';
 
 function HomePage() {
@@ -61,7 +59,6 @@ function HomePage() {
   };
   
   return (
-
     <div className="homepage-container bg-white-100 w-full absolute top-0">
       <div className="header">
         <Header />
