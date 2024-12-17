@@ -147,10 +147,10 @@ const vote = (pollIndex) => {
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
-                    <p>{post.userName[0]}</p>
+                    <p>{post.userName[0].toUpperCase()}</p>
                 </div>
-                <p>posted by {post.userName} &#9679; {formatDate(post.publishedDate)}</p>
-            </div>
+                <p>posted by <strong style={{ fontSize: '1.1rem' }}> {post.userName} </strong> &#9679; <span style={{ fontSize: '0.9rem', fontWeight: 'bold'}}>{formatDate(post.publishedDate)}</span></p>
+                </div>
 
             <h1 className="text-2xl">{post.postContent}</h1>
 
