@@ -91,9 +91,11 @@ class PostServiceTest {
         user.setEmail(email);
         user.setSavedPosts(List.of("post1", "post2"));
 
-        Post post1 = new Post("user1@example.com","user1" ,"Post 1", null, Post.privacy.PUBLIC, null, new Date());
+        Post post1 = new Post("user1@example.com","user1" ,"Post 1", null,
+                Post.privacy.PUBLIC, null, new Date());
         post1.setId("post1");
-        Post post2 = new Post("user2@example.com", "user2","Post 2", null, Post.privacy.PUBLIC, null, new Date());
+        Post post2 = new Post("user2@example.com", "user2","Post 2", null,
+                Post.privacy.PUBLIC, null, new Date());
         post2.setId("post2");
 
         when(userRepository.findByEmail(email)).thenReturn(user);
@@ -109,50 +111,43 @@ class PostServiceTest {
 
     @Test
     public void testSavePostSuccess() {
-        // Arrange
-        String userEmail = "user@example.com";
-        String postId = "post123";
-
-        User user = new User();
-        user.setEmail(userEmail);
-        user.setSavedPosts(new ArrayList<>()); // Initialize savedPosts
-
-        when(userRepository.findByEmail(userEmail)).thenReturn(user);
-        when(postRepository.existsById(postId)).thenReturn(true);
-
-        // Act
-        postService.savePost(userEmail, postId);
-
-        // Assert
-        verify(userRepository, times(1)).save(user);
-        assert user.getSavedPosts().contains(postId);
-    }
-
-    @Test
-    public void testSavePostAlreadySaved() {
-        // Arrange
         String userEmail = "user@example.com";
         String postId = "post123";
 
         User user = new User();
         user.setEmail(userEmail);
         user.setSavedPosts(new ArrayList<>());
-        user.getSavedPosts().add(postId); // Post already saved
 
         when(userRepository.findByEmail(userEmail)).thenReturn(user);
         when(postRepository.existsById(postId)).thenReturn(true);
 
-        // Act
         postService.savePost(userEmail, postId);
 
-        // Assert
-        verify(userRepository, never()).save(user); // No save operation
+        verify(userRepository, times(1)).save(user);
+        assert user.getSavedPosts().contains(postId);
+    }
+
+    @Test
+    public void testSavePostAlreadySaved() {
+        String userEmail = "user@example.com";
+        String postId = "post123";
+
+        User user = new User();
+        user.setEmail(userEmail);
+        user.setSavedPosts(new ArrayList<>());
+        user.getSavedPosts().add(postId);
+
+        when(userRepository.findByEmail(userEmail)).thenReturn(user);
+        when(postRepository.existsById(postId)).thenReturn(true);
+
+        postService.savePost(userEmail, postId);
+
+        verify(userRepository, never()).save(user);
         assertEquals(1, user.getSavedPosts().size());
     }
 
     @Test
     public void testSavePostPostNotFound() {
-        // Arrange
         String userEmail = "user@example.com";
         String postId = "post123";
 
@@ -162,19 +157,17 @@ class PostServiceTest {
         when(userRepository.findByEmail(userEmail)).thenReturn(user);
         when(postRepository.existsById(postId)).thenReturn(false);
 
-        // Act & Assert
         PostNotFoundException exception = assertThrows(
                 PostNotFoundException.class,
                 () -> postService.savePost(userEmail, postId)
         );
 
         assertEquals("Post with ID post123 not found", exception.getMessage());
-        verify(userRepository, never()).save(user); // No save operation
+        verify(userRepository, never()).save(user);
     }
 
     @Test
     public void testVoteSuccess() {
-        // Arrange
         String userEmail = "user@example.com";
         String postId = "post123";
         int pollIndex = 0;
@@ -189,17 +182,14 @@ class PostServiceTest {
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
-        // Act
         postService.vote(userEmail, postId, pollIndex);
 
-        // Assert
         assertTrue(post.getPolls().get(pollIndex).getVoters().contains(userEmail));
-        verify(postRepository, times(1)).save(post); // Ensure the post is saved
+        verify(postRepository, times(1)).save(post);
     }
 
     @Test
     public void testVoteDuplicate() {
-        // Arrange
         String userEmail = "user@example.com";
         String postId = "post123";
         int pollIndex = 0;
@@ -208,37 +198,33 @@ class PostServiceTest {
         post.setId(postId);
 
         Poll poll = new Poll();
-        poll.setVoters(new ArrayList<>(List.of(userEmail))); // User has already voted
+        poll.setVoters(new ArrayList<>(List.of(userEmail))); 
 
         post.setPolls(List.of(poll));
 
         when(postRepository.findById(postId)).thenReturn(Optional.of(post));
 
-        // Act
         postService.vote(userEmail, postId, pollIndex);
 
-        // Assert
         assertEquals(1, post.getPolls().get(pollIndex).getVoters().size());
-        verify(postRepository, never()).save(post); // No save operation
+        verify(postRepository, never()).save(post);
     }
 
     @Test
     public void testVotePostNotFound() {
-        // Arrange
         String userEmail = "user@example.com";
         String postId = "invalidPostId";
         int pollIndex = 0;
 
         when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         PostNotFoundException exception = assertThrows(
                 PostNotFoundException.class,
                 () -> postService.vote(userEmail, postId, pollIndex)
         );
 
         assertEquals("Post with ID invalidPostId not found", exception.getMessage());
-        verify(postRepository, never()).save(any(Post.class)); // No save operation
+        verify(postRepository, never()).save(any(Post.class));
     }
 
 
@@ -249,7 +235,8 @@ class PostServiceTest {
         String currentUserEmail = "testuser@example.com";
         when(authentication.getName()).thenReturn(currentUserEmail);
 
-        Post userPost = new Post("testuser@example.com", "testuser" ,"User Post", null, Post.privacy.PUBLIC, null, new Date());
+        Post userPost = new Post("testuser@example.com", "testuser" ,"User Post",
+                null, Post.privacy.PUBLIC, null, new Date());
 
         when(postRepository.findByUserEmail(eq(currentUserEmail), any(PageRequest.class)))
                 .thenReturn(Collections.singletonList(userPost));
@@ -269,7 +256,8 @@ class PostServiceTest {
         when(authentication.getName()).thenReturn(currentUserEmail);
 
         String friendEmail = "friend@example.com";
-        Post friendPost = new Post(friendEmail, "testuser" ,"Friend Post", null, Post.privacy.FRIENDS, null, new Date());
+        Post friendPost = new Post(friendEmail, "testuser" ,"Friend Post", null,
+                Post.privacy.FRIENDS, null, new Date());
 
         when(userService.getFriends(currentUserEmail)).thenReturn(List.of(friendEmail));
         when(postRepository.findByUserEmailInWithSpecificPrivacy(eq(List.of(friendEmail)), any(PageRequest.class)))
