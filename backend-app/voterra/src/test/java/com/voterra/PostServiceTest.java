@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
@@ -81,6 +82,30 @@ class PostServiceTest {
     }
 
     @Test
+    void testGetSavedPosts() {
+        String email = "testuser@example.com";
+        int page = 0;
+        PageRequest pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "publishedDate"));
+
+        User user = new User();
+        user.setEmail(email);
+        user.setSavedPosts(List.of("post1", "post2"));
+
+        Post post1 = new Post("user1@example.com","user1" ,"Post 1", null, Post.privacy.PUBLIC, null, new Date());
+        post1.setId("post1");
+        Post post2 = new Post("user2@example.com", "user2","Post 2", null, Post.privacy.PUBLIC, null, new Date());
+        post2.setId("post2");
+
+        when(userRepository.findByEmail(email)).thenReturn(user);
+        when(postRepository.findByIdIn(user.getSavedPosts(), pageable)).thenReturn(List.of(post1, post2));
+
+        List<Post> result = postService.getSavedPosts(email, page);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(post1));
+        assertTrue(result.contains(post2));
+    }
     public void testSavePostSuccess() {
         // Arrange
         String userEmail = "user@example.com";
@@ -275,5 +300,4 @@ class PostServiceTest {
         assertEquals(1, result.size());
         assertTrue(result.contains(publicPost));
     }
-
 }

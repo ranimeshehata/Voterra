@@ -19,7 +19,10 @@ public interface PostRepository extends MongoRepository<Post, String> {
     @Query("{ 'userEmail': { $nin: ?0 }, 'privacy': 'PUBLIC' }")
     List<Post> findByUserEmailNotInWithPublicPrivacy(List<String> excludedEmails, Pageable pageable);
 
-    @Query("{ 'userEmail': ?0, 'privacy': 'PUBLIC' }")
+    // Fetch posts by post id in a saved post list
+    List<Post> findByIdIn(List<String> savedPostIds, Pageable pageable);
+
+  @Query("{ 'userEmail': ?0, 'privacy': 'PUBLIC' }")
     List<Post> findByUserEmailWithPublicPrivacy(String userEmail, Pageable pageable);
 
 }
