@@ -1,31 +1,75 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import UserProfileHeader from "../components/UserProfileHeader";
+import { useRecoilState } from 'recoil';
+import { userState } from '../recoil/atoms';
+import { fetchUserProfilePosts } from '../voterraUtils/PostUtils';
+import PostContainer from '../components/PostsContainer';
+import Loader from '../components/Loader';
 
-const UserProfile = ({user}) => {
+const UserProfile = () => {
+      const [posts, setPosts] = useState([]);
+      const [page, setPage] = useState(0);
+      const [isLoading, setIsLoading] = useState(false);
+      const [hasMore, setHasMore] = useState(true);
+      const observerRef = useRef(null);
+      const [user,setUser]=useRecoilState(userState);
+      const loadPosts = useCallback(async (page) => {
+          if (isLoading || !hasMore || !user) return;
+          setIsLoading(true);
+          try {
+              const data = await fetchUserProfilePosts(page,user.email);
+              console.log(data);
+              
+              if (data.length > 0) {
+                  setPosts((prevPosts) => [...prevPosts, ...data]);
+                  setPage(page + 1);
+              } else {
+                  setHasMore(false);
+              }
+          } catch (error) {
+              console.error(error);
+          } finally {
+              setIsLoading(false);
+          }
+      }, [isLoading, hasMore,user]);
+   
+    useEffect(() => {
+      
+      const observer = new IntersectionObserver(
+          (entries) => {
+              if (entries[0].isIntersecting) {
+                  loadPosts(page);
+              }
+          },
+          { threshold: 1.0 }
+      );
+      const currentObserverRef = observerRef.current;
+      if (currentObserverRef) observer.observe(currentObserverRef);
 
+      return () => {
+          if (currentObserverRef) observer.unobserve(currentObserverRef);
+      };
+  }, [page, hasMore, isLoading, loadPosts,user]);
+  useEffect(()=>{
+    const userObj=JSON.parse(localStorage.getItem('user'));
+    setUser(userObj);
+  },[]);
   return (
     <div className="bg-white-100 w-full absolute top-0">
       <div className="header">
         <UserProfileHeader />
       </div>
-      <div className="flex-grow flex flex-col items-center justify-center w-full">
+      {user&&<div className="flex-grow flex flex-col items-center justify-center w-full">
         <div className="profile-header flex items-center mb-4">
-          <img 
-            src={user.profilePicture} 
-            alt={`${user.name}'s profile`} 
-            className="profile-picture mr-4" 
-          />
-          <h2 className="text-2xl">{user.name}</h2>
+          <h2 className="text-2xl">{user.firstName} {user.lastName}</h2>
         </div>
         <div className="profile-posts w-full max-w-md">
           <h3 className="text-xl mb-2">Posts</h3>
-          <ul className="list-disc pl-5">
-            {user.posts.map((post, index) => (
-              <li key={index} className="mb-1">{post}</li>
-            ))}
-          </ul>
+          <PostContainer posts={posts}/>
+          {isLoading && <Loader/>}
+          {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
         </div>
-      </div>
+      </div>}
     </div>
   );
 };
