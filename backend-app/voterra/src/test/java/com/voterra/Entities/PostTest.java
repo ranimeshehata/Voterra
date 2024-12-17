@@ -53,6 +53,7 @@ class PostTest {
 
         // Act
         post.setUserEmail(userEmail);
+        post.setUserName(username);
         post.setPostContent(postContent);
         post.setCategory(category);
         post.setPrivacy(privacy);
