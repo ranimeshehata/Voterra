@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Loader = () => {
   return (
     <div className="flex flex-row gap-2 pb-5 justify-center">

@@ -39,9 +39,34 @@ export async function fetchPosts(page) {
       }
   
       const data = await response.json();
-      console.log( data);
+      console.log("posts", data);
       return data;
     } catch (error) {
       console.error('Error fetching posts:', error.message);
+    }
+}
+
+export async function fetchSavedPosts(page) {
+    const token = localStorage.getItem("token");
+    console.log(token);
+    try {
+      const response = await fetch(`http://localhost:8080/posts/getSavedPosts?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+ token
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'failed');
+      }
+  
+      const data = await response.json();
+      console.log("saved", data);
+      return data;
+    } catch (error) {
+      console.error('Error fetching saved posts:', error.message);
     }
 }

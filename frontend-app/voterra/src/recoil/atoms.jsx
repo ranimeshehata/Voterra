@@ -8,5 +8,5 @@ export const userState = atom({
 
 export const isAuthenticatedState = atom({
   key: 'isAuthenticatedState',
-  default: true,
+  default: !!localStorage.getItem('token'),
 });

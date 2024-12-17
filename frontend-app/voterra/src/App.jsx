@@ -8,6 +8,7 @@ const IntroPage = React.lazy(() => import('./pages/IntroPage'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
+const SavedPosts = React.lazy(() => import('./pages/SavedPosts'));
 
 function App() {
   useAuth();
@@ -21,6 +22,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/homepage" element={<HomePage />} />
+            <Route path='/savedPosts' element={<SavedPosts />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
           </Routes>
         </Suspense>

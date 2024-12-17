@@ -2,9 +2,17 @@ import { Row, Col } from 'react-bootstrap';
 import Avatar from 'react-avatar';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 
 function SideBarHomePage({ user, handleLogout }) {
+    const navigate = useNavigate();
+
+    const handleSavedPostsClick = () => {
+        console.log('Saved Posts clicked');
+        navigate('/savedPosts', { state: { savedPosts: user.savedPosts } });
+    };
+
   return (
     <div>
         <div className="profile">
@@ -40,7 +48,7 @@ function SideBarHomePage({ user, handleLogout }) {
       
             <Row>
                 <Col>
-                    <a href="/savedposts" className="sidebar-link">
+                    <a href="/savedPosts" className="sidebar-link" onClick={handleSavedPostsClick }>
                         <i className="fas fa-bookmark"></i>
                         <span className="sidebar-link-text">Saved Posts</span>
                     </a>
@@ -81,7 +89,8 @@ SideBarHomePage.propTypes = {
   user: PropTypes.shape({
     firstName: PropTypes.string,
     lastName: PropTypes.string,
-    username: PropTypes.string
+    username: PropTypes.string,
+    savedPosts: PropTypes.array
   }).isRequired,
   handleLogout: PropTypes.func.isRequired,
 };
