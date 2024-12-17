@@ -3,8 +3,10 @@ import './style.css';
 import React, { Suspense } from 'react';
 import './style.css';
 import useAuth from './hooks/useAuth';
+import user from './components/user';
 const Login = React.lazy(() => import('./pages/Login'));
 const IntroPage = React.lazy(() => import('./pages/IntroPage'));
+const UserProfile = React.lazy(() => import('./pages/UserProfile'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
@@ -22,6 +24,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/homepage" element={<HomePage />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
+            <Route path="/userprofile" element={<UserProfile user={user} />} />
           </Routes>
         </Suspense>
       </Router>
