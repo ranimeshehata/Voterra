@@ -106,6 +106,8 @@ class PostServiceTest {
         assertTrue(result.contains(post1));
         assertTrue(result.contains(post2));
     }
+
+    @Test
     public void testSavePostSuccess() {
         // Arrange
         String userEmail = "user@example.com";

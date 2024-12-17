@@ -1,4 +1,4 @@
-package com.voterra;
+package com.voterra.Entities;
 
 import com.voterra.entities.User;
 import org.junit.jupiter.api.Test;
