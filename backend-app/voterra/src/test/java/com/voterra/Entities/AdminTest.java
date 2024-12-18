@@ -1,5 +1,7 @@
-package com.voterra.entities;
+package com.voterra.Entities;
 
+import com.voterra.entities.Admin;
+import com.voterra.entities.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
