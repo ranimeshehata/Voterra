@@ -3,7 +3,6 @@ import './style.css';
 import React, { Suspense } from 'react';
 import './style.css';
 import useAuth from './hooks/useAuth';
-import user from './components/user';
 const Login = React.lazy(() => import('./pages/Login'));
 const IntroPage = React.lazy(() => import('./pages/IntroPage'));
 const UserProfile = React.lazy(() => import('./pages/UserProfile'));
@@ -26,7 +25,7 @@ function App() {
             <Route path="/homepage" element={<HomePage />} />
             <Route path='/savedPosts' element={<SavedPosts />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
-            <Route path="/userprofile" element={<UserProfile user={user} />} />
+            <Route path="/userprofile" element={<UserProfile />} />
           </Routes>
         </Suspense>
       </Router>
