@@ -100,8 +100,6 @@ public class PostController {
     public ResponseEntity<?> getPosts(
             @RequestParam int page) {
         try {
-
-            System.out.println(postService.getPaginatedPosts(page));
             return ResponseEntity.ok(postService.getPaginatedPosts(page));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));

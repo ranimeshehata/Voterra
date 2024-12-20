@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Voterra" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/voterra/target/demo-0.0.1-SNAPSHOT.jar" />
+    <option name="WORKING_DIRECTORY" value="D:\programming\Project\Voterra\backend-app" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2" />
+  </configuration>
+</component>

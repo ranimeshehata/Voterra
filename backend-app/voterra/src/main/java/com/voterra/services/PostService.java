@@ -43,8 +43,6 @@ public class PostService {
 
     public void savePost(String userEmail, String postId){
         User user = userRepository.findByEmail(userEmail);
-//        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(postId));
-//        System.out.println(post.getId());
         if (user.getSavedPosts() == null) {
             user.setSavedPosts(new ArrayList<>()); // Initialize if null
         }
@@ -65,8 +63,6 @@ public class PostService {
         List<String> voters = polls.get(pollIndex).getVoters();
         if(!voters.contains(userEmail)){
             voters.add(userEmail);
-            //print voters
-            System.out.println(Arrays.toString(voters.toArray()));
             postRepository.save(post);
         }
     }
