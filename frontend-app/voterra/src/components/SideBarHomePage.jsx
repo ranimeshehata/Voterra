@@ -37,7 +37,7 @@ function SideBarHomePage({ user, handleLogout }) {
            
             <Row>
                 <Col>
-                    <a href="/profile" className="sidebar-link">
+                    <a href="/userprofile" className="sidebar-link">
                         <i className="fas fa-user"></i>
                         <span className="sidebar-link-text">Profile</span>
                     </a>

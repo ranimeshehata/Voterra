@@ -20,6 +20,27 @@ export const createPost=async(content,polls,category,privacy,username,email)=>{
     }
     const token = localStorage.getItem("token");
 }
+export async function fetchUserProfilePosts(page,email) {
+  const token = localStorage.getItem("token");
+  try {
+    const response = await fetch(`http://localhost:8080/posts/userContent?email=${email}&page=${page}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization:"Bearer "+ token
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'failed');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
 
 export async function fetchPosts(page) {
     const token = localStorage.getItem("token");

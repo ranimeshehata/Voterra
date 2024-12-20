@@ -176,7 +176,7 @@ const vote = (pollIndex) => {
      );
 }
 PostCard.propTypes = {
-    removePostFromFeed: PropTypes.func.isRequired,
+    removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,

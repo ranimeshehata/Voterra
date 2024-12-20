@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import UserProfileHeader from "../components/UserProfileHeader";
 import { useRecoilState } from 'recoil';
 import { userState } from '../recoil/atoms';
@@ -18,8 +18,6 @@ const UserProfile = () => {
           setIsLoading(true);
           try {
               const data = await fetchUserProfilePosts(page,user.email);
-              console.log(data);
-              
               if (data.length > 0) {
                   setPosts((prevPosts) => [...prevPosts, ...data]);
                   setPage(page + 1);
@@ -54,17 +52,20 @@ const UserProfile = () => {
     const userObj=JSON.parse(localStorage.getItem('user'));
     setUser(userObj);
   },[]);
+  
   return (
-    <div className="bg-white-100 w-full absolute top-0">
+    <div className="bg-white-100 w-full">
       <div className="header">
         <UserProfileHeader />
       </div>
-      {user&&<div className="flex-grow flex flex-col items-center justify-center w-full">
-        <div className="profile-header flex items-center mb-4">
+      {user&&<div className="flex-grow flex flex-col items-center justify-center w-full p-8">
+        <div className="profile-header flex flex-col items-center mb-4">
           <h2 className="text-2xl">{user.firstName} {user.lastName}</h2>
+          
+          <h3 className="text-lg text-gray-500">@{user.username}</h3>
         </div>
-        <div className="profile-posts w-full max-w-md">
-          <h3 className="text-xl mb-2">Posts</h3>
+        <div className="profile-posts w-full ">
+          <h3 className="text-xl mb-2b ">Posts</h3>
           <PostContainer posts={posts}/>
           {isLoading && <Loader/>}
           {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
