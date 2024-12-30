@@ -1,9 +1,8 @@
 package com.voterra.services;
-import com.voterra.entities.Poll;
+import com.voterra.entities.*;
 import com.voterra.exceptions.PostNotFoundException;
-import com.voterra.entities.Post;
-import com.voterra.entities.User;
 import com.voterra.repos.PostRepository;
+import com.voterra.repos.ReportedPostRepository;
 import com.voterra.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +27,9 @@ public class PostService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReportedPostRepository reportedPostRepository;
 
     private final JwtUtils jwtUtils = new JwtUtils();
     public Post createPost(Post post){
@@ -116,4 +118,56 @@ public class PostService {
             return postRepository.findByUserEmailWithPublicPrivacy(email, pageable);
         }
     }
+
+    public void reportPost(ReportedPost reportedPost) {
+        ReportedPost rp = reportedPostRepository.findById(reportedPost.getPostId()).orElse(null);
+        if (rp == null) {
+            reportedPostRepository.save(reportedPost);
+        }
+        else{
+            String reporterId = reportedPost.getReportersId().getFirst();
+            if (rp.getReportersId().contains(reporterId)) {
+                return;
+            }
+            rp.getReportersId().add(reporterId);
+        }
+    }
+
+    public List<Post> getReportedPosts() {
+        List<ReportedPost> reportedPosts = reportedPostRepository.findAll();
+        List<Post> originalPosts = new ArrayList<>();
+
+        for (ReportedPost reportedPost : reportedPosts) {
+            Post post = postRepository.findById(reportedPost.getPostId()).orElse(null);
+            if (post != null) {
+                originalPosts.add(post);
+            }
+        }
+        return originalPosts;
+    }
+
+    public void deleteReportedPost(String postId) {
+        ReportedPost reportedPost = reportedPostRepository.findById(postId).orElse(null);
+        if (reportedPost != null) {
+
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                if (user.getSavedPosts() != null && user.getSavedPosts().contains(postId)) {
+                    user.getSavedPosts().remove(postId);
+                    userRepository.save(user);
+                }
+            }
+
+            postRepository.deleteById(postId);
+            reportedPostRepository.deleteById(postId);
+        }
+    }
+
+    public void leaveReportedPost(String postId) {
+        ReportedPost reportedPost = reportedPostRepository.findById(postId).orElse(null);
+        if (reportedPost != null) {
+            reportedPostRepository.deleteById(postId);
+        }
+    }
+
 }

@@ -45,7 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         if ((USERS + "signup").equals(requestUri) || (USERS + "login").equals(requestUri) || (USERS + "signupWithGoogle").equals(requestUri) ||
                 (USERS + "signupWithFacebook").equals(requestUri) || (USERS + "loginWithGoogle").equals(requestUri)
-                || (USERS + "loginWithFacebook").equals(requestUri) || (USERS + "forgetPassword").equals(requestUri) || (POSTS  + "savePost").equals(requestUri)) {
+                || (USERS + "loginWithFacebook").equals(requestUri) || (USERS + "forgetPassword").equals(requestUri) || (POSTS  + "savePost").equals(requestUri)
+                || (POSTS + "reportPost").equals(requestUri) || (POSTS + "getReportedPosts").equals(requestUri) || (POSTS + "deleteReportedPost").equals(requestUri)
+                || (POSTS + "leaveReportedPost").equals(requestUri)){
             // If the request is for /signup or /login, skip the filter and continue the chain
             filterChain.doFilter(request, response);
             return;

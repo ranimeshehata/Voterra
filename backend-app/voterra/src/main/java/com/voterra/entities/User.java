@@ -19,7 +19,7 @@ public class User {
     private gender gender;
     private Date dateOfBirth;
     private List<String> friends;
-    private List<String> savedPosts;            //list of (userID - postID)
+    private List<String> savedPosts;            //list of (postID)
 
     @Override
     public String toString() {

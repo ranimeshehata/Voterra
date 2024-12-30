@@ -1,5 +1,7 @@
 package com.voterra.controllers;
+import com.voterra.entities.Admin;
 import com.voterra.entities.Post;
+import com.voterra.entities.ReportedPost;
 import com.voterra.entities.User;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.UserRepository;
@@ -116,4 +118,64 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PostMapping("/reportPost")
+    public ResponseEntity<?> reportPost(@RequestBody ReportedPost reportedPost) {
+        try {
+            postService.reportPost(reportedPost);
+            return ResponseEntity.ok("post reported successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getReportedPosts")
+    public ResponseEntity<?> getReportedPosts(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            User user = userRepository.findByEmail(email);
+            if (user.getUserType() != User.userType.ADMIN) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
+            }
+            return ResponseEntity.ok(postService.getReportedPosts());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/deleteReportedPost")
+    public ResponseEntity<?> deleteReportedPost(@RequestBody Map<String, String> request) {
+        try {
+            String postId = request.get("postId");
+            String email = request.get("email");
+            User user = userRepository.findByEmail(email);
+            if (user.getUserType() != User.userType.ADMIN) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
+            }
+            postService.deleteReportedPost(postId);
+            return ResponseEntity.ok("post deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/leaveReportedPost")
+    public ResponseEntity<?> leaveReportedPost(@RequestBody Map<String, String> request) {
+        try {
+            String postId = request.get("postId");
+            String email = request.get("email");
+            User user = userRepository.findByEmail(email);
+            if (user.getUserType() != User.userType.ADMIN) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
+            }
+            postService.leaveReportedPost(postId);
+            return ResponseEntity.ok("post deleted successfully from reported posts list");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+
+
+
 }
