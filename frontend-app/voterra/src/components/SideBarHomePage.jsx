@@ -55,6 +55,14 @@ function SideBarHomePage({ user, handleLogout }) {
             </Row>
             <Row>
                 <Col>
+                    <a href="/reportedposts" className="sidebar-link">
+                        <i className="fas fa-flag"></i>
+                        <span className="sidebar-link-text">Reported Posts</span>
+                    </a>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
                     <a href="/about" className="sidebar-link">
                         <i className="fas fa-info-circle"></i>
                         <span className="sidebar-link-text">About</span>

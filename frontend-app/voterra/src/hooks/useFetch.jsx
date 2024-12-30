@@ -115,6 +115,21 @@ function useFetch() {
       }, onComplete, onError);
   };
 
+  const reportPost = (url, body, onComplete, onError) => {
+    fetchData(
+      url,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+      onComplete,
+      onError
+    );
+  };
+
   return { 
     data, 
     loading, 
@@ -124,7 +139,8 @@ function useFetch() {
     postSignout,
     postCreate,
     postSave,
-    deletePost
+    deletePost,
+    reportPost
   };
 }
 

@@ -14,7 +14,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
     const [postMenu,setPostMenu]=useState(false);
     const [isSaved, setIsSaved] = useState(post.isSaved);
     const [isDeleted, setIsDeleted] = useState(false);
-    const { postSave, deletePost } = useFetch();
+    const { postSave, deletePost, reportPost } = useFetch();
 
     useEffect(()=>{
         let x=0;
@@ -62,6 +62,27 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             }
         },
         (error)=>{
+            console.error(error);
+        });
+    };
+
+    const handleReportPost = (postId) => {
+        const token = localStorage.getItem('token');
+        const reportersId = [user.email];
+        console.log(postId);
+        console.log(reportersId);
+        reportPost("http://localhost:8080/posts/reportPost", {
+            postId,
+            reportersId,
+        },
+        (response, error) => {
+            if (response) {
+                console.log(response);
+            } else {
+                console.error(error);
+            }
+        },
+        (error) => {
             console.error(error);
         });
     };
@@ -129,6 +150,8 @@ const vote = (pollIndex) => {
             console.error(error);
         });
     };
+
+    
     
     return (
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
@@ -142,6 +165,14 @@ const vote = (pollIndex) => {
                         {isSaved ? 'Post Saved' : 'Save Post'}
                     </p>
                     { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                    )}
+                    {post.userEmail !== user.email && (
+                        <p 
+                            className="hover:bg-gray-100" 
+                            onClick={() => handleReportPost(post.id)}
+                        >
+                                Report Post
+                        </p>
                     )}
                 </div>
             </div>
