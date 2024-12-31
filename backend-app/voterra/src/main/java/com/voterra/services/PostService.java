@@ -15,7 +15,6 @@ import com.voterra.tokenization.JwtUtils;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -67,29 +66,45 @@ public class PostService {
         }
     }
   
-  public List<Post> getPaginatedPosts(int page) {
+  public List<Post> getPaginatedPosts(String category, int page){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         int size = 5;
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+        if(category.equals("all")) {
+            List<Post> userPosts = postRepository.findByUserEmail(email, pageable);
 
-        List<Post> userPosts = postRepository.findByUserEmail(email, pageable);
+            List<String> friends = userService.getFriends(email);
+            List<Post> friendPosts = postRepository.findByUserEmailInWithSpecificPrivacy(friends, pageable);
 
-        List<String> friends = userService.getFriends(email);
-        List<Post> friendPosts = postRepository.findByUserEmailInWithSpecificPrivacy(friends, pageable);
+            List<String> excludedEmails = new ArrayList<>(friends);
+            excludedEmails.add(email);
+            List<Post> nonFriendPosts = postRepository.findByUserEmailNotInWithPublicPrivacy(excludedEmails, pageable);
+            List<Post> combinedPosts = new ArrayList<>();
+            combinedPosts.addAll(userPosts);
+            combinedPosts.addAll(friendPosts);
+            combinedPosts.addAll(nonFriendPosts);
+            combinedPosts.sort((post1, post2) -> post2.getPublishedDate().compareTo(post1.getPublishedDate()));
+            return combinedPosts;
+        }
+        else {
+            List<Post> userPosts = postRepository.findByUserEmailAndCategory(email, category, pageable);
 
-        List<String> excludedEmails = new ArrayList<>(friends);
-        excludedEmails.add(email);
-        List<Post> nonFriendPosts = postRepository.findByUserEmailNotInWithPublicPrivacy(excludedEmails, pageable);
+            List<String> friends = userService.getFriends(email);
+            List<Post> friendPosts = postRepository.findByUserEmailInWithSpecificPrivacyAndCategory(friends, category, pageable);
 
-        List<Post> combinedPosts = new ArrayList<>();
-        combinedPosts.addAll(userPosts);
-        combinedPosts.addAll(friendPosts);
-        combinedPosts.addAll(nonFriendPosts);
-        combinedPosts.sort((post1, post2) -> post2.getPublishedDate().compareTo(post1.getPublishedDate()));
-
-        return combinedPosts;
+            List<String> excludedEmails = new ArrayList<>(friends);
+            excludedEmails.add(email);
+            List<Post> nonFriendPosts = postRepository.findByUserEmailNotInWithPublicPrivacyAndCategory(excludedEmails, category, pageable);
+            List<Post> combinedPosts = new ArrayList<>();
+            combinedPosts.addAll(userPosts);
+            combinedPosts.addAll(friendPosts);
+            combinedPosts.addAll(nonFriendPosts);
+            combinedPosts.sort((post1, post2) -> post2.getPublishedDate().compareTo(post1.getPublishedDate()));
+            return combinedPosts;
+        }
     }
+
 
     public List<Post> getSavedPosts(String email, int page) {
         int size = 5;
@@ -97,8 +112,14 @@ public class PostService {
 
         User user = userRepository.findByEmail(email);
         List<String> savedPostIds = user.getSavedPosts();
-
-        return postRepository.findByIdIn(savedPostIds,pageable);
+        for(String postId : savedPostIds) {
+            if (!postRepository.existsById(postId)) {
+                savedPostIds.remove(postId);
+            }
+        }
+        user.setSavedPosts(savedPostIds);
+        userRepository.save(user);
+        return postRepository.findByIdIn(savedPostIds, pageable);
     }
 
     public List<Post> getUserPosts(String email, int page) {
@@ -115,5 +136,27 @@ public class PostService {
         else {
             return postRepository.findByUserEmailWithPublicPrivacy(email, pageable);
         }
+    }
+
+    public List<Post> searchPosts(String postContent, int page) {
+        int size = 5;
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+        List<Post> matchedPost =  postRepository.findByPostContentContaining(postContent, pageable);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<String> friends = userService.getFriends(email);
+        List<Post> returnedPost = new ArrayList<>();
+        for(Post post : matchedPost){
+            if(String.valueOf(post.getPrivacy()).equals("PUBLIC")){
+                returnedPost.add(post);
+            }
+            else if(String.valueOf(post.getPrivacy()).equals("FRIENDS") && friends.contains(post.getUserEmail())){
+                returnedPost.add(post);
+            }
+            else if(post.getUserEmail().equals(email)){
+                returnedPost.add(post);
+            }
+        }
+        returnedPost.sort((post1, post2) -> post2.getPublishedDate().compareTo(post1.getPublishedDate()));
+        return returnedPost;
     }
 }
