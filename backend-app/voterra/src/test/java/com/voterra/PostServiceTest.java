@@ -353,7 +353,7 @@ class PostServiceTest {
     }
 
     @Test
-    void testReportPost_AlreadyReportedByUser() {
+    void testReportPost_AlreadyReportedBySameUser() {
         ReportedPost existingReportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
         when(reportedPostRepository.findById("postId")).thenReturn(Optional.of(existingReportedPost));
 
@@ -365,6 +365,33 @@ class PostServiceTest {
         verify(reportedPostRepository, never()).save(any());
         verify(userRepository, never()).save(any());
     }
+
+    @Test
+    void testReportPost_NewUserReportsAlreadyReportedPost() {
+        String postId = "postId1";
+        String newUserEmail = "newUser@example.com";
+        String existingUserEmail = "existingUser@example.com";
+
+        ReportedPost existingReportedPost = new ReportedPost(postId, new LinkedList<>(List.of(existingUserEmail)));
+
+        ReportedPost newReportedPost = new ReportedPost(postId, new LinkedList<>(List.of(newUserEmail)));
+
+        when(reportedPostRepository.findById(postId)).thenReturn(Optional.of(existingReportedPost));
+
+        User newUser = new User();
+        newUser.setEmail(newUserEmail);
+        newUser.setReportedPosts(new LinkedList<>());
+        when(userRepository.findByEmail(newUserEmail)).thenReturn(newUser);
+
+        String result = postService.reportPost(newReportedPost);
+
+        assertEquals("Post reported successfully", result);
+        verify(reportedPostRepository).save(existingReportedPost);
+        verify(userRepository).save(newUser);
+        assertTrue(existingReportedPost.getReportersId().contains(newUserEmail));
+        assertTrue(newUser.getReportedPosts().contains(postId));
+    }
+
 
     @Test
     void testGetReportedPosts() {
