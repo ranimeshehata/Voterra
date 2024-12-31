@@ -20,6 +20,10 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
     useEffect(()=>{
         let x=0;
         const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+        console.log(reportedPosts);
+        console.log(user.email);
+        console.log(reportedPosts.includes(post.id));
+        console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
         }
@@ -39,9 +43,9 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
             setIsReported(true);
         }
 
-        if (reportedPosts.includes(post.id)) {
-            setIsReported(true);
-        }
+        // if (reportedPosts.includes(post.id) && reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email))) {
+        //     setIsReported(true);
+        // }
 
     },[post.polls, user.email, user.savedPosts, post.id, user.reportedPosts]);
 
