@@ -15,7 +15,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
     const [isSaved, setIsSaved] = useState(post.isSaved);
     const [isReported, setIsReported] = useState(post.isReported);
     const [isDeleted, setIsDeleted] = useState(false);
-    const { postSave, deletePost, reportPost } = useFetch();
+    const { postSave, deletePost, reportPost, acceptReportedPost } = useFetch();
 
     useEffect(()=>{
         let x=0;
@@ -169,6 +169,33 @@ const vote = (pollIndex) => {
         });
     };
 
+    const AcceptReport = (id) => {
+        const token=localStorage.getItem("token");
+        const email=user.email;
+        const postId=id;
+        if (!token) {
+            toast.error("Session expired. Please log in again.");
+            return;
+        }
+        acceptReportedPost("http://localhost:8080/posts/deleteReportedPost",{
+            postId:postId,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                console.log(response);
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+            }
+            else{
+                console.error(error);
+            }
+        },
+        (error)=>{
+            console.error(error);
+        });
+    };
+
     
     
     return (
@@ -180,9 +207,9 @@ const vote = (pollIndex) => {
                         <>
                             <p 
                                 className="hover:bg-gray-100" 
-                                // onClick={postDelete}
+                                onClick={() => AcceptReport(post.id)}
                             >
-                                Delete Post
+                                Accept Report
                             </p>
                             <p
                                 className="hover:bg-gray-100"
