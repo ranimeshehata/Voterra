@@ -13,32 +13,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SuperAdminTest {
 
-//    @Test
-//    void testMakeAdmin() {
-//        // Arrange
-//        List<String> admins = new ArrayList<>();
-//        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED);
-//        superAdmin.setListOfAdmins(admins);
-//
-//        // Act
-//        superAdmin.makeAdmin("newAdmin");
-//
-//        // Assert
-//        assertTrue(superAdmin.getListOfAdmins().contains("newAdmin"));
-//    }
+    @Test
+    void testMakeAdmin() {
+        // Arrange
+        List<String> admins = new ArrayList<>();
+        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED, new ArrayList<>());
+        superAdmin.setListOfAdmins(admins);
 
-//    @Test
-//    void testRemoveAdmin() {
-//        // Arrange
-//        List<String> admins = new ArrayList<>();
-//        admins.add("adminToRemove");
-//        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED);
-//        superAdmin.setListOfAdmins(admins);
-//
-//        // Act
-//        superAdmin.removeAdmin("adminToRemove");
-//
-//        // Assert
-//        assertEquals(0, superAdmin.getListOfAdmins().size());
-//    }
+        // Act
+        superAdmin.makeAdmin("newAdmin");
+
+        // Assert
+        assertTrue(superAdmin.getListOfAdmins().contains("newAdmin"));
+    }
+
+    @Test
+    void testRemoveAdmin() {
+        // Arrange
+        List<String> admins = new ArrayList<>();
+        admins.add("adminToRemove");
+        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED, new ArrayList<>() );
+        superAdmin.setListOfAdmins(admins);
+
+        // Act
+        superAdmin.removeAdmin("adminToRemove");
+
+        // Assert
+        assertEquals(0, superAdmin.getListOfAdmins().size());
+    }
 }
