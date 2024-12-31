@@ -48,7 +48,7 @@ public class PostService {
     public void savePost(String userEmail, String postId){
         User user = userRepository.findByEmail(userEmail);
         if (user.getSavedPosts() == null) {
-            user.setSavedPosts(new ArrayList<>()); // Initialize if null
+            user.setSavedPosts(new ArrayList<>());
         }
         if(postRepository.existsById(postId)){
             if(!user.getSavedPosts().contains(postId)){
@@ -125,6 +125,9 @@ public class PostService {
         ReportedPost rp = reportedPostRepository.findById(reportedPost.getPostId()).orElse(null);
         if (rp == null) {
             reportedPostRepository.save(reportedPost);
+            User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
+            user.getReportedPosts().add(reportedPost.getPostId());
+            userRepository.save(user);
         }
         else{
             String reporterId = reportedPost.getReportersId().getFirst();
@@ -132,6 +135,9 @@ public class PostService {
                 return "You have already reported this post";
             }
             rp.getReportersId().add(reporterId);
+            User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
+            user.getReportedPosts().add(reportedPost.getPostId());
+            userRepository.save(user);
             reportedPostRepository.save(rp);
         }
         return "Post reported successfully";
@@ -159,6 +165,10 @@ public class PostService {
                     user.getSavedPosts().remove(postId);
                     userRepository.save(user);
                 }
+                if (user.getReportedPosts() != null && user.getReportedPosts().contains(postId)) {
+                    user.getReportedPosts().remove(postId);
+                    userRepository.save(user);
+                }
             }
 
             postRepository.deleteById(postId);
@@ -170,6 +180,13 @@ public class PostService {
         ReportedPost reportedPost = reportedPostRepository.findById(postId).orElse(null);
         if (reportedPost != null) {
             reportedPostRepository.deleteById(postId);
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                if (user.getReportedPosts() != null && user.getReportedPosts().contains(postId)) {
+                    user.getReportedPosts().remove(postId);
+                    userRepository.save(user);
+                }
+            }
         }
     }
 

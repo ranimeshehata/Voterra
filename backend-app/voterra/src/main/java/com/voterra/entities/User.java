@@ -20,6 +20,7 @@ public class User {
     private Date dateOfBirth;
     private List<String> friends;
     private List<String> savedPosts;            //list of (postID)
+    private List<String> reportedPosts;         //list of (postID)
 
     @Override
     public String toString() {
@@ -46,7 +47,7 @@ public class User {
     }
 
     public User(String email, String password, String username, String firstName, String lastName,
-                Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender) {
+                Date dateOfBirth, List<String> friends, List<String> savedPosts, userType userType, gender gender, List<String> reportedPosts) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -57,6 +58,7 @@ public class User {
         this.savedPosts = savedPosts;
         this.userType = userType;
         this.gender = gender;
+        this.reportedPosts = reportedPosts;
     }
 
     public User() {
@@ -140,5 +142,13 @@ public class User {
 
     public void setSavedPosts(List<String> savedPosts) {
         this.savedPosts = savedPosts;
+    }
+
+    public List<String> getReportedPosts() {
+        return reportedPosts;
+    }
+
+    public void setReportedPosts(List<String> reportedPosts) {
+        this.reportedPosts = reportedPosts;
     }
 }

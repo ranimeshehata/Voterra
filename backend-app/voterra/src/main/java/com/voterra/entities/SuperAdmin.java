@@ -9,8 +9,9 @@ import java.util.List;
 public class SuperAdmin extends User {
     private List<String> listOfAdmins;
 
-    public SuperAdmin(String email, String password, String username, String firstName, String lastName, Date dateOfBirth, List<String> friends, List<String> savedPosts, User.userType userType, User.gender gender) {
-        super(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender);
+    public SuperAdmin(String email, String password, String username, String firstName, String lastName, Date dateOfBirth,
+                      List<String> friends, List<String> savedPosts, User.userType userType, User.gender gender, List<String> reportedPosts) {
+        super(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender, reportedPosts);
     }
 
     public void makeAdmin(String userId) {
