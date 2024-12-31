@@ -1,4 +1,5 @@
 package com.voterra.services;
+import com.voterra.DTOs.ReportedPostDTO;
 import com.voterra.entities.*;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.PostRepository;
@@ -135,22 +136,16 @@ public class PostService {
         }
     }
 
-    public HashMap<Post, Integer> getReportedPosts(int page) {
+    public List<ReportedPostDTO> getReportedPosts(int page) {
         int size = 5;
         PageRequest pageable = PageRequest.of(page, size);
-
         List<ReportedPost> reportedPosts = reportedPostRepository.findAll(pageable).getContent();
-        System.out.println("Number of reported posts: " + reportedPosts.size());
-        HashMap<Post, Integer> posts = new HashMap<>();
-
+        List<ReportedPostDTO> reportedPostDTOS = new ArrayList<>();
         for (ReportedPost reportedPost : reportedPosts) {
-            Post post = postRepository.findById(reportedPost.getPostId()).orElse(null);
-            if (post != null) {
-                posts.put(post, reportedPost.getReportersId().size());
-                System.out.println(reportedPost.getReportersId().size());
-            }
+            postRepository.findById(reportedPost.getPostId())
+                    .ifPresent(post -> reportedPostDTOS.add(new ReportedPostDTO(post, reportedPost.getReportersId().size())));
         }
-        return posts;
+        return reportedPostDTOS;
     }
 
     public void deleteReportedPost(String postId) {
