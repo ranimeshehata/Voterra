@@ -17,7 +17,8 @@ class SuperAdminTest {
     void testMakeAdmin() {
         // Arrange
         List<String> admins = new ArrayList<>();
-        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED);
+        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED, new ArrayList<>());
         superAdmin.setListOfAdmins(admins);
 
         // Act
@@ -32,7 +33,8 @@ class SuperAdminTest {
         // Arrange
         List<String> admins = new ArrayList<>();
         admins.add("adminToRemove");
-        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED);
+        SuperAdmin superAdmin = new SuperAdmin("admin@example.com", "password", "admin", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.SUPERADMIN, User.gender.NOT_SPECIFIED, new ArrayList<>() );
         superAdmin.setListOfAdmins(admins);
 
         // Act

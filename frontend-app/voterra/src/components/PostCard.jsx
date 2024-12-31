@@ -5,16 +5,18 @@ import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import { toast } from "react-toastify";
+import Avatar from "react-avatar";
 
-const PostCard = ({post, removePostFromFeed, onSavePost}) => {
+const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
     const [isSaved, setIsSaved] = useState(post.isSaved);
+    const [isReported, setIsReported] = useState(post.isReported);
     const [isDeleted, setIsDeleted] = useState(false);
-    const { postSave, deletePost } = useFetch();
+    const { postSave, deletePost, reportPost, acceptReportedPost, leaveReportedPost } = useFetch();
 
     useEffect(()=>{
         let x=0;
@@ -33,7 +35,11 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             setIsSaved(true);
         }
 
-    },[post.polls, user.email, user.savedPosts, post.id]);
+        if (user.reportedPosts && user.reportedPosts.includes(post.id)) {
+            setIsReported(true);
+        }
+
+    },[post.polls, user, post.id]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -62,6 +68,33 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             }
         },
         (error)=>{
+            console.error(error);
+        });
+    };
+
+    const handleReportPost = (postId) => {
+        const token = localStorage.getItem('token');
+        const reportersId = [user.email];
+        reportPost("http://localhost:8080/posts/reportPost", {
+            postId,
+            reportersId,
+        },
+        (response, error) => {
+            if (response) {
+                if(response === "You have already reported this post") {
+                    toast.error("You have already reported this post");
+                }
+                    setIsReported(true);
+                    setUser(prevUser => ({
+                        ...prevUser,
+                        reportedPosts: [...prevUser.reportedPosts, postId]
+                    }));
+                    onReportPost(postId);
+            } else {
+                console.error(error);
+            }
+        },
+        (error) => {
             console.error(error);
         });
     };
@@ -129,25 +162,125 @@ const vote = (pollIndex) => {
             console.error(error);
         });
     };
+
+    const AcceptReport = (id) => {
+        const token=localStorage.getItem("token");
+        const email=user.email;
+        const postId=id;
+        if (!token) {
+            toast.error("Session expired. Please log in again.");
+            return;
+        }
+        acceptReportedPost("http://localhost:8080/posts/deleteReportedPost",{
+            postId:postId,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+            }
+            else{
+                console.error(error);
+            }
+        },
+        (error)=>{
+            console.error(error);
+        });
+    };
+
+    const IgnoreReport = (id) => {
+        const token=localStorage.getItem("token");
+        const email=user.email;
+        const postId=id;
+        if (!token) {
+            toast.error("Session expired. Please log in again.");
+            return;
+        }
+        leaveReportedPost("http://localhost:8080/posts/leaveReportedPost",{
+            postId:postId,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+            }
+            else{
+                console.error(error);
+            }
+        },
+        (error)=>{
+            console.error(error);
+        }
+        );
+    };
+    
     
     return (
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
                 <i onClick={()=>setPostMenu(prev=>!prev)} className="fa-solid fa-ellipsis-vertical"></i>
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
-                    <p
-                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                        onClick={() => !isSaved && savePost(post.id)}
-                    >
-                        {isSaved ? 'Post Saved' : 'Save Post'}
-                    </p>
-                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                    {pageType === 'reported'? (
+                        <>
+                            <p 
+                                className="hover:bg-gray-100" 
+                                onClick={() => AcceptReport(post.id)}
+                            >
+                                Accept Report
+                            </p>
+                            <p
+                                className="hover:bg-gray-100"
+                                onClick={() => IgnoreReport(post.id)}
+                            >
+                                Ignore Report
+                            </p>
+                        </>
+                    ) : (
+                        user.userType !== 'ADMIN'? (
+                            <>
+                                <p
+                                    className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                    onClick={() => !isSaved && savePost(post.id)}
+                                >
+                                    {isSaved ? 'Post Saved' : 'Save Post'}
+                                </p>
+                                { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>)}
+                                {post.userEmail !== user.email && (
+                                    <p 
+                                        className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        onClick={() => !isReported && handleReportPost(post.id)}
+                                    >
+                                        {isReported ? 'Post Reported' : 'Report Post'}
+                                    </p>
+                                )}
+                            </>
+                        ):(
+                            <>
+                                <p
+                                    className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                    onClick={() => !isSaved && savePost(post.id)}
+                                >
+                                    {isSaved ? 'Post Saved' : 'Save Post'}
+                                </p>
+                                <p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                            </>
+                            )
+                        
                     )}
                 </div>
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
-                    
+                    {/* <p>{post.userName[0].toUpperCase()}</p> */}
+                    <Avatar
+                        name={post.userName}
+                        size="40"
+                        round={true}
+                        color="#eb6070"
+                        boxShadow="0px 17px 40px 4px rgba(25, 30, 36, 0.11)"
+                    />
                 </div>
                 <p>posted by <strong style={{ fontSize: '1.1rem' }}> {post.userName} </strong> &#9679; <span style={{ fontSize: '0.9rem', fontWeight: 'bold'}}>{formatDate(post.publishedDate)}</span></p>
                 </div>
@@ -168,9 +301,20 @@ const vote = (pollIndex) => {
                     </div>
                 ))}
             </div>
-            <p>{totalVotes} voters</p>
-            <div>
-                <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <p>
+                        {totalVotes} {totalVotes > 1 ? 'votes' : 'vote'}
+                    </p>
+                    {post.reportersCount > 0 && (
+                        <div>
+                            <p className="p-2 bg-red-200 rounded-full w-fit"> {post.reportersCount} {post.reportersCount > 1 ? 'reports' : 'report'}</p>
+                        </div>
+                    )}
+                    <div>
+                        <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
+                    </div>
+                </div>
             </div>
         </div>
      );
@@ -178,6 +322,8 @@ const vote = (pollIndex) => {
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
+    onReportPost: PropTypes.func,
+    pageType: PropTypes.string,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
@@ -191,9 +337,15 @@ PostCard.propTypes = {
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
-        isSaved: PropTypes.bool
+        isSaved: PropTypes.bool,
+        isReported: PropTypes.bool,
+        reportersCount: PropTypes.number
     }).isRequired,
+};
 
+PostCard.defaultProps = {
+    onReportPost: () => console.log('Default report function'),
+    onSavePost: () => console.log('Default save function'),
 };
 
 export default PostCard;

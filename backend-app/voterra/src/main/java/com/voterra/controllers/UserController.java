@@ -104,4 +104,6 @@ public class UserController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage())); // Return error message if account already exists
         }
     }
+
+
 }

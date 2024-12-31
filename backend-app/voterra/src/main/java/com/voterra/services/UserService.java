@@ -34,7 +34,9 @@ public class UserService {
             throw new RuntimeException("Username already exists");
         }
         if(user.getUserType()==SUPERADMIN){
-            SuperAdmin superAdmin = new SuperAdmin(user.getEmail(), user.getPassword(), user.getUsername(), user.getFirstName(), user.getLastName(), user.getDateOfBirth(), user.getFriends(), user.getSavedPosts(), user.getUserType(), user.getGender());
+            SuperAdmin superAdmin = new SuperAdmin(user.getEmail(), user.getPassword(), user.getUsername(), user.getFirstName(),
+                    user.getLastName(), user.getDateOfBirth(), user.getFriends(), user.getSavedPosts(), user.getUserType(),
+                    user.getGender(), user.getReportedPosts());
             superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
             userRepository.save(superAdmin);
             return new Object[] {superAdmin, jwtUtils.generateToken(superAdmin.getEmail())};

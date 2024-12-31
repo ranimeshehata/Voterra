@@ -88,6 +88,44 @@ export async function fetchSavedPosts(page) {
       console.error(error.message);
     }
 }
+
+export async function fetchReportedPosts(page) {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8080/posts/getReportedPosts?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+ token
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'failed');
+      }
+  
+      const data = await response.json();
+      const transformedData = data.map(item => ({
+        id: item.post.id,
+        userEmail: item.post.userEmail,
+        userName: item.post.userName,
+        postContent: item.post.postContent,
+        category: item.post.category,
+        privacy: item.post.privacy,
+        polls: item.post.polls.map(poll => ({
+          pollContent: poll.pollContent,
+          voters: poll.voters
+      })),
+        publishedDate: item.post.publishedDate,
+        reportersCount: item.numberOfReports
+    }));
+    return transformedData;
+    } catch (error) {
+      console.error(error.message);
+    }
+}
+
 export const fetchSearch = async ( search, page) => {
   const token = localStorage.getItem("token");
   try {
@@ -111,3 +149,4 @@ export const fetchSearch = async ( search, page) => {
       return [];
   }
 };
+

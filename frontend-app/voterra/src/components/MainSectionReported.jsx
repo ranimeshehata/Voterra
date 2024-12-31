@@ -1,20 +1,20 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import PostContainer from "./PostsContainer";
-import { fetchSavedPosts } from "../voterraUtils/PostUtils";
+import { fetchReportedPosts } from "../voterraUtils/PostUtils";
 import Loader from "./Loader";
 
-const MainSectionSaved = () => {
+function MainSectionReported() {
     const [posts, setPosts] = useState([]);
     const [page, setPage] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef(null);
-
+    
     const loadPosts = useCallback(async (page) => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
-            const data = await fetchSavedPosts(page);
+            const data = await fetchReportedPosts(page);
             if (data.length > 0) {
                 setPosts((prevPosts) => [...prevPosts, ...data]);
                 setPage(page + 1);
@@ -56,19 +56,20 @@ const MainSectionSaved = () => {
       };
 
     const handleReportPost = (postId) => {
-        setPosts(posts.map(post => 
-          post.id === postId ? { ...post, isReported: true } : post
+        setPosts(posts.map(post =>
+            post.id === postId ? { ...post, isReported: true } : post
         ));
-      }
-      
+    }
+
     return (
         <div className="flex flex-col gap-10">
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} onReportPost={handleReportPost} />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} pageType="reported" onReportPost={handleReportPost}/>
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
+
             {!isLoading && (
             <>
-                {posts.length === 0 && <div className="text-center text-4xl text-gray-600">No saved posts yet ..</div>}
+                {posts.length === 0 && <div className="text-center text-4xl text-gray-600">No reported posts yet ..</div>}
                 <div className="flex justify-center">
                     <button
                         className="bg-red-500 mb-5 text-white p-2 rounded-lg mt-2 shadow"
@@ -81,6 +82,7 @@ const MainSectionSaved = () => {
         )}
         </div>
     );
-};
 
-export default MainSectionSaved;
+}
+
+export default MainSectionReported;

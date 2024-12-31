@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useRecoilState } from 'recoil';
 import Logo from '../assets/Logo.svg';
 import { useLocation } from 'react-router-dom';

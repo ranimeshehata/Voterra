@@ -27,7 +27,8 @@ class AdminTest {
         User.gender gender = User.gender.MALE;
 
         // Act
-        Admin admin = new Admin(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender);
+        Admin admin = new Admin(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts,
+                userType, gender, new ArrayList<>());
 
         // Assert
         assertEquals(email, admin.getEmail());
@@ -44,7 +45,8 @@ class AdminTest {
 
     @Test
     void testDeletePost() {
-        Admin admin = new Admin("admin@example.com", "password123", "adminUser", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.ADMIN, User.gender.MALE);
+        Admin admin = new Admin("admin@example.com", "password123", "adminUser", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.ADMIN, User.gender.MALE, new ArrayList<>());
         String postId = "post123";
 
         admin.deletePost(postId);
@@ -53,7 +55,8 @@ class AdminTest {
 
     @Test
     void testLeavePost() {
-        Admin admin = new Admin("admin@example.com", "password123", "adminUser", "Admin", "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.ADMIN, User.gender.MALE);
+        Admin admin = new Admin("admin@example.com", "password123", "adminUser", "Admin",
+                "User", new Date(), new ArrayList<>(), new ArrayList<>(), User.userType.ADMIN, User.gender.MALE, new ArrayList<>());
         String postId = "post123";
 
         admin.leavePost(postId);

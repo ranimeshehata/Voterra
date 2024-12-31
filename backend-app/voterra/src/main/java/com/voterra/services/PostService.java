@@ -1,9 +1,9 @@
 package com.voterra.services;
-import com.voterra.entities.Poll;
+import com.voterra.DTOs.ReportedPostDTO;
+import com.voterra.entities.*;
 import com.voterra.exceptions.PostNotFoundException;
-import com.voterra.entities.Post;
-import com.voterra.entities.User;
 import com.voterra.repos.PostRepository;
+import com.voterra.repos.ReportedPostRepository;
 import com.voterra.repos.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,10 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.voterra.tokenization.JwtUtils;
-
-
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -27,6 +26,9 @@ public class PostService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReportedPostRepository reportedPostRepository;
 
     private final JwtUtils jwtUtils = new JwtUtils();
     public Post createPost(Post post){
@@ -43,7 +45,7 @@ public class PostService {
     public void savePost(String userEmail, String postId){
         User user = userRepository.findByEmail(userEmail);
         if (user.getSavedPosts() == null) {
-            user.setSavedPosts(new ArrayList<>()); // Initialize if null
+            user.setSavedPosts(new ArrayList<>());
         }
         if(postRepository.existsById(postId)){
             if(!user.getSavedPosts().contains(postId)){
@@ -138,6 +140,75 @@ public class PostService {
         }
     }
 
+    public String reportPost(ReportedPost reportedPost) {
+        ReportedPost rp = reportedPostRepository.findById(reportedPost.getPostId()).orElse(null);
+        if (rp == null) {
+            reportedPostRepository.save(reportedPost);
+            User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
+            user.getReportedPosts().add(reportedPost.getPostId());
+            userRepository.save(user);
+        }
+        else{
+            String reporterId = reportedPost.getReportersId().getFirst();
+            if (rp.getReportersId().contains(reporterId)) {
+                return "You have already reported this post";
+            }
+            rp.getReportersId().add(reporterId);
+            User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
+            user.getReportedPosts().add(reportedPost.getPostId());
+            userRepository.save(user);
+            reportedPostRepository.save(rp);
+        }
+        return "Post reported successfully";
+    }
+
+    public List<ReportedPostDTO> getReportedPosts(int page) {
+        int size = 5;
+        PageRequest pageable = PageRequest.of(page, size);
+        List<ReportedPost> reportedPosts = reportedPostRepository.findAll(pageable).getContent();
+        List<ReportedPostDTO> reportedPostDTOS = new ArrayList<>();
+        for (ReportedPost reportedPost : reportedPosts) {
+            postRepository.findById(reportedPost.getPostId())
+                    .ifPresent(post -> reportedPostDTOS.add(new ReportedPostDTO(post, reportedPost.getReportersId().size())));
+        }
+        return reportedPostDTOS;
+    }
+
+    public void deleteReportedPost(String postId) {
+        ReportedPost reportedPost = reportedPostRepository.findById(postId).orElse(null);
+        if (reportedPost != null) {
+
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                if (user.getSavedPosts() != null && user.getSavedPosts().contains(postId)) {
+                    user.getSavedPosts().remove(postId);
+                    userRepository.save(user);
+                }
+                if (user.getReportedPosts() != null && user.getReportedPosts().contains(postId)) {
+                    user.getReportedPosts().remove(postId);
+                    userRepository.save(user);
+                }
+            }
+
+            postRepository.deleteById(postId);
+            reportedPostRepository.deleteById(postId);
+        }
+    }
+
+    public void leaveReportedPost(String postId) {
+        ReportedPost reportedPost = reportedPostRepository.findById(postId).orElse(null);
+        if (reportedPost != null) {
+            reportedPostRepository.deleteById(postId);
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                if (user.getReportedPosts() != null && user.getReportedPosts().contains(postId)) {
+                    user.getReportedPosts().remove(postId);
+                    userRepository.save(user);
+                }
+            }
+        }
+    }
+
     public List<Post> searchPosts(String postContent, int page) {
         int size = 5;
         PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
@@ -159,4 +230,5 @@ public class PostService {
         returnedPost.sort((post1, post2) -> post2.getPublishedDate().compareTo(post1.getPublishedDate()));
         return returnedPost;
     }
+
 }
