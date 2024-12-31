@@ -92,16 +92,19 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
         },
         (response, error) => {
             if (response) {
-                setIsReported(true);
-                setUser(prevUser => ({
-                    ...prevUser,
-                    reportedPosts: [...(prevUser.reportedPosts || []), postId]
-                }));
-                onReportPost(postId);
-                const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
-                reportedPosts.push(postId);
-                localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
-                console.log(response);
+                if(response === "You have already reported this post") {
+                    toast.error("You have already reported this post");
+                }
+                    setIsReported(true);
+                    setUser(prevUser => ({
+                        ...prevUser,
+                        reportedPosts: [...(prevUser.reportedPosts || []), postId]
+                    }));
+                    onReportPost(postId);
+                    const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+                    reportedPosts.push(postId);
+                    localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
+                    console.log(response);
             } else {
                 console.error(error);
             }
