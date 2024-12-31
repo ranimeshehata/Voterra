@@ -63,10 +63,10 @@ class UserTest {
         Date dateOfBirth = new Date(946684800000L); // Jan 1, 2000
         List<String> friends = Arrays.asList("friend1", "friend2");
         List<String> savedPosts = Arrays.asList("post1", "post2");
+        List<String> reportedPosts = Arrays.asList("post3", "post4");
 
         // Create the User object
-        User user = new User(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender);
-
+        User user = new User(email, password, username, firstName, lastName, dateOfBirth, friends, savedPosts, userType, gender, reportedPosts);
         // Expected string representation of the User object
         String expectedString = "User{" +
                 "email='" + email + '\'' +
