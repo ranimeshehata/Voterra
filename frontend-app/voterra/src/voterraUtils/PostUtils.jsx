@@ -104,7 +104,25 @@ export async function fetchReportedPosts(page) {
       }
   
       const data = await response.json();
-      return data;
+      console.log("Raw data:", data);
+      const transformedData = data.map(item => ({
+        id: item.post.id,
+        userEmail: item.post.userEmail,
+        userName: item.post.userName,
+        postContent: item.post.postContent,
+        category: item.post.category,
+        privacy: item.post.privacy,
+        polls: item.post.polls.map(poll => ({
+          pollContent: poll.pollContent,
+          voters: poll.voters
+      })),
+        publishedDate: item.post.publishedDate,
+        reportersCount: item.numberOfReports
+    }));
+
+    console.log("Transformed data:", transformedData);
+    return transformedData;
+      // return data;
       // return data.map(post => ({
       //   ...post,
       //   reportersCount: post.reportersId ? post.reportersId.length : 0

@@ -20,6 +20,7 @@ function ReportedPosts() {
     const isAuthenticated = useRecoilValue(isAuthenticatedState);
     const navigate = useNavigate();
     const { postSignout } = useFetch();
+    
     useEffect(() => {
         const token = localStorage.getItem('token');
       if (!isAuthenticated) {
@@ -34,6 +35,11 @@ function ReportedPosts() {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser){
           setUser(storedUser)
+          const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+            setUser(prevUser => ({
+                ...prevUser,
+                reportedPosts: reportedPosts
+            }));
         }
         setLoading(false);
       }

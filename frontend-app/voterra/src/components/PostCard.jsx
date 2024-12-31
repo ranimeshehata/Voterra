@@ -6,7 +6,7 @@ import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import { toast } from "react-toastify";
 
-const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
+const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
@@ -20,10 +20,11 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
     useEffect(()=>{
         let x=0;
         const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
-        console.log(reportedPosts);
-        console.log(user.email);
-        console.log(reportedPosts.includes(post.id));
-        console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
+        // console.log(reportedPosts);
+        // console.log(user.userType);
+        // console.log(user.email);
+        // console.log(reportedPosts.includes(post.id));
+        // console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
         }
@@ -96,6 +97,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
                     ...prevUser,
                     reportedPosts: [...(prevUser.reportedPosts || []), postId]
                 }));
+                onReportPost(postId);
                 const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
                 reportedPosts.push(postId);
                 localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
@@ -252,41 +254,37 @@ const vote = (pollIndex) => {
                             </p>
                         </>
                     ) : (
-                        <>
-                            <p
-                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                        onClick={() => !isSaved && savePost(post.id)}
-                    >
-                        {isSaved ? 'Post Saved' : 'Save Post'}
-                    </p>
-                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                        user.userType !== 'ADMIN'? (
+                            <>
+                                <p
+                                    className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                    onClick={() => !isSaved && savePost(post.id)}
+                                >
+                                    {isSaved ? 'Post Saved' : 'Save Post'}
+                                </p>
+                                { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>)}
+                                {post.userEmail !== user.email && (
+                                    <p 
+                                        className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        onClick={() => !isReported && handleReportPost(post.id)}
+                                    >
+                                        {isReported ? 'Post Reported' : 'Report Post'}
+                                    </p>
+                                )}
+                            </>
+                        ):(
+                            <>
+                                <p
+                                    className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                    onClick={() => !isSaved && savePost(post.id)}
+                                >
+                                    {isSaved ? 'Post Saved' : 'Save Post'}
+                                </p>
+                                <p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                            </>
+                            )
+                        
                     )}
-                    {post.userEmail !== user.email && (
-                        <p 
-                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                            onClick={() => !isReported && handleReportPost(post.id)}
-                        >
-                            {isReported ? 'Post Reported' : 'Report Post'}
-                        </p>
-                    )}
-                        </>
-                    )}
-                    {/* <p
-                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                        onClick={() => !isSaved && savePost(post.id)}
-                    >
-                        {isSaved ? 'Post Saved' : 'Save Post'}
-                    </p>
-                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
-                    )}
-                    {post.userEmail !== user.email && (
-                        <p 
-                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                            onClick={() => !isReported && handleReportPost(post.id)}
-                        >
-                            {isReported ? 'Post Reported' : 'Report Post'}
-                        </p>
-                    )} */}
                 </div>
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
@@ -312,21 +310,28 @@ const vote = (pollIndex) => {
                     </div>
                 ))}
             </div>
-            <p>{totalVotes} voters</p>
-            <div>
-                <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
-            </div>
-            {/* {user.userType === 'ADMIN' && post.reportersCount > 0 && (
-                <div>
-                    <p className="p-2 bg-red-200 rounded-full w-fit">Reported by {post.reportersCount} {post.reportersCount > 1 ? 'users' : 'user'}</p>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <p>
+                        {totalVotes} {totalVotes > 1 ? 'votes' : 'vote'}
+                    </p>
+                    {post.reportersCount > 0 && (
+                        <div>
+                            <p className="p-2 bg-red-200 rounded-full w-fit"> {post.reportersCount} {post.reportersCount > 1 ? 'reports' : 'report'}</p>
+                        </div>
+                    )}
+                    <div>
+                        <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
                     </div>
-                )} */}
+                </div>
+            </div>
         </div>
      );
 }
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
+    onReportPost: PropTypes.func,
     pageType: PropTypes.string,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
@@ -342,7 +347,8 @@ PostCard.propTypes = {
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
         isSaved: PropTypes.bool,
-        isReported: PropTypes.bool
+        isReported: PropTypes.bool,
+        reportersCount: PropTypes.number
     }).isRequired,
 
 };
