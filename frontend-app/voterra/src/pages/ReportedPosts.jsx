@@ -9,6 +9,7 @@ import useFetch from '../hooks/useFetch';
 import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
 import Loader from '../components/Loader';
+import MainSectionReported from '../components/MainSectionReported';
 
 
 
@@ -73,7 +74,7 @@ function ReportedPosts() {
         </div>
         );
       }
-      
+
     return (
     <div className="homepage-container bg-white-100 w-full absolute top-0">
         <div className="header">
@@ -85,9 +86,9 @@ function ReportedPosts() {
             <SideBarHomePage user={user} handleLogout={handleLogout}/>
           </div>
   
-          {/* <div className="w-[100%] md:w-[80%] lg:w-[60%] min-h-screen  p-3">
-            <MainSectionSaved />
-          </div> */}
+          <div className="w-[100%] md:w-[80%] lg:w-[60%] min-h-screen  p-3">
+            <MainSectionReported />
+          </div>
         </div>
       </div>
     )

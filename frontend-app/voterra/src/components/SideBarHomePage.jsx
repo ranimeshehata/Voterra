@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SideBarHomePage({ user, handleLogout }) {
     const navigate = useNavigate();
+    const userType = user.userType;
 
     const handleSavedPostsClick = () => {
         navigate('/savedPosts', { state: { savedPosts: user.savedPosts } });
@@ -53,6 +54,7 @@ function SideBarHomePage({ user, handleLogout }) {
                     </a>
                 </Col>
             </Row>
+            {userType === 'ADMIN' && (
             <Row>
                 <Col>
                     <a href="/reportedposts" className="sidebar-link">
@@ -61,6 +63,7 @@ function SideBarHomePage({ user, handleLogout }) {
                     </a>
                 </Col>
             </Row>
+            )}
             <Row>
                 <Col>
                     <a href="/about" className="sidebar-link">
@@ -97,7 +100,8 @@ SideBarHomePage.propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     username: PropTypes.string,
-    savedPosts: PropTypes.array
+    savedPosts: PropTypes.array,
+    userType: PropTypes.string
   }).isRequired,
   handleLogout: PropTypes.func.isRequired,
 };

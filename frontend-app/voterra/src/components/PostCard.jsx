@@ -13,6 +13,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
     const [isSaved, setIsSaved] = useState(post.isSaved);
+    const [isReported, setIsReported] = useState(post.isReported);
     const [isDeleted, setIsDeleted] = useState(false);
     const { postSave, deletePost, reportPost } = useFetch();
 
@@ -33,7 +34,11 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             setIsSaved(true);
         }
 
-    },[post.polls, user.email, user.savedPosts, post.id]);
+        if (user.reportedPosts && user.reportedPosts.includes(post.id)) {
+            setIsReported(true);
+        }
+
+    },[post.polls, user.email, user.savedPosts, post.id, user.reportedPosts]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -77,6 +82,8 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
         },
         (response, error) => {
             if (response) {
+                setIsReported(true);
+                
                 console.log(response);
             } else {
                 console.error(error);
@@ -168,10 +175,10 @@ const vote = (pollIndex) => {
                     )}
                     {post.userEmail !== user.email && (
                         <p 
-                            className="hover:bg-gray-100" 
-                            onClick={() => handleReportPost(post.id)}
+                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            onClick={() => !isReported && handleReportPost(post.id)}
                         >
-                                Report Post
+                            {isReported ? 'Post Reported' : 'Report Post'}
                         </p>
                     )}
                 </div>
@@ -222,7 +229,8 @@ PostCard.propTypes = {
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
-        isSaved: PropTypes.bool
+        isSaved: PropTypes.bool,
+        isReported: PropTypes.bool
     }).isRequired,
 
 };
