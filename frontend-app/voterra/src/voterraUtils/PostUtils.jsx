@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+
+
 export const createPost=async(content,polls,category,privacy,username,email)=>{
   const today = new Date();
   const formattedDate = today.toISOString();
@@ -42,15 +44,16 @@ export async function fetchUserProfilePosts(page,email) {
   }
 }
 
-export async function fetchPosts(page) {
+export async function fetchPosts(filter,page) {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/posts/homepage?page=${page}`, {
+      const response = await fetch(`http://localhost:8080/posts/homepage?category=${filter}&page=${page}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization:"Bearer "+ token
         },
+        
       });
   
       if (!response.ok) {
@@ -86,3 +89,65 @@ export async function fetchSavedPosts(page) {
       console.error(error.message);
     }
 }
+
+export async function fetchReportedPosts(page) {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(`http://localhost:8080/posts/getReportedPosts?page=${page}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:"Bearer "+ token
+        },
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'failed');
+      }
+  
+      const data = await response.json();
+      const transformedData = data.map(item => ({
+        id: item.post.id,
+        userEmail: item.post.userEmail,
+        userName: item.post.userName,
+        postContent: item.post.postContent,
+        category: item.post.category,
+        privacy: item.post.privacy,
+        polls: item.post.polls.map(poll => ({
+          pollContent: poll.pollContent,
+          voters: poll.voters
+      })),
+        publishedDate: item.post.publishedDate,
+        reportersCount: item.numberOfReports
+    }));
+    return transformedData;
+    } catch (error) {
+      console.error(error.message);
+    }
+}
+
+export const fetchSearch = async ( search, page) => {
+  const token = localStorage.getItem("token");
+  try {
+      const response = await fetch(`http://localhost:8080/posts/search?postContent=${encodeURIComponent(search)}&page=${page}`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization:"Bearer "+ token
+          },
+      });
+
+      if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Failed to fetch posts");
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error("Error fetching posts:", error.message);
+      return [];
+  }
+};
+

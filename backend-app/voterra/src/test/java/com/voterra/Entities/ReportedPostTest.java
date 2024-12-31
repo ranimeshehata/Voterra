@@ -4,6 +4,7 @@ import com.voterra.entities.ReportedPost;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,36 +15,34 @@ class ReportedPostTest {
     void testReportedPostConstructor() {
         // Arrange
         String postId = "12345";
-        String reporterId = "67890";
+        List<String> reportersId = List.of("67890");
         String reason = "Inappropriate content";
         Date reportedDate=new Date();
         // Act
-        ReportedPost reportedPost = new ReportedPost(postId, reporterId, reason,reportedDate);
+        ReportedPost reportedPost = new ReportedPost(postId, reportersId);
 
         // Assert
         assertNotNull(reportedPost);  // Ensure the reportedPost object is not null
         assertEquals(postId, reportedPost.getPostId());  // Verify the postId
-        assertEquals(reporterId, reportedPost.getReporterId());  // Verify the reporterId
-        assertEquals(reason, reportedPost.getReason());  // Verify the reason
+        assertEquals(reportersId, reportedPost.getReportersId());  // Verify the reporterId
+
     }
 
     @Test
     void testReportedPostSettersAndGetters() {
         // Arrange
-        ReportedPost reportedPost = new ReportedPost(null, null, null,null);
+        ReportedPost reportedPost = new ReportedPost(null, null);
         String postId = "12345";
-        String reporterId = "67890";
+        List<String> reporterId = List.of("67890");
         String reason = "Inappropriate content";
 
         // Act
         reportedPost.setPostId(postId);
-        reportedPost.setReporterId(reporterId);
-        reportedPost.setReason(reason);
+        reportedPost.setReportersId(reporterId);
 
         // Assert
         assertEquals(postId, reportedPost.getPostId());  // Verify the postId
-        assertEquals(reporterId, reportedPost.getReporterId());  // Verify the reporterId
-        assertEquals(reason, reportedPost.getReason());  // Verify the reason
+        assertEquals(reporterId, reportedPost.getReportersId());  // Verify the reporterId
     }
 }
 

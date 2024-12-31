@@ -72,7 +72,8 @@ class FriendServiceTest {
     @Test
     void testGetFriends_PaginatedResults() {
         when(userRepository.findById("test@example.com")).thenReturn(Optional.of(user));
-        when(userRepository.findAllById(anyList())).thenReturn(Arrays.asList(new User("friend1@example.com", null, null, null, null, null, null, null, null, null)));
+        when(userRepository.findAllById(anyList())).thenReturn(Arrays.asList(new User("friend1@example.com",
+                null, null, null, null, null, null, null, null, null, null)));
 
         List<User> result = friendService.getFriends("test@example.com", 0);
         assertEquals(1, result.size());
@@ -192,10 +193,12 @@ class FriendServiceTest {
 
     @Test
     void testSuggestFriends_PaginatedResults() {
-        User friend1 = new User("friend1@example.com", null, null, null, null, null, Arrays.asList("friend3@example.com"), null, null, null);
+        User friend1 = new User("friend1@example.com", null, null, null, null,
+                null, Arrays.asList("friend3@example.com"), null, null, null, null);
         when(userRepository.findById("test@example.com")).thenReturn(Optional.of(user));
         when(userRepository.findById("friend1@example.com")).thenReturn(Optional.of(friend1));
-        when(userRepository.findAllById(anyList())).thenReturn(Arrays.asList(new User("friend3@example.com", null, null, null, null, null, null, null, null, null)));
+        when(userRepository.findAllById(anyList())).thenReturn(Arrays.asList(new User("friend3@example.com",
+                null, null, null, null, null, null, null, null, null, null)));
 
         List<User> result = friendService.suggestFriends("test@example.com", 0);
         assertEquals(1, result.size());

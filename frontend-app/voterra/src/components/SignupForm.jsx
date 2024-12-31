@@ -38,7 +38,8 @@ const SignupForm = () => {
         userType:"USER",
         dateOfBirth:"",
         friends:[],
-        savedPosts:[]
+        savedPosts:[],
+        reportedPosts:[]
     })
     const navigate=useNavigate();
 
@@ -67,7 +68,8 @@ const SignupForm = () => {
             userType:"USER",
             dateOfBirth:"",
             friends:[],
-            savedPosts:[]
+            savedPosts:[],
+            reportedPosts:[]
         }
         setFormData(formatted);        
         if(provIndex == 1){

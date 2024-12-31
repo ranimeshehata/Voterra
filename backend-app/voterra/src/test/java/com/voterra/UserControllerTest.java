@@ -135,4 +135,34 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").value(true));
     }
+
+    @Test
+    void testSignupWithExistingEmail() throws Exception {
+        User user = new User();
+        user.setEmail("existing@example.com");
+        user.setPassword("password123");
+
+        Mockito.when(userService.signup(Mockito.any(User.class))).thenThrow(new RuntimeException("Email already exists"));
+
+        mockMvc.perform(post("/users/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Email already exists"));
+    }
+
+    @Test
+    void testLoginWithInvalidCredentials() throws Exception {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail("invalid@example.com");
+        loginRequest.setPassword("wrongpassword");
+
+        Mockito.when(userService.login(Mockito.anyString(), Mockito.anyString())).thenThrow(new RuntimeException("Invalid credentials"));
+
+        mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid credentials"));
+    }
 }

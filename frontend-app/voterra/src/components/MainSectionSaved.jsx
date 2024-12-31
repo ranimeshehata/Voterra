@@ -55,11 +55,30 @@ const MainSectionSaved = () => {
         ));
       };
 
+    const handleReportPost = (postId) => {
+        setPosts(posts.map(post => 
+          post.id === postId ? { ...post, isReported: true } : post
+        ));
+      }
+      
     return (
         <div className="flex flex-col gap-10">
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} onReportPost={handleReportPost} />
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
+            {!isLoading && (
+            <>
+                {posts.length === 0 && <div className="text-center text-4xl text-gray-600">No saved posts yet ..</div>}
+                <div className="flex justify-center">
+                    <button
+                        className="bg-red-500 mb-5 text-white p-2 rounded-lg mt-2 shadow"
+                        onClick={() => window.location.href = "/homepage"}
+                    >
+                        Back to Home
+                    </button>
+                </div>
+            </>
+        )}
         </div>
     );
 };
