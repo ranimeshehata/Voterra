@@ -19,15 +19,6 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
 
     useEffect(()=>{
         let x=0;
-        // const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
-        // console.log(reportedPosts);
-        // console.log(user.userType);
-        // console.log(user.email);
-        // console.log(reportedPosts.includes(post.id));
-        console.log(user);
-        console.log(user.reportedPosts);
-        // console.log(reportedPosts);
-        // console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
         }
@@ -46,10 +37,6 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
         if (user.reportedPosts && user.reportedPosts.includes(post.id)) {
             setIsReported(true);
         }
-
-        // if (reportedPosts.includes(post.id) && reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email))) {
-        //     setIsReported(true);
-        // }
 
     },[post.polls, user, post.id]);
 
@@ -87,8 +74,6 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
     const handleReportPost = (postId) => {
         const token = localStorage.getItem('token');
         const reportersId = [user.email];
-        console.log(postId);
-        console.log(reportersId);
         reportPost("http://localhost:8080/posts/reportPost", {
             postId,
             reportersId,
@@ -103,10 +88,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
                         ...prevUser,
                         reportedPosts: [...prevUser.reportedPosts, postId]
                     }));
-                    // const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
-                    // reportedPosts.push(postId);
                     onReportPost(postId);
-                    console.log(response);
             } else {
                 console.error(error);
             }
@@ -194,7 +176,6 @@ const vote = (pollIndex) => {
         },
         (response, error)=>{
             if(response){
-                console.log(response);
                 setIsDeleted(true);
                 removePostFromFeed(post.id);
             }
@@ -221,13 +202,10 @@ const vote = (pollIndex) => {
         },
         (response, error)=>{
             if(response){
-                console.log(response);
-                console.log("Post removed from reported posts");
                 setIsDeleted(true);
                 removePostFromFeed(post.id);
             }
             else{
-                console.log("Error in removing post from reported posts");
                 console.error(error);
             }
         },

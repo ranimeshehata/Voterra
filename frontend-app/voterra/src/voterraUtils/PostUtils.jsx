@@ -104,7 +104,6 @@ export async function fetchReportedPosts(page) {
       }
   
       const data = await response.json();
-      console.log("Raw data:", data);
       const transformedData = data.map(item => ({
         id: item.post.id,
         userEmail: item.post.userEmail,
@@ -119,14 +118,7 @@ export async function fetchReportedPosts(page) {
         publishedDate: item.post.publishedDate,
         reportersCount: item.numberOfReports
     }));
-
-    console.log("Transformed data:", transformedData);
     return transformedData;
-      // return data;
-      // return data.map(post => ({
-      //   ...post,
-      //   reportersCount: post.reportersId ? post.reportersId.length : 0
-      // }));
     } catch (error) {
       console.error(error.message);
     }

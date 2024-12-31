@@ -15,10 +15,7 @@ function MainSectionReported() {
         setIsLoading(true);
         try {
             const data = await fetchReportedPosts(page);
-            console.log("out", data);
-            console.log(data.length);
             if (data.length > 0) {
-                console.log("in", data);
                 setPosts((prevPosts) => [...prevPosts, ...data]);
                 setPage(page + 1);
             } else {
