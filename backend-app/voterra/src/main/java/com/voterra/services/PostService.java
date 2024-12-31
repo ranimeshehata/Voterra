@@ -15,6 +15,7 @@ import com.voterra.tokenization.JwtUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -130,23 +131,26 @@ public class PostService {
                 return;
             }
             rp.getReportersId().add(reporterId);
+            reportedPostRepository.save(rp);
         }
     }
 
-    public List<Post> getReportedPosts(int page) {
+    public HashMap<Post, Integer> getReportedPosts(int page) {
         int size = 5;
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+        PageRequest pageable = PageRequest.of(page, size);
 
         List<ReportedPost> reportedPosts = reportedPostRepository.findAll(pageable).getContent();
-        List<Post> originalPosts = new ArrayList<>();
+        System.out.println("Number of reported posts: " + reportedPosts.size());
+        HashMap<Post, Integer> posts = new HashMap<>();
 
         for (ReportedPost reportedPost : reportedPosts) {
             Post post = postRepository.findById(reportedPost.getPostId()).orElse(null);
             if (post != null) {
-                originalPosts.add(post);
+                posts.put(post, reportedPost.getReportersId().size());
+                System.out.println(reportedPost.getReportersId().size());
             }
         }
-        return originalPosts;
+        return posts;
     }
 
     public void deleteReportedPost(String postId) {
