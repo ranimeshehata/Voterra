@@ -2,9 +2,11 @@ package com.voterra;
 
 import com.voterra.entities.Poll;
 import com.voterra.entities.Post;
+import com.voterra.entities.ReportedPost;
 import com.voterra.entities.User;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.PostRepository;
+import com.voterra.repos.ReportedPostRepository;
 import com.voterra.repos.UserRepository;
 import com.voterra.services.PostService;
 import com.voterra.services.UserService;
@@ -40,6 +42,9 @@ class PostServiceTest {
 
     @Mock
     private Authentication authentication;
+
+    @Mock
+    private ReportedPostRepository reportedPostRepository;
 
     @InjectMocks
     private PostService postService;
@@ -329,5 +334,67 @@ class PostServiceTest {
 
         verify(postRepository, times(1)).existsById(postId);
         verify(postRepository, times(0)).deleteById(postId);
+    }
+
+    @Test
+    void testReportNewPost() {
+        // Arrange
+        ReportedPost newReportedPost = new ReportedPost();
+        newReportedPost.setPostId("123");
+        newReportedPost.setReportersId(new LinkedList<>());
+        newReportedPost.getReportersId().add("reporter1");
+
+        when(reportedPostRepository.findById("123")).thenReturn(Optional.empty());
+
+        // Act
+        postService.reportPost(newReportedPost);
+
+        // Assert
+        verify(reportedPostRepository).save(newReportedPost);
+    }
+
+    @Test
+    void testDuplicateReportingBySameReporter() {
+        // Arrange
+        ReportedPost existingReportedPost = new ReportedPost();
+        existingReportedPost.setPostId("123");
+        existingReportedPost.setReportersId(new LinkedList<>());
+        existingReportedPost.getReportersId().add("reporter1");
+
+        ReportedPost newReportAttempt = new ReportedPost();
+        newReportAttempt.setPostId("123");
+        newReportAttempt.setReportersId(new LinkedList<>());
+        newReportAttempt.getReportersId().add("reporter1");
+
+        when(reportedPostRepository.findById("123")).thenReturn(Optional.of(existingReportedPost));
+
+        // Act
+        postService.reportPost(newReportAttempt);
+
+        // Assert
+        verify(reportedPostRepository, never()).save(any());
+    }
+
+    @Test
+    void testAdditionalReportingByDifferentReporter() {
+        // Arrange
+        ReportedPost existingReportedPost = new ReportedPost();
+        existingReportedPost.setPostId("123");
+        existingReportedPost.setReportersId(new LinkedList<>());
+        existingReportedPost.getReportersId().add("reporter1");
+
+        ReportedPost newReportAttempt = new ReportedPost();
+        newReportAttempt.setPostId("123");
+        newReportAttempt.setReportersId(new LinkedList<>());
+        newReportAttempt.getReportersId().add("reporter2");
+
+        when(reportedPostRepository.findById("123")).thenReturn(Optional.of(existingReportedPost));
+
+        // Act
+        postService.reportPost(newReportAttempt);
+
+        // Assert
+        assertTrue(existingReportedPost.getReportersId().contains("reporter2"));
+        verify(reportedPostRepository).save(existingReportedPost);
     }
 }

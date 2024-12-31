@@ -122,8 +122,7 @@ public class PostController {
     @PostMapping("/reportPost")
     public ResponseEntity<?> reportPost(@RequestBody ReportedPost reportedPost) {
         try {
-            postService.reportPost(reportedPost);
-            return ResponseEntity.ok("post reported successfully");
+            return ResponseEntity.ok(postService.reportPost(reportedPost));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
