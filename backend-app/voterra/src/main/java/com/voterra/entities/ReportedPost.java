@@ -19,6 +19,9 @@ public class ReportedPost {
         this.reportersId = reportersId;
     }
 
+    public ReportedPost() {
+    }
+
     public String getPostId() {
         return postId;
     }

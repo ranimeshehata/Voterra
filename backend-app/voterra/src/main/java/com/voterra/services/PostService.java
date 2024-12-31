@@ -121,7 +121,7 @@ public class PostService {
         }
     }
 
-    public void reportPost(ReportedPost reportedPost) {
+    public String reportPost(ReportedPost reportedPost) {
         ReportedPost rp = reportedPostRepository.findById(reportedPost.getPostId()).orElse(null);
         if (rp == null) {
             reportedPostRepository.save(reportedPost);
@@ -129,11 +129,12 @@ public class PostService {
         else{
             String reporterId = reportedPost.getReportersId().getFirst();
             if (rp.getReportersId().contains(reporterId)) {
-                return;
+                return "You have already reported this post";
             }
             rp.getReportersId().add(reporterId);
             reportedPostRepository.save(rp);
         }
+        return "Post reported successfully";
     }
 
     public List<ReportedPostDTO> getReportedPosts(int page) {
