@@ -120,11 +120,6 @@ public class PostController {
     }
 
 
-    @PostMapping("/reportPost")
-    public ResponseEntity<?> reportPost(@RequestBody ReportedPost reportedPost) {
-        try {
-            return ResponseEntity.ok(postService.reportPost(reportedPost));
-
     @GetMapping("/search")
     public ResponseEntity<?> searchPosts(
             @RequestParam String postContent,
@@ -136,6 +131,14 @@ public class PostController {
         }
     }
 
+    @PostMapping("/reportPost")
+    public ResponseEntity<?> reportPost(@RequestBody ReportedPost reportedPost) {
+        try {
+            return ResponseEntity.ok(postService.reportPost(reportedPost));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
+        }
+    }
 
     @GetMapping("/getReportedPosts")
     public ResponseEntity<?> getReportedPosts(@RequestParam int page) {
