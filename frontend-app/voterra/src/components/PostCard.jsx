@@ -19,12 +19,13 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
 
     useEffect(()=>{
         let x=0;
-        const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+        // const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
         // console.log(reportedPosts);
         // console.log(user.userType);
         // console.log(user.email);
         // console.log(reportedPosts.includes(post.id));
-        // console.log(user.reportedPosts);
+        console.log(user);
+        console.log(user.reportedPosts);
         // console.log(reportedPosts);
         // console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
@@ -50,7 +51,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
         //     setIsReported(true);
         // }
 
-    },[post.polls, user.email, user.savedPosts, post.id, user.reportedPosts]);
+    },[post.polls, user, post.id]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -100,12 +101,11 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
                     setIsReported(true);
                     setUser(prevUser => ({
                         ...prevUser,
-                        reportedPosts: [...(prevUser.reportedPosts || []), postId]
+                        reportedPosts: [...prevUser.reportedPosts, postId]
                     }));
+                    // const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+                    // reportedPosts.push(postId);
                     onReportPost(postId);
-                    const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
-                    reportedPosts.push(postId);
-                    localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
                     console.log(response);
             } else {
                 console.error(error);
