@@ -29,5 +29,4 @@ public class Post extends FeedFactory{
     public void setPublishedDate(Date publishedDate) {
         this.publishedDate = publishedDate;
     }
-
 }

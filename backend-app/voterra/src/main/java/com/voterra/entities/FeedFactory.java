@@ -16,6 +16,7 @@ public class FeedFactory {
     private privacy privacy;
     private List<Poll> polls;
 
+
     public enum category {
         SPORTS, TECHNOLOGY, ENTERTAINMENT, HEALTH, EDUCATION, BUSINESS, FASHION, FOOD, JOBS, MEDICAL, CARS, EVENTS,
         PLACES, CELEBRITIES, NATURE, MOVIES, OTHER
