@@ -19,6 +19,7 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
 
     useEffect(()=>{
         let x=0;
+        const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
         }
@@ -35,6 +36,10 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
         }
 
         if (user.reportedPosts && user.reportedPosts.includes(post.id)) {
+            setIsReported(true);
+        }
+
+        if (reportedPosts.includes(post.id)) {
             setIsReported(true);
         }
 
@@ -83,7 +88,13 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
         (response, error) => {
             if (response) {
                 setIsReported(true);
-                
+                setUser(prevUser => ({
+                    ...prevUser,
+                    reportedPosts: [...(prevUser.reportedPosts || []), postId]
+                }));
+                const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+                reportedPosts.push(postId);
+                localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
                 console.log(response);
             } else {
                 console.error(error);
@@ -210,6 +221,11 @@ const vote = (pollIndex) => {
             <div>
                 <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
             </div>
+            {/* {user.userType === 'ADMIN' && post.reportersCount > 0 && (
+                <div>
+                    <p className="p-2 bg-red-200 rounded-full w-fit">Reported by {post.reportersCount} {post.reportersCount > 1 ? 'users' : 'user'}</p>
+                    </div>
+                )} */}
         </div>
      );
 }

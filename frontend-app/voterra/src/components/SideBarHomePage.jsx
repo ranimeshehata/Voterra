@@ -35,7 +35,14 @@ function SideBarHomePage({ user, handleLogout }) {
             <ReactTooltip id="profile-name-tooltip" />
         </div>
         <div className='sidebar-links'>
-           
+            <Row>
+                <Col>
+                    <a href="/homepage" className="sidebar-link">
+                        <i className="fas fa-home"></i>
+                        <span className="sidebar-link-text">Home</span>
+                    </a>
+                </Col>
+            </Row>
             <Row>
                 <Col>
                     <a href="/userprofile" className="sidebar-link">

@@ -133,8 +133,11 @@ public class PostService {
         }
     }
 
-    public List<Post> getReportedPosts() {
-        List<ReportedPost> reportedPosts = reportedPostRepository.findAll();
+    public List<Post> getReportedPosts(int page) {
+        int size = 5;
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedDate"));
+
+        List<ReportedPost> reportedPosts = reportedPostRepository.findAll(pageable).getContent();
         List<Post> originalPosts = new ArrayList<>();
 
         for (ReportedPost reportedPost : reportedPosts) {
