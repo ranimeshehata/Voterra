@@ -45,7 +45,7 @@ function AboutPage() {
                         </span>
                     </i>                                     
                 </div>
-                <div className="text-center mb-8">
+                <div className="text-center mb-2">
                     <button 
                         type="submit"
                         className="bg-red-500 mb-5 text-white p-2 rounded-lg mt-2 shadow ml-40 mr-40 text-lg font-bold hover:bg-red-600"
