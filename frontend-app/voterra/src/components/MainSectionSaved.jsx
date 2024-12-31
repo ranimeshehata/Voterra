@@ -55,9 +55,15 @@ const MainSectionSaved = () => {
         ));
       };
 
+    const handleReportPost = (postId) => {
+        setPosts(posts.map(post => 
+          post.id === postId ? { ...post, isReported: true } : post
+        ));
+      }
+      
     return (
         <div className="flex flex-col gap-10">
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} onReportPost={handleReportPost} />
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
             {!isLoading && (

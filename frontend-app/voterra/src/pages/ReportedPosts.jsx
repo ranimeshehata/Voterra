@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
@@ -11,15 +10,13 @@ import SideBarHomePage from '../components/SideBarHomePage';
 import Loader from '../components/Loader';
 import MainSectionReported from '../components/MainSectionReported';
 
-
-
-
 function ReportedPosts() {
     const [user, setUser] = useRecoilState(userState);
     const [loading, setLoading] = useState(true);
     const isAuthenticated = useRecoilValue(isAuthenticatedState);
     const navigate = useNavigate();
     const { postSignout } = useFetch();
+    
     useEffect(() => {
         const token = localStorage.getItem('token');
       if (!isAuthenticated) {
@@ -34,6 +31,11 @@ function ReportedPosts() {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser){
           setUser(storedUser)
+          const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+            setUser(prevUser => ({
+                ...prevUser,
+                reportedPosts: reportedPosts
+            }));
         }
         setLoading(false);
       }

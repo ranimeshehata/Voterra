@@ -9,13 +9,12 @@ function MainSectionReported() {
     const [isLoading, setIsLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef(null);
-
+    
     const loadPosts = useCallback(async (page) => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
         try {
             const data = await fetchReportedPosts(page);
-            console.log(data);
             if (data.length > 0) {
                 setPosts((prevPosts) => [...prevPosts, ...data]);
                 setPage(page + 1);
@@ -56,9 +55,15 @@ function MainSectionReported() {
         ));
       };
 
+    const handleReportPost = (postId) => {
+        setPosts(posts.map(post =>
+            post.id === postId ? { ...post, isReported: true } : post
+        ));
+    }
+
     return (
         <div className="flex flex-col gap-10">
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} pageType="reported" />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} pageType="reported" onReportPost={handleReportPost}/>
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
 

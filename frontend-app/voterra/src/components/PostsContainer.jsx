@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import PostCard from "./PostCard";
 
 
-const PostContainer = ({posts, removePostFromFeed, onSavePost, pageType}) => {
+const PostContainer = ({posts, removePostFromFeed, onSavePost, pageType, onReportPost}) => {
     const [postList, setPostList] = useState(posts);
 
     useEffect(()=>{
         setPostList(posts);
     },[posts])
+
+
 
     return ( 
         <div className="flex flex-col gap-4">
@@ -20,6 +22,7 @@ const PostContainer = ({posts, removePostFromFeed, onSavePost, pageType}) => {
                     removePostFromFeed={removePostFromFeed} 
                     onSavePost={onSavePost}
                     pageType={pageType}
+                    onReportPost={onReportPost}
                 />
             ))}
         </div>
@@ -29,6 +32,7 @@ PostContainer.propTypes = {
     posts: PropTypes.array,
     removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
+    onReportPost: PropTypes.func,
     pageType: PropTypes.string
     
 };

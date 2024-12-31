@@ -4,7 +4,7 @@ export const userState = atom({
   key: 'userState',
   default: {
     ...JSON.parse(localStorage.getItem('user')) || {},
-  reportedPosts: JSON.parse(localStorage.getItem('user'))?.reportedPosts || []
+  reportedPosts: JSON.parse(localStorage.getItem('user'))?.reportedPosts || [],
   },
 });
 

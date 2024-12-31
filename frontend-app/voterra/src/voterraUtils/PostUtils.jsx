@@ -104,11 +104,21 @@ export async function fetchReportedPosts(page) {
       }
   
       const data = await response.json();
-      return data;
-      // return data.map(post => ({
-      //   ...post,
-      //   reportersCount: post.reportersId ? post.reportersId.length : 0
-      // }));
+      const transformedData = data.map(item => ({
+        id: item.post.id,
+        userEmail: item.post.userEmail,
+        userName: item.post.userName,
+        postContent: item.post.postContent,
+        category: item.post.category,
+        privacy: item.post.privacy,
+        polls: item.post.polls.map(poll => ({
+          pollContent: poll.pollContent,
+          voters: poll.voters
+      })),
+        publishedDate: item.post.publishedDate,
+        reportersCount: item.numberOfReports
+    }));
+    return transformedData;
     } catch (error) {
       console.error(error.message);
     }
