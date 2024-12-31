@@ -6,18 +6,24 @@ import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import { toast } from "react-toastify";
 
-const PostCard = ({post, removePostFromFeed, onSavePost}) => {
+const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
     const [user,setUser]=useRecoilState(userState);
     const [postMenu,setPostMenu]=useState(false);
     const [isSaved, setIsSaved] = useState(post.isSaved);
+    const [isReported, setIsReported] = useState(post.isReported);
     const [isDeleted, setIsDeleted] = useState(false);
-    const { postSave, deletePost } = useFetch();
+    const { postSave, deletePost, reportPost, acceptReportedPost, leaveReportedPost } = useFetch();
 
     useEffect(()=>{
         let x=0;
+        const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+        console.log(reportedPosts);
+        console.log(user.email);
+        console.log(reportedPosts.includes(post.id));
+        console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
         }
@@ -33,7 +39,15 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             setIsSaved(true);
         }
 
-    },[post.polls, user.email, user.savedPosts, post.id]);
+        if (user.reportedPosts && user.reportedPosts.includes(post.id)) {
+            setIsReported(true);
+        }
+
+        // if (reportedPosts.includes(post.id) && reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email))) {
+        //     setIsReported(true);
+        // }
+
+    },[post.polls, user.email, user.savedPosts, post.id, user.reportedPosts]);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
@@ -62,6 +76,35 @@ const PostCard = ({post, removePostFromFeed, onSavePost}) => {
             }
         },
         (error)=>{
+            console.error(error);
+        });
+    };
+
+    const handleReportPost = (postId) => {
+        const token = localStorage.getItem('token');
+        const reportersId = [user.email];
+        console.log(postId);
+        console.log(reportersId);
+        reportPost("http://localhost:8080/posts/reportPost", {
+            postId,
+            reportersId,
+        },
+        (response, error) => {
+            if (response) {
+                setIsReported(true);
+                setUser(prevUser => ({
+                    ...prevUser,
+                    reportedPosts: [...(prevUser.reportedPosts || []), postId]
+                }));
+                const reportedPosts = JSON.parse(localStorage.getItem('reportedPosts')) || [];
+                reportedPosts.push(postId);
+                localStorage.setItem('reportedPosts', JSON.stringify(reportedPosts));
+                console.log(response);
+            } else {
+                console.error(error);
+            }
+        },
+        (error) => {
             console.error(error);
         });
     };
@@ -129,13 +172,88 @@ const vote = (pollIndex) => {
             console.error(error);
         });
     };
+
+    const AcceptReport = (id) => {
+        const token=localStorage.getItem("token");
+        const email=user.email;
+        const postId=id;
+        if (!token) {
+            toast.error("Session expired. Please log in again.");
+            return;
+        }
+        acceptReportedPost("http://localhost:8080/posts/deleteReportedPost",{
+            postId:postId,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                console.log(response);
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+            }
+            else{
+                console.error(error);
+            }
+        },
+        (error)=>{
+            console.error(error);
+        });
+    };
+
+    const IgnoreReport = (id) => {
+        const token=localStorage.getItem("token");
+        const email=user.email;
+        const postId=id;
+        if (!token) {
+            toast.error("Session expired. Please log in again.");
+            return;
+        }
+        leaveReportedPost("http://localhost:8080/posts/leaveReportedPost",{
+            postId:postId,
+            email:email
+        },
+        (response, error)=>{
+            if(response){
+                console.log(response);
+                console.log("Post removed from reported posts");
+                setIsDeleted(true);
+                removePostFromFeed(post.id);
+            }
+            else{
+                console.log("Error in removing post from reported posts");
+                console.error(error);
+            }
+        },
+        (error)=>{
+            console.error(error);
+        }
+        );
+    };
+    
     
     return (
         <div className="shadow-xl rounded-lg p-5 flex flex-col gap-3 font-[nunito] relative">
             <div className="cursor-pointer absolute top-8 right-8">
                 <i onClick={()=>setPostMenu(prev=>!prev)} className="fa-solid fa-ellipsis-vertical"></i>
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
-                    <p
+                    {pageType === 'reported'? (
+                        <>
+                            <p 
+                                className="hover:bg-gray-100" 
+                                onClick={() => AcceptReport(post.id)}
+                            >
+                                Accept Report
+                            </p>
+                            <p
+                                className="hover:bg-gray-100"
+                                onClick={() => IgnoreReport(post.id)}
+                            >
+                                Ignore Report
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <p
                         className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         onClick={() => !isSaved && savePost(post.id)}
                     >
@@ -143,6 +261,32 @@ const vote = (pollIndex) => {
                     </p>
                     { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
                     )}
+                    {post.userEmail !== user.email && (
+                        <p 
+                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            onClick={() => !isReported && handleReportPost(post.id)}
+                        >
+                            {isReported ? 'Post Reported' : 'Report Post'}
+                        </p>
+                    )}
+                        </>
+                    )}
+                    {/* <p
+                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        onClick={() => !isSaved && savePost(post.id)}
+                    >
+                        {isSaved ? 'Post Saved' : 'Save Post'}
+                    </p>
+                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                    )}
+                    {post.userEmail !== user.email && (
+                        <p 
+                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            onClick={() => !isReported && handleReportPost(post.id)}
+                        >
+                            {isReported ? 'Post Reported' : 'Report Post'}
+                        </p>
+                    )} */}
                 </div>
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
@@ -172,12 +316,18 @@ const vote = (pollIndex) => {
             <div>
                 <p className="p-2 bg-gray-200 rounded-full w-fit">{post.category}</p>
             </div>
+            {/* {user.userType === 'ADMIN' && post.reportersCount > 0 && (
+                <div>
+                    <p className="p-2 bg-red-200 rounded-full w-fit">Reported by {post.reportersCount} {post.reportersCount > 1 ? 'users' : 'user'}</p>
+                    </div>
+                )} */}
         </div>
      );
 }
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
+    pageType: PropTypes.string,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(
@@ -191,7 +341,8 @@ PostCard.propTypes = {
         postContent: PropTypes.string.isRequired,
         category: PropTypes.string.isRequired,
         userEmail: PropTypes.string.isRequired,
-        isSaved: PropTypes.bool
+        isSaved: PropTypes.bool,
+        isReported: PropTypes.bool
     }).isRequired,
 
 };

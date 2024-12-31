@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SideBarHomePage({ user, handleLogout }) {
     const navigate = useNavigate();
+    const userType = user.userType;
 
     const handleSavedPostsClick = () => {
         navigate('/savedPosts', { state: { savedPosts: user.savedPosts } });
@@ -34,7 +35,14 @@ function SideBarHomePage({ user, handleLogout }) {
             <ReactTooltip id="profile-name-tooltip" />
         </div>
         <div className='sidebar-links'>
-           
+            <Row>
+                <Col>
+                    <a href="/homepage" className="sidebar-link">
+                        <i className="fas fa-home"></i>
+                        <span className="sidebar-link-text">Home</span>
+                    </a>
+                </Col>
+            </Row>
             <Row>
                 <Col>
                     <a href="/userprofile" className="sidebar-link">
@@ -53,6 +61,16 @@ function SideBarHomePage({ user, handleLogout }) {
                     </a>
                 </Col>
             </Row>
+            {userType === 'ADMIN' && (
+            <Row>
+                <Col>
+                    <a href="/reportedposts" className="sidebar-link">
+                        <i className="fas fa-flag"></i>
+                        <span className="sidebar-link-text">Reported Posts</span>
+                    </a>
+                </Col>
+            </Row>
+            )}
             <Row>
                 <Col>
                     <a href="/about" className="sidebar-link">
@@ -89,7 +107,8 @@ SideBarHomePage.propTypes = {
     firstName: PropTypes.string,
     lastName: PropTypes.string,
     username: PropTypes.string,
-    savedPosts: PropTypes.array
+    savedPosts: PropTypes.array,
+    userType: PropTypes.string
   }).isRequired,
   handleLogout: PropTypes.func.isRequired,
 };

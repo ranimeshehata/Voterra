@@ -10,6 +10,9 @@ const SignUp = React.lazy(() => import('./pages/SignUp'));
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
 const SavedPosts = React.lazy(() => import('./pages/SavedPosts'));
+const ReportedPosts = React.lazy(() => import('./pages/ReportedPosts'));
+const ErrorNotFound = React.lazy(() => import('./pages/ErrorNotFound'));
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 
 function App() {
   useAuth();
@@ -26,6 +29,9 @@ function App() {
             <Route path='/savedPosts' element={<SavedPosts />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
             <Route path="/userprofile" element={<UserProfile />} />
+            <Route path="/reportedposts" element={<ReportedPosts />} />
+            <Route path="*" element={<ErrorNotFound />} />
+            <Route path="/about" element={<AboutPage />} />
           </Routes>
         </Suspense>
       </Router>
