@@ -63,12 +63,9 @@ function UserFeed() {
         <h3>Create a Post</h3>
         <textarea
           placeholder="Ask a question or share something..."
-          // value={newPostQuestion}
-          // onChange={(e) => setNewPostQuestion(e.target.value)}
           className="textarea-field"
         ></textarea>
         <button 
-          // onClick={handleCreatePost} 
           className="create-button"
         >
           Post

@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import { toast } from "react-toastify";
+import Avatar from "react-avatar";
 
 const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}) => {
     const [totalVotes,setTotalVotes]=useState(0);
@@ -272,7 +273,14 @@ const vote = (pollIndex) => {
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
                 <div className="w-10 h-10 rounded-full flex bg-red-500 text-white justify-center items-center">
-                    <p>{post.userName[0].toUpperCase()}</p>
+                    {/* <p>{post.userName[0].toUpperCase()}</p> */}
+                    <Avatar
+                        name={post.userName}
+                        size="40"
+                        round={true}
+                        color="#eb6070"
+                        boxShadow="0px 17px 40px 4px rgba(25, 30, 36, 0.11)"
+                    />
                 </div>
                 <p>posted by <strong style={{ fontSize: '1.1rem' }}> {post.userName} </strong> &#9679; <span style={{ fontSize: '0.9rem', fontWeight: 'bold'}}>{formatDate(post.publishedDate)}</span></p>
                 </div>
@@ -333,7 +341,11 @@ PostCard.propTypes = {
         isReported: PropTypes.bool,
         reportersCount: PropTypes.number
     }).isRequired,
+};
 
+PostCard.defaultProps = {
+    onReportPost: () => console.log('Default report function'),
+    onSavePost: () => console.log('Default save function'),
 };
 
 export default PostCard;

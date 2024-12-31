@@ -1,5 +1,6 @@
 package com.voterra;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voterra.controllers.PostController;
 import com.voterra.entities.Post;
 import com.voterra.entities.ReportedPost;
@@ -7,6 +8,9 @@ import com.voterra.entities.User;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.UserRepository;
 import com.voterra.services.PostService;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,15 +20,19 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class PostControllerTest {
 
@@ -43,9 +51,16 @@ class PostControllerTest {
     @InjectMocks
     private PostController postController;
 
+    private MockMvc mockMvc;
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        SecurityContextHolder.setContext(securityContext);
+        MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(postController).build();
+        this.objectMapper = new ObjectMapper();
         SecurityContextHolder.setContext(securityContext);
     }
 
@@ -281,18 +296,6 @@ class PostControllerTest {
     }
 
     @Test
-    void testReportPost() {
-        ReportedPost reportedPost = new ReportedPost();
-        when(postService.reportPost(reportedPost)).thenReturn(reportedPost);
-
-        ResponseEntity<?> response = postController.reportPost(reportedPost);
-
-        assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
-        assertEquals(reportedPost, response.getBody());
-    }
-
-    @Test
     void testReportPost_ExceptionHandling() {
         ReportedPost reportedPost = new ReportedPost();
         when(postService.reportPost(reportedPost)).thenThrow(new RuntimeException("Reporting error"));
@@ -472,5 +475,70 @@ class PostControllerTest {
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertNotNull(body);
         assertEquals("Error leaving reported post", body.get("message"));
+    }
+
+    @Test
+    void testReportPost() throws Exception {
+        ReportedPost reportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
+        Mockito.when(postService.reportPost(Mockito.any(ReportedPost.class))).thenReturn("Post reported successfully");
+
+        mockMvc.perform(post("/posts/reportPost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(reportedPost)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("Post reported successfully"));
+    }
+
+    @Test
+    void testGetReportedPosts() throws Exception {
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("admin@example.com");
+
+        User user = new User();
+        user.setEmail("admin@example.com");
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(user);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/posts/getReportedPosts")
+                        .param("page", "0"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void testDeleteReportedPost() throws Exception {
+        Map<String, String> request = Map.of("postId", "1", "email", "admin@example.com");
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("admin@example.com");
+
+        User user = new User();
+        user.setEmail("admin@example.com");
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(user);
+
+        mockMvc.perform(delete("/posts/deleteReportedPost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("post deleted successfully"));
+    }
+
+    @Test
+    void testLeaveReportedPost() throws Exception {
+        Map<String, String> request = Map.of("postId", "1", "email", "admin@example.com");
+
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("admin@example.com");
+
+        User user = new User();
+        user.setEmail("admin@example.com");
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail("admin@example.com")).thenReturn(user);
+
+        mockMvc.perform(delete("/posts/leaveReportedPost")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("post deleted successfully from reported posts list"));
     }
 }
