@@ -130,14 +130,14 @@ public class PostController {
     }
 
     @GetMapping("/getReportedPosts")
-    public ResponseEntity<?> getReportedPosts() {
+    public ResponseEntity<?> getReportedPosts(@RequestParam int page) {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
             User user = userRepository.findByEmail(email);
             if (user.getUserType() != User.userType.ADMIN) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not authorized to delete this post");
             }
-            return ResponseEntity.ok(postService.getReportedPosts());
+            return ResponseEntity.ok(postService.getReportedPosts(page));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
