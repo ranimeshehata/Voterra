@@ -81,7 +81,7 @@ function SideBarHomePage({ user, handleLogout }) {
             </Row>
             <Row>
                 <Col>
-                    <a href="/contact" className="sidebar-link">
+                    <a href="/contactus" className="sidebar-link">
                         <i className="fas fa-envelope"></i>
                         <span className="sidebar-link-text">Contact</span>
                     </a>

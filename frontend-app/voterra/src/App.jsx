@@ -13,6 +13,7 @@ const SavedPosts = React.lazy(() => import('./pages/SavedPosts'));
 const ReportedPosts = React.lazy(() => import('./pages/ReportedPosts'));
 const ErrorNotFound = React.lazy(() => import('./pages/ErrorNotFound'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
+const ContactsPage = React.lazy(() => import('./pages/ContactsPage'));
 
 function App() {
   useAuth();
@@ -32,6 +33,7 @@ function App() {
             <Route path="/reportedposts" element={<ReportedPosts />} />
             <Route path="*" element={<ErrorNotFound />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/contactus" element={<ContactsPage />} />
           </Routes>
         </Suspense>
       </Router>
