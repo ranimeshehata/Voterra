@@ -1,9 +1,7 @@
 package com.voterra;
 
-import com.voterra.entities.Poll;
-import com.voterra.entities.Post;
-import com.voterra.entities.ReportedPost;
-import com.voterra.entities.User;
+import com.voterra.DTOs.ReportedPostDTO;
+import com.voterra.entities.*;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.PostRepository;
 import com.voterra.repos.ReportedPostRepository;
@@ -15,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContext;
@@ -337,64 +336,124 @@ class PostServiceTest {
     }
 
     @Test
-    void testReportNewPost() {
-        // Arrange
-        ReportedPost newReportedPost = new ReportedPost();
-        newReportedPost.setPostId("123");
-        newReportedPost.setReportersId(new LinkedList<>());
-        newReportedPost.getReportersId().add("reporter1");
+    void testReportPost_NewPost() {
+        ReportedPost newReportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
+        when(reportedPostRepository.findById("postId")).thenReturn(Optional.empty());
 
-        when(reportedPostRepository.findById("123")).thenReturn(Optional.empty());
+        User user = new User();
+        user.setReportedPosts(new ArrayList<>());
+        when(userRepository.findByEmail("user1@example.com")).thenReturn(user);
 
-        // Act
-        postService.reportPost(newReportedPost);
+        String result = postService.reportPost(newReportedPost);
 
-        // Assert
+        assertEquals("Post reported successfully", result);
         verify(reportedPostRepository).save(newReportedPost);
+        verify(userRepository).save(user);
+        assertTrue(user.getReportedPosts().contains("postId"));
     }
 
     @Test
-    void testDuplicateReportingBySameReporter() {
-        // Arrange
-        ReportedPost existingReportedPost = new ReportedPost();
-        existingReportedPost.setPostId("123");
-        existingReportedPost.setReportersId(new LinkedList<>());
-        existingReportedPost.getReportersId().add("reporter1");
+    void testReportPost_AlreadyReportedBySameUser() {
+        ReportedPost existingReportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
+        when(reportedPostRepository.findById("postId")).thenReturn(Optional.of(existingReportedPost));
 
-        ReportedPost newReportAttempt = new ReportedPost();
-        newReportAttempt.setPostId("123");
-        newReportAttempt.setReportersId(new LinkedList<>());
-        newReportAttempt.getReportersId().add("reporter1");
+        ReportedPost newReportAttempt = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
 
-        when(reportedPostRepository.findById("123")).thenReturn(Optional.of(existingReportedPost));
+        String result = postService.reportPost(newReportAttempt);
 
-        // Act
-        postService.reportPost(newReportAttempt);
-
-        // Assert
+        assertEquals("You have already reported this post", result);
         verify(reportedPostRepository, never()).save(any());
+        verify(userRepository, never()).save(any());
     }
 
     @Test
-    void testAdditionalReportingByDifferentReporter() {
-        // Arrange
-        ReportedPost existingReportedPost = new ReportedPost();
-        existingReportedPost.setPostId("123");
-        existingReportedPost.setReportersId(new LinkedList<>());
-        existingReportedPost.getReportersId().add("reporter1");
+    void testReportPost_NewUserReportsAlreadyReportedPost() {
+        String postId = "postId1";
+        String newUserEmail = "newUser@example.com";
+        String existingUserEmail = "existingUser@example.com";
 
-        ReportedPost newReportAttempt = new ReportedPost();
-        newReportAttempt.setPostId("123");
-        newReportAttempt.setReportersId(new LinkedList<>());
-        newReportAttempt.getReportersId().add("reporter2");
+        ReportedPost existingReportedPost = new ReportedPost(postId, new LinkedList<>(List.of(existingUserEmail)));
 
-        when(reportedPostRepository.findById("123")).thenReturn(Optional.of(existingReportedPost));
+        ReportedPost newReportedPost = new ReportedPost(postId, new LinkedList<>(List.of(newUserEmail)));
 
-        // Act
-        postService.reportPost(newReportAttempt);
+        when(reportedPostRepository.findById(postId)).thenReturn(Optional.of(existingReportedPost));
 
-        // Assert
-        assertTrue(existingReportedPost.getReportersId().contains("reporter2"));
+        User newUser = new User();
+        newUser.setEmail(newUserEmail);
+        newUser.setReportedPosts(new LinkedList<>());
+        when(userRepository.findByEmail(newUserEmail)).thenReturn(newUser);
+
+        String result = postService.reportPost(newReportedPost);
+
+        assertEquals("Post reported successfully", result);
         verify(reportedPostRepository).save(existingReportedPost);
+        verify(userRepository).save(newUser);
+        assertTrue(existingReportedPost.getReportersId().contains(newUserEmail));
+        assertTrue(newUser.getReportedPosts().contains(postId));
     }
+
+
+    @Test
+    void testGetReportedPosts() {
+        ReportedPost reportedPost1 = new ReportedPost("postId1", new LinkedList<>(List.of("user1@example.com")));
+        ReportedPost reportedPost2 = new ReportedPost("postId2", new LinkedList<>(List.of("user2@example.com", "user3@example.com")));
+
+        Post post1 = new Post("user1@example.com", "User1", "Content1", FeedFactory.category.BUSINESS,
+                FeedFactory.privacy.PUBLIC, null, new Date());
+        Post post2 = new Post("user2@example.com", "User2", "Content2", FeedFactory.category.SPORTS,
+                FeedFactory.privacy.PUBLIC, null, new Date());
+
+        List<ReportedPost> reportedPosts = List.of(reportedPost1, reportedPost2);
+
+        when(reportedPostRepository.findAll(PageRequest.of(0, 5))).thenReturn(new PageImpl<>(reportedPosts));
+        when(postRepository.findById("postId1")).thenReturn(Optional.of(post1));
+        when(postRepository.findById("postId2")).thenReturn(Optional.of(post2));
+
+        List<ReportedPostDTO> result = postService.getReportedPosts(0);
+
+        assertEquals(2, result.size());
+        assertEquals(1, result.get(0).getNumberOfReports());
+        assertEquals(2, result.get(1).getNumberOfReports());
+        assertEquals("Content1", result.get(0).getPost().getPostContent());
+        assertEquals("Content2", result.get(1).getPost().getPostContent());
+    }
+
+
+    @Test
+    void testDeleteReportedPost() {
+        ReportedPost reportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
+        User user = new User();
+        user.setSavedPosts(new ArrayList<>(List.of("postId")));
+        user.setReportedPosts(new ArrayList<>(List.of("postId")));
+        List<User> users = List.of(user);
+
+        when(reportedPostRepository.findById("postId")).thenReturn(Optional.of(reportedPost));
+        when(userRepository.findAll()).thenReturn(users);
+
+        postService.deleteReportedPost("postId");
+
+        assertFalse(user.getSavedPosts().contains("postId"));
+        assertFalse(user.getReportedPosts().contains("postId"));
+        verify(postRepository).deleteById("postId");
+        verify(reportedPostRepository).deleteById("postId");
+    }
+
+    @Test
+    void testLeaveReportedPost() {
+        ReportedPost reportedPost = new ReportedPost("postId", new LinkedList<>(List.of("user1@example.com")));
+        User user = new User();
+        user.setReportedPosts(new ArrayList<>(List.of("postId")));
+        List<User> users = List.of(user);
+
+        when(reportedPostRepository.findById("postId")).thenReturn(Optional.of(reportedPost));
+        when(userRepository.findAll()).thenReturn(users);
+
+        postService.leaveReportedPost("postId");
+
+        assertFalse(user.getReportedPosts().contains("postId"));
+        verify(reportedPostRepository).deleteById("postId");
+        verify(userRepository).save(user);
+    }
+
+
 }
