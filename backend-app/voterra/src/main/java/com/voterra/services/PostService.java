@@ -121,26 +121,26 @@ public class PostService {
         }
     }
 
-    public String reportPost(ReportedPost reportedPost) {
+    public ReportedPost reportPost(ReportedPost reportedPost) {
         ReportedPost rp = reportedPostRepository.findById(reportedPost.getPostId()).orElse(null);
         if (rp == null) {
             reportedPostRepository.save(reportedPost);
             User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
             user.getReportedPosts().add(reportedPost.getPostId());
             userRepository.save(user);
-        }
-        else{
+            return reportedPost;
+        } else {
             String reporterId = reportedPost.getReportersId().getFirst();
             if (rp.getReportersId().contains(reporterId)) {
-                return "You have already reported this post";
+                throw new IllegalArgumentException("You have already reported this post");
             }
             rp.getReportersId().add(reporterId);
             User user = userRepository.findByEmail(reportedPost.getReportersId().getFirst());
             user.getReportedPosts().add(reportedPost.getPostId());
             userRepository.save(user);
             reportedPostRepository.save(rp);
+            return rp;
         }
-        return "Post reported successfully";
     }
 
     public List<ReportedPostDTO> getReportedPosts(int page) {

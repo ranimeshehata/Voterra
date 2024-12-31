@@ -2,6 +2,7 @@ package com.voterra;
 
 import com.voterra.controllers.PostController;
 import com.voterra.entities.Post;
+import com.voterra.entities.ReportedPost;
 import com.voterra.entities.User;
 import com.voterra.exceptions.PostNotFoundException;
 import com.voterra.repos.UserRepository;
@@ -15,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.util.Collections;
 import java.util.Date;
@@ -276,5 +278,199 @@ class PostControllerTest {
         assertNotNull(body);
         System.out.println(body.get("message"));
         assertEquals("Post with ID Post not found not found", body.get("message"));
+    }
+
+    @Test
+    void testReportPost() {
+        ReportedPost reportedPost = new ReportedPost();
+        when(postService.reportPost(reportedPost)).thenReturn(reportedPost);
+
+        ResponseEntity<?> response = postController.reportPost(reportedPost);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(reportedPost, response.getBody());
+    }
+
+    @Test
+    void testReportPost_ExceptionHandling() {
+        ReportedPost reportedPost = new ReportedPost();
+        when(postService.reportPost(reportedPost)).thenThrow(new RuntimeException("Reporting error"));
+
+        ResponseEntity<?> response = postController.reportPost(reportedPost);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Reporting error", body.get("message"));
+    }
+
+    @Test
+    void testGetReportedPosts_Unauthorized() {
+        String email = "user@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.USER);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        ResponseEntity<?> response = postController.getReportedPosts(0);
+
+        assertNotNull(response);
+        assertEquals(401, response.getStatusCodeValue());
+        assertEquals("You are not authorized to delete this post", response.getBody());
+    }
+
+    @Test
+    void testGetReportedPosts_ExceptionHandling() {
+        String email = "admin@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        when(postService.getReportedPosts(0)).thenThrow(new RuntimeException("Error retrieving reported posts"));
+
+        ResponseEntity<?> response = postController.getReportedPosts(0);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Error retrieving reported posts", body.get("message"));
+    }
+
+    @Test
+    void testDeleteReportedPost_Success() {
+        String email = "admin@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+        doNothing().when(postService).deleteReportedPost("1");
+
+        ResponseEntity<?> response = postController.deleteReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("post deleted successfully", response.getBody());
+    }
+
+    @Test
+    void testDeleteReportedPost_Unauthorized() {
+        String email = "user@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.USER);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+
+        ResponseEntity<?> response = postController.deleteReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(401, response.getStatusCodeValue());
+        assertEquals("You are not authorized to delete this post", response.getBody());
+    }
+
+    @Test
+    void testDeleteReportedPost_ExceptionHandling() {
+        String email = "admin@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+        doThrow(new RuntimeException("Error deleting reported post")).when(postService).deleteReportedPost("1");
+
+        ResponseEntity<?> response = postController.deleteReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Error deleting reported post", body.get("message"));
+    }
+
+    @Test
+    void testLeaveReportedPost_Success() {
+        String email = "admin@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+        doNothing().when(postService).leaveReportedPost("1");
+
+        ResponseEntity<?> response = postController.leaveReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals("post deleted successfully from reported posts list", response.getBody());
+    }
+
+    @Test
+    void testLeaveReportedPost_Unauthorized() {
+        String email = "user@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.USER);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+
+        ResponseEntity<?> response = postController.leaveReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(401, response.getStatusCodeValue());
+        assertEquals("You are not authorized to delete this post", response.getBody());
+    }
+
+    @Test
+    void testLeaveReportedPost_ExceptionHandling() {
+        String email = "admin@example.com";
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(email);
+
+        User user = new User();
+        user.setEmail(email);
+        user.setUserType(User.userType.ADMIN);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        Map<String, String> request = Map.of("postId", "1", "email", email);
+        doThrow(new RuntimeException("Error leaving reported post")).when(postService).leaveReportedPost("1");
+
+        ResponseEntity<?> response = postController.leaveReportedPost(request);
+
+        assertNotNull(response);
+        assertEquals(400, response.getStatusCodeValue());
+        Map<?, ?> body = (Map<?, ?>) response.getBody();
+        assertNotNull(body);
+        assertEquals("Error leaving reported post", body.get("message"));
     }
 }
