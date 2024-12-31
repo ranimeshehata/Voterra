@@ -129,6 +129,22 @@ function useFetch() {
       onError
     );
   };
+
+  const leaveReportedPost = (url, body, onComplete, onError) => {  
+    fetchData(
+      url,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      },
+      onComplete,
+      onError
+    );
+  };
+
   const reportPost = (url, body, onComplete, onError) => {
     fetchData(
       url,
@@ -144,6 +160,7 @@ function useFetch() {
     );
   };
 
+
   return { 
     data, 
     loading, 
@@ -155,7 +172,8 @@ function useFetch() {
     postSave,
     deletePost,
     reportPost,
-    acceptReportedPost
+    acceptReportedPost,
+    leaveReportedPost
   };
 }
 
