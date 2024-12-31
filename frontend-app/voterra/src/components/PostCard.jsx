@@ -6,7 +6,7 @@ import { userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import { toast } from "react-toastify";
 
-const PostCard = ({post, removePostFromFeed, onSavePost}) => {
+const PostCard = ({post, removePostFromFeed, onSavePost, pageType}) => {
     const [totalVotes,setTotalVotes]=useState(0);
     const [votedPoll,setVotedPoll]=useState(-1);
     const [voted,setVoted]=useState(false);
@@ -176,7 +176,24 @@ const vote = (pollIndex) => {
             <div className="cursor-pointer absolute top-8 right-8">
                 <i onClick={()=>setPostMenu(prev=>!prev)} className="fa-solid fa-ellipsis-vertical"></i>
                 <div className={`${postMenu?"block":"hidden"} shadow-lg border-2  absolute w-44 bg-white p-3`}>
-                    <p
+                    {pageType === 'reported'? (
+                        <>
+                            <p 
+                                className="hover:bg-gray-100" 
+                                // onClick={postDelete}
+                            >
+                                Delete Post
+                            </p>
+                            <p
+                                className="hover:bg-gray-100"
+                                // onClick={postDelete}
+                            >
+                                Ignore Report
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <p
                         className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         onClick={() => !isSaved && savePost(post.id)}
                     >
@@ -192,6 +209,24 @@ const vote = (pollIndex) => {
                             {isReported ? 'Post Reported' : 'Report Post'}
                         </p>
                     )}
+                        </>
+                    )}
+                    {/* <p
+                        className={`hover:bg-gray-100 ${isSaved ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                        onClick={() => !isSaved && savePost(post.id)}
+                    >
+                        {isSaved ? 'Post Saved' : 'Save Post'}
+                    </p>
+                    { post.userEmail == user.email  && (<p className="hover:bg-gray-100" onClick={postDelete}>Delete Post</p>
+                    )}
+                    {post.userEmail !== user.email && (
+                        <p 
+                            className={`hover:bg-gray-100 ${isReported ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            onClick={() => !isReported && handleReportPost(post.id)}
+                        >
+                            {isReported ? 'Post Reported' : 'Report Post'}
+                        </p>
+                    )} */}
                 </div>
             </div>
             <div id="userInfo" className="flex gap-3 items-center">
@@ -232,6 +267,7 @@ const vote = (pollIndex) => {
 PostCard.propTypes = {
     removePostFromFeed: PropTypes.func,
     onSavePost: PropTypes.func,
+    pageType: PropTypes.string,
     post: PropTypes.shape({
         id: PropTypes.string.isRequired,
         polls: PropTypes.arrayOf(

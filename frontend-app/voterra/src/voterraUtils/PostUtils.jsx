@@ -105,6 +105,10 @@ export async function fetchReportedPosts(page) {
   
       const data = await response.json();
       return data;
+      // return data.map(post => ({
+      //   ...post,
+      //   reportersCount: post.reportersId ? post.reportersId.length : 0
+      // }));
     } catch (error) {
       console.error(error.message);
     }

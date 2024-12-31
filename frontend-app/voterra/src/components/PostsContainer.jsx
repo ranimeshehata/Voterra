@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import PostCard from "./PostCard";
 
 
-const PostContainer = ({posts, removePostFromFeed, onSavePost}) => {
+const PostContainer = ({posts, removePostFromFeed, onSavePost, pageType}) => {
     const [postList, setPostList] = useState(posts);
 
     useEffect(()=>{
@@ -19,6 +19,7 @@ const PostContainer = ({posts, removePostFromFeed, onSavePost}) => {
                     post={post} 
                     removePostFromFeed={removePostFromFeed} 
                     onSavePost={onSavePost}
+                    pageType={pageType}
                 />
             ))}
         </div>
@@ -27,7 +28,8 @@ const PostContainer = ({posts, removePostFromFeed, onSavePost}) => {
 PostContainer.propTypes = {
     posts: PropTypes.array,
     removePostFromFeed: PropTypes.func,
-    onSavePost: PropTypes.func
+    onSavePost: PropTypes.func,
+    pageType: PropTypes.string
     
 };
 

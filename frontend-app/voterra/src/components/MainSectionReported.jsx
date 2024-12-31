@@ -58,10 +58,10 @@ function MainSectionReported() {
 
     return (
         <div className="flex flex-col gap-10">
-            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} />
+            <PostContainer posts={posts} removePostFromFeed = { removePostFromFeed } onSavePost={handleSavePost} pageType="reported" />
             {isLoading && <Loader/>}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
-            
+
             {!isLoading && (
             <>
                 {posts.length === 0 && <div className="text-center text-4xl text-gray-600">No reported posts yet ..</div>}
