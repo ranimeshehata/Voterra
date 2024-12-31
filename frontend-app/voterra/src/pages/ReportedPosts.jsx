@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { userState, isAuthenticatedState } from '../recoil/atoms';
@@ -10,9 +9,6 @@ import Header from '../components/Header';
 import SideBarHomePage from '../components/SideBarHomePage';
 import Loader from '../components/Loader';
 import MainSectionReported from '../components/MainSectionReported';
-
-
-
 
 function ReportedPosts() {
     const [user, setUser] = useRecoilState(userState);
