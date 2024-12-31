@@ -24,6 +24,8 @@ const PostCard = ({post, removePostFromFeed, onSavePost, pageType, onReportPost}
         // console.log(user.userType);
         // console.log(user.email);
         // console.log(reportedPosts.includes(post.id));
+        // console.log(user.reportedPosts);
+        // console.log(reportedPosts);
         // console.log(reportedPosts.some(rp => rp.reportersId && rp.reportersId.includes(user.email)));
         for(let i=0;i<post.polls.length;i++){
             x+=post.polls[i].voters.length;
