@@ -13,3 +13,11 @@ export const isAuthenticatedState = atom({
   key: 'isAuthenticatedState',
   default: !!localStorage.getItem('token'),
 });
+export const currFilter = atom({
+  key: 'currFilter',
+  default: "all",
+});
+export const currSearch = atom({
+  key: 'currSearch',
+  default: "",
+});

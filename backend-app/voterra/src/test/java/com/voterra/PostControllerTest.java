@@ -2,6 +2,7 @@ package com.voterra;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voterra.controllers.PostController;
+import com.voterra.entities.FeedFactory;
 import com.voterra.entities.Post;
 import com.voterra.entities.ReportedPost;
 import com.voterra.entities.User;
@@ -11,6 +12,7 @@ import com.voterra.services.PostService;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,10 +69,11 @@ class PostControllerTest {
     @Test
     void testGetPosts() {
         int page = 0;
-        Post post = new Post("testuser@example.com","testuser" ,"Test Post", null, Post.privacy.PUBLIC, null, new Date());
-        when(postService.getPaginatedPosts(page)).thenReturn(Collections.singletonList(post));
+        String category = "OTHER";
+        Post post = new Post("testuser@example.com","testuser" ,"Test Post", FeedFactory.category.OTHER, Post.privacy.PUBLIC, null, new Date());
+        when(postService.getPaginatedPosts(category, page)).thenReturn(Collections.singletonList(post));
 
-        ResponseEntity<?> response = postController.getPosts(page);
+        ResponseEntity<?> response = postController.getPosts(category , page);
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
@@ -83,16 +86,21 @@ class PostControllerTest {
     @Test
     void testGetPosts_ExceptionHandling() {
         int page = 0;
-        when(postService.getPaginatedPosts(page)).thenThrow(new RuntimeException("Test exception"));
+        String category = "all";
+        String expectedMessage = "Test exception";
 
-        ResponseEntity<?> response = postController.getPosts(page);
+        when(postService.getPaginatedPosts(category, page)).thenThrow(new RuntimeException(expectedMessage));
+
+        ResponseEntity<?> response = postController.getPosts(category, page);
 
         assertNotNull(response);
         assertEquals(400, response.getStatusCodeValue());
+
         Map<?, ?> body = (Map<?, ?>) response.getBody();
         assertNotNull(body);
-        assertEquals("Test exception", body.get("message"));
+        assertEquals(expectedMessage, body.get("message"));
     }
+
 
     @Test
     void testGetSavedPosts_Success() {

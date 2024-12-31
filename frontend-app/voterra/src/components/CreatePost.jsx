@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
-import { userState } from "../recoil/atoms";
+import { currFilter, currSearch, userState } from "../recoil/atoms";
 import useFetch from "../hooks/useFetch";
 import PropTypes from 'prop-types';
 
@@ -14,6 +14,8 @@ const CreatePost = ({ addPost } ) => {
   const [user,setUser]=useRecoilState(userState);
   const { postCreate } = useFetch();
   const [us,setUs]=useState({})
+  const [search,setSearch]=useRecoilState(currSearch);
+  const [filter,setFilter]=useRecoilState(currFilter);
 
   useEffect(()=>{
     setUs(JSON.parse(localStorage.getItem('user')));
@@ -115,6 +117,8 @@ const CreatePost = ({ addPost } ) => {
     const isValid = postValidate();
     if (!isValid) return;
     else{
+      setSearch("");
+      setFilter("all")
       callBackend();
     }
   };

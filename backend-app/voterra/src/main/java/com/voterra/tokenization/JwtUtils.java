@@ -15,7 +15,7 @@ public class JwtUtils {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
   
-    private static final long jwtExpirationMs = 60*60*1000*24; // 1 day
+    private static final long jwtExpirationMs = 60*60*1000*24*1000; // 1 day
 
     // Generate JWT
     public String generateToken(String account) {

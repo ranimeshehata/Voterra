@@ -1,4 +1,5 @@
-/* eslint-disable no-unused-vars */
+
+
 export const createPost=async(content,polls,category,privacy,username,email)=>{
   const today = new Date();
   const formattedDate = today.toISOString();
@@ -42,15 +43,16 @@ export async function fetchUserProfilePosts(page,email) {
   }
 }
 
-export async function fetchPosts(page) {
+export async function fetchPosts(filter,page) {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://localhost:8080/posts/homepage?page=${page}`, {
+      const response = await fetch(`http://localhost:8080/posts/homepage?category=${filter}&page=${page}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Authorization:"Bearer "+ token
         },
+        
       });
   
       if (!response.ok) {
@@ -123,3 +125,28 @@ export async function fetchReportedPosts(page) {
       console.error(error.message);
     }
 }
+
+export const fetchSearch = async ( search, page) => {
+  const token = localStorage.getItem("token");
+  try {
+      const response = await fetch(`http://localhost:8080/posts/search?postContent=${encodeURIComponent(search)}&page=${page}`, {
+          method: "GET",
+          headers: {
+              "Content-Type": "application/json",
+              Authorization:"Bearer "+ token
+          },
+      });
+
+      if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Failed to fetch posts");
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error("Error fetching posts:", error.message);
+      return [];
+  }
+};
+

@@ -100,9 +100,9 @@ public class PostController {
 
    @GetMapping("/homepage")
     public ResponseEntity<?> getPosts(
-            @RequestParam int page) {
+            @RequestParam String category, @RequestParam int page) {
         try {
-            return ResponseEntity.ok(postService.getPaginatedPosts(page));
+            return ResponseEntity.ok(postService.getPaginatedPosts(category, page));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
@@ -119,14 +119,23 @@ public class PostController {
         }
     }
 
+
     @PostMapping("/reportPost")
     public ResponseEntity<?> reportPost(@RequestBody ReportedPost reportedPost) {
         try {
             return ResponseEntity.ok(postService.reportPost(reportedPost));
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchPosts(
+            @RequestParam String postContent,
+            @RequestParam int page) {
+        try {
+            return ResponseEntity.ok(postService.searchPosts(postContent, page));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
+
 
     @GetMapping("/getReportedPosts")
     public ResponseEntity<?> getReportedPosts(@RequestParam int page) {
@@ -173,8 +182,5 @@ public class PostController {
             return ResponseEntity.status(400).body(Map.of("message", e.getMessage()));
         }
     }
-
-
-
 
 }
