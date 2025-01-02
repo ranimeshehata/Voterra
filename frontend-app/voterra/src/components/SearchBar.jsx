@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 import { currFilter, currSearch } from "../recoil/atoms";
