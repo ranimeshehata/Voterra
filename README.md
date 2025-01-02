@@ -22,8 +22,9 @@ To get started with Voterra, follow the setup instructions for both the frontend
 6. [Starting the Backend Server](#starting-the-backend-server)
 7. [Database Setup](#database-setup)
 8. [Running Unit Tests](#running-unit-tests)
-9. [Dependencies](#dependencies)
-10. [Contact Us](#contact-us)
+9. [Architecture](#architecture)
+10. [Dependencies](#dependencies)
+11. [Contact Us](#contact-us)
 
 
 ## **Authors**:
@@ -97,6 +98,7 @@ mongod
 ```
 
 ## **Running Unit Tests**:
+- **Backend Testing**: JUnit, Mockito
 - To run the unit tests for the backend, use the following command:
 ```sh
 cd backend-app
@@ -104,6 +106,25 @@ cd backend-app
 ```sh
 mvn test
 ```
+
+## **Architecture**:
+The Voterra application follows a modern web application architecture with a clear separation of concerns between the frontend and backend.
+
+### **Frontend**:
+- **Framework**: React
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Routing**: React Router DOM
+
+### **Backend**:
+- **Framework**: Spring Boot (Java)
+- **Database**: MongoDB
+- **ORM**: Mongoose
+
+### **Communication**:
+- The frontend communicates with the backend via RESTful APIs.
+- The backend handles business logic, database interactions, and serves the API endpoints.
+
 
 ## **Dependencies**:
 - The project uses the following dependencies:
