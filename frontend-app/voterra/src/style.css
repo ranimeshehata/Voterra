@@ -1,7 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.friends-page {
+  padding: 20px;
+}
 
+.friends-page h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.profile-friends ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.profile-friends li {
+  margin: 5px 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
 .user-profile {
   border: 1px solid #ccc;
   padding: 20px;

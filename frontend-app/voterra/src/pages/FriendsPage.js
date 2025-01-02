@@ -2,26 +2,24 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import UserProfileHeader from "../components/UserProfileHeader";
 import { useRecoilState } from 'recoil';
 import { userState } from '../recoil/atoms';
-import { fetchUserProfilePosts } from '../voterraUtils/PostUtils';
-import PostContainer from '../components/PostsContainer';
+import { fetchUserFriends } from '../voterraUtils/FriendsUtils';
 import Loader from '../components/Loader';
-import { Link } from 'react-router-dom'; // Import Link component
 
-const UserProfile = () => {
-  const [posts, setPosts] = useState([]);
+const FriendsPage = () => {
+  const [friends, setFriends] = useState([]);
   const [page, setPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const observerRef = useRef(null);
   const [user, setUser] = useRecoilState(userState);
 
-  const loadPosts = useCallback(async (page) => {
+  const loadFriends = useCallback(async (page) => {
     if (isLoading || !hasMore || !user) return;
     setIsLoading(true);
     try {
-      const data = await fetchUserProfilePosts(page, user.email);
+      const data = await fetchUserFriends(page, user.email);
       if (data.length > 0) {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
+        setFriends((prevFriends) => [...prevFriends, ...data]);
         setPage(page + 1);
       } else {
         setHasMore(false);
@@ -37,7 +35,7 @@ const UserProfile = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          loadPosts(page);
+          loadFriends(page);
         }
       },
       { threshold: 1.0 }
@@ -48,7 +46,7 @@ const UserProfile = () => {
     return () => {
       if (currentObserverRef) observer.unobserve(currentObserverRef);
     };
-  }, [page, hasMore, isLoading, loadPosts, user]);
+  }, [page, hasMore, isLoading, loadFriends, user]);
 
   useEffect(() => {
     const userObj = JSON.parse(localStorage.getItem('user'));
@@ -66,17 +64,22 @@ const UserProfile = () => {
             <h2 className="text-2xl">{user.firstName} {user.lastName}</h2>
             <h3 className="text-lg text-gray-500">@{user.username}</h3>
           </div>
-          <div className="profile-posts w-full ">
-            <h3 className="text-xl mb-2">Posts</h3>
-            <PostContainer posts={posts} />
+          <div className="profile-friends w-full">
+            <h3 className="text-xl mb-2">Friends</h3>
+            <ul>
+              {friends.map((friend, index) => (
+                <li key={index} className="friend-item">
+                  {friend.name}
+                </li>
+              ))}
+            </ul>
             {isLoading && <Loader />}
             {hasMore && <div ref={observerRef} className="infinite-trigger"></div>}
           </div>
-          <Link to="/friends" className="btn btn-primary mt-4">View Friends</Link> {/* Add button link */}
         </div>
       )}
     </div>
   );
 };
 
-export default UserProfile;
+export default FriendsPage;

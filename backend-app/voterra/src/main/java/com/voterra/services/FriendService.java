@@ -66,18 +66,23 @@ public class FriendService {
     }
     public void removeFriend(String userEmail , String friendEmail){
         // get the user
-        User user = userRepository.findById(userEmail).orElseThrow(() -> new RuntimeException("User Not Found"));
+        User user1 = userRepository.findById(userEmail).orElseThrow(() -> new RuntimeException("User Not Found"));
         //malicious user removing himself
         if(userEmail.equals(friendEmail)){
             throw new RuntimeException("User Not Found");
         }
         // the friend list is empty or the friendEmail is not in the friends list
-        if(user.getFriends() == null
-                || !(user.getFriends().contains(friendEmail))) {
+        if(user1.getFriends() == null
+                || !(user1.getFriends().contains(friendEmail))) {
             throw new RuntimeException("User Not Found");
         }
-        user.getFriends().remove(friendEmail) ;
-        userRepository.save(user) ;
+        user1.getFriends().remove(friendEmail) ;
+
+        userRepository.save(user1) ;
+
+        User user2 = userRepository.findById(friendEmail).orElseThrow(() -> new RuntimeException("User Not Found"));
+        user2.getFriends().remove(userEmail) ;
+        userRepository.save(user2) ;
     }
     public List<User> suggestFriends(String email, int page) {
 
