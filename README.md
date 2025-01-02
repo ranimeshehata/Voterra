@@ -135,9 +135,6 @@ The Voterra application follows a modern web application architecture with a cle
   - Vite
   - Spring Boot
   - MongoDB
-  - Mongoose
-  - Express
-  - Dotenv
   - JUnit
   - Mockito
 
