@@ -34,6 +34,7 @@ function App() {
             <Route path="*" element={<ErrorNotFound />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contactus" element={<ContactsPage />} />
+            
           </Routes>
         </Suspense>
       </Router>
