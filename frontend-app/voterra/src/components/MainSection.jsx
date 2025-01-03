@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState, useRef, useCallback } from "react";
 import CreatePost from "./CreatePost";
 import PostContainer from "./PostsContainer";
@@ -65,7 +66,7 @@ const MainSection = () => {
                 setHasMore(data.length > 0);
             }).catch((error) => console.error(error)).finally(() => setIsLoading(false));
         }
-    }, [search, filter]);
+    }, [search]);
 
     const loadPosts = useCallback(
         async (currentPage) => {
